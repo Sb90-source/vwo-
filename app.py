@@ -13,101 +13,99 @@ st.set_page_config("💀 CYBER BREACH SIMULATOR", layout="wide", initial_sidebar
 # ==========================================================
 # VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
 # ==========================================================
-st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-html, body, [class*="css"] {
-    background-color: #020409 !important;
-    color: #00ff9c !important;
-    font-family: 'Share Tech Mono', monospace !important;
-}
-h1,h2,h3,h4 {
-    font-family: 'Orbitron', monospace !important;
-    color: #00ff9c !important;
-    text-shadow: 0 0 15px rgba(0,255,156,0.5);
-    letter-spacing: 3px;
-}
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea {
-    background-color: #000 !important;
-    color: #00ff9c !important;
-    border: 1px solid #00ff9c !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    font-size: 14px !important;
-    caret-color: #00ff9c;
-}
-.stButton > button {
-    background-color: #000 !important;
-    color: #00ff9c !important;
-    border: 1px solid #00ff9c !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    letter-spacing: 2px;
-    transition: all 0.2s;
-}
-.stButton > button:hover {
-    background-color: #00ff9c !important;
-    color: #000 !important;
-    box-shadow: 0 0 20px rgba(0,255,156,0.6);
-}
-.stTabs [data-baseweb="tab"] {
-    font-family: 'Share Tech Mono', monospace !important;
-    color: #00ff9c !important;
-    background: #000 !important;
-    border: 1px solid #00ff9c !important;
-    margin-right: 4px;
-    letter-spacing: 2px;
-}
-.stTabs [aria-selected="true"] {
-    background: #00ff9c !important;
-    color: #000 !important;
-}
-.stAlert {
-    background: #000 !important;
-    border: 1px solid #00ff9c !important;
-    color: #00ff9c !important;
-    font-family: 'Share Tech Mono', monospace !important;
-}
-code, pre {
-    background-color: #050e08 !important;
-    color: #00ff9c !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    border: 1px solid rgba(0,255,156,0.2) !important;
-}
-#MainMenu, footer, header {visibility: hidden;}
-.block-container { padding-top: 1rem !important; }
-
-/* SCANLINES */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent, transparent 2px,
-        rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-}
-
-
-@keyframes flicker {
-    0%,89%,91%,93%,100% { opacity:1; }
-    90% { opacity:0.3; }
-    92% { opacity:0.6; }
-    94% { opacity:0.1; }
-    95% { opacity:0.8; }
-    96% { opacity:0.2; }
-    97% { opacity:1; }
-}
-body { animation: flicker 2s infinite; }
-
-/* PROGRESS BAR OVERRIDE */
-.stProgress > div > div {
-    background: linear-gradient(90deg, #00ff9c, #00ffcc) !important;
-}
-</style>
-""", unsafe_allow_html=True)
+# Inject CSS via JS into parent document — prevents Streamlit from leaking style tags as text
+components.html("""
+<script>
+(function() {
+    const css = `
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        html, body, [class*="css"] {
+            background-color: #020409 !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        h1,h2,h3,h4 {
+            font-family: 'Orbitron', monospace !important;
+            color: #00ff9c !important;
+            text-shadow: 0 0 15px rgba(0,255,156,0.5);
+            letter-spacing: 3px;
+        }
+        .stTextInput > div > div > input,
+        .stTextArea > div > div > textarea {
+            background-color: #000 !important;
+            color: #00ff9c !important;
+            border: 1px solid #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-size: 14px !important;
+            caret-color: #00ff9c;
+        }
+        .stButton > button {
+            background-color: #000 !important;
+            color: #00ff9c !important;
+            border: 1px solid #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+        }
+        .stButton > button:hover {
+            background-color: #00ff9c !important;
+            color: #000 !important;
+            box-shadow: 0 0 20px rgba(0,255,156,0.6);
+        }
+        .stTabs [data-baseweb="tab"] {
+            font-family: 'Share Tech Mono', monospace !important;
+            color: #00ff9c !important;
+            background: #000 !important;
+            border: 1px solid #00ff9c !important;
+            margin-right: 4px;
+            letter-spacing: 2px;
+        }
+        .stTabs [aria-selected="true"] {
+            background: #00ff9c !important;
+            color: #000 !important;
+        }
+        .stAlert {
+            background: #000 !important;
+            border: 1px solid #00ff9c !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        code, pre {
+            background-color: #050e08 !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            border: 1px solid rgba(0,255,156,0.2) !important;
+        }
+        #MainMenu, footer, header { visibility: hidden; }
+        .block-container { padding-top: 1rem !important; }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes flicker {
+            0%,89%,91%,93%,100% { opacity:1; }
+            90% { opacity:0.3; }
+            92% { opacity:0.6; }
+            94% { opacity:0.1; }
+            95% { opacity:0.8; }
+            96% { opacity:0.2; }
+            97% { opacity:1; }
+        }
+        body { animation: flicker 2s infinite; }
+        .stProgress > div > div {
+            background: linear-gradient(90deg, #00ff9c, #00ffcc) !important;
+        }
+    `;
+    const style = window.parent.document.createElement('style');
+    style.textContent = css;
+    window.parent.document.head.appendChild(style);
+})();
+</script>
+""", height=0)
 
 # Matrix rain + keyboard sounds
 components.html("""
@@ -434,6 +432,23 @@ if st.session_state.role == "teacher":
 
     conn.close()
 
+    st.subheader("RESET STUDENT")
+    all_students = [r[0] for r in sqlite3.connect("platform.db").execute(
+        "SELECT DISTINCT username FROM users WHERE role='student'"
+    ).fetchall()]
+    reset_target = st.selectbox("Selecteer student", all_students, key="reset_target")
+    if st.button("🗑 RESET GESELECTEERDE STUDENT", key="teacher_reset"):
+        conn2 = sqlite3.connect("platform.db")
+        c2 = conn2.cursor()
+        c2.execute("DELETE FROM progress WHERE username=?", (reset_target,))
+        c2.execute("DELETE FROM flags WHERE username=?", (reset_target,))
+        c2.execute("DELETE FROM hints WHERE username=?", (reset_target,))
+        conn2.commit()
+        conn2.close()
+        st.success(f"✅ Progressie van {reset_target} gereset!")
+        st.rerun()
+
+    st.markdown("---")
     if st.button("🔓 LOGOUT"):
         st.session_state.clear()
         st.rerun()
@@ -745,19 +760,191 @@ Analyseer het systeem.
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
-        st.markdown("""
-```
-[DATA EXTRACTION]
-Verbonden als: admin
-Toegang: DATABASE READ
-Taak: Extraheer admin credentials via UNION attack
-```
-        """)
-        cmd = st.text_input("root@db:~#", key="sql3", placeholder="SELECT ... UNION ...")
+        col_l, col_m, col_r = st.columns([1, 2, 1])
+        with col_m:
+            components.html("""
+            <style>
+            * { box-sizing:border-box; margin:0; padding:0; }
+            body { background:transparent; font-family:'Segoe UI',Arial,sans-serif; }
+            .laptop-wrap { display:flex; flex-direction:column; align-items:center; }
+            .screen-outer {
+                background:#1a1a2e; border:3px solid #333; border-bottom:6px solid #222;
+                border-radius:12px 12px 0 0; width:100%; padding:12px;
+                box-shadow:0 0 30px rgba(0,0,0,0.8),inset 0 0 10px rgba(0,0,0,0.5); position:relative;
+            }
+            .screen-outer::before {
+                content:''; position:absolute; top:6px; left:50%; transform:translateX(-50%);
+                width:8px; height:8px; background:#333; border-radius:50%;
+            }
+            .screen-inner { background:#f5f6fa; border-radius:4px; overflow:hidden; min-height:420px; }
+            .browser-bar {
+                background:#e8e8e8; padding:8px 12px; display:flex; align-items:center;
+                gap:8px; border-bottom:1px solid #ccc;
+            }
+            .dot { width:10px; height:10px; border-radius:50%; }
+            .dot.r { background:#ff5f57; } .dot.y { background:#febc2e; } .dot.g { background:#28c840; }
+            .url-bar {
+                flex:1; background:white; border:1px solid #ccc; border-radius:4px;
+                padding:3px 10px; font-size:11px; color:#666; display:flex; align-items:center; gap:4px;
+            }
+
+            /* TOP NAV */
+            .topnav {
+                background:#1a73e8; color:white; padding:10px 20px;
+                display:flex; align-items:center; justify-content:space-between;
+            }
+            .topnav .logo { font-size:16px; font-weight:700; letter-spacing:-0.5px; }
+            .topnav .logo span { color:#ffd700; }
+            .topnav .user-info { display:flex; align-items:center; gap:8px; font-size:12px; }
+            .avatar {
+                width:28px; height:28px; border-radius:50%; background:#ffd700;
+                color:#1a1a2e; display:flex; align-items:center; justify-content:center;
+                font-weight:700; font-size:12px;
+            }
+
+            /* SIDEBAR + CONTENT */
+            .dashboard { display:flex; min-height:360px; }
+            .sidebar {
+                width:160px; background:#fff; border-right:1px solid #e0e0e0;
+                padding:12px 0; flex-shrink:0;
+            }
+            .sidebar-item {
+                padding:8px 16px; font-size:12px; color:#555; cursor:pointer;
+                display:flex; align-items:center; gap:8px;
+            }
+            .sidebar-item.active { background:#e8f0fe; color:#1a73e8; font-weight:600; border-left:3px solid #1a73e8; }
+            .sidebar-item:hover { background:#f5f5f5; }
+
+            .content { flex:1; padding:20px; }
+            .content h2 { font-size:15px; color:#333; margin-bottom:16px; font-weight:600; }
+
+            /* TABLE */
+            .data-table { width:100%; border-collapse:collapse; font-size:12px; }
+            .data-table th {
+                background:#f8f9fa; padding:8px 12px; text-align:left;
+                border-bottom:2px solid #dee2e6; color:#666; font-weight:600; font-size:11px;
+            }
+            .data-table td { padding:8px 12px; border-bottom:1px solid #f0f0f0; color:#444; }
+            .data-table tr:hover { background:#f8f9fa; }
+            .badge {
+                display:inline-block; padding:2px 8px; border-radius:10px;
+                font-size:10px; font-weight:600;
+            }
+            .badge.admin { background:#ffeeba; color:#856404; }
+            .badge.user { background:#d4edda; color:#155724; }
+
+            /* INJECTED overlay */
+            .inject-overlay {
+                display:none; position:absolute; top:0;left:0;right:0;bottom:0;
+                background:rgba(231,76,60,0.08); pointer-events:none; border-radius:4px;
+            }
+            .inject-banner {
+                display:none; background:#d4edda; border:1px solid #28a745;
+                color:#155724; padding:8px 12px; font-size:11px; margin-bottom:12px;
+                border-radius:4px;
+            }
+
+            /* HINGE + BASE */
+            .hinge {
+                width:100%; height:8px;
+                background:linear-gradient(180deg,#1a1a1a,#2d2d2d); position:relative;
+            }
+            .hinge::after {
+                content:''; position:absolute; left:50%; top:50%;
+                transform:translate(-50%,-50%); width:40px; height:4px;
+                background:#111; border-radius:2px;
+            }
+            .base {
+                background:linear-gradient(180deg,#2d2d2d,#222); width:108%; height:18px;
+                border-radius:0 0 12px 12px; box-shadow:0 4px 15px rgba(0,0,0,0.5); position:relative;
+            }
+            .base::after {
+                content:''; position:absolute; bottom:4px; left:50%;
+                transform:translateX(-50%); width:50px; height:3px;
+                background:#1a1a1a; border-radius:2px;
+            }
+            </style>
+
+            <div class="laptop-wrap">
+                <div class="screen-outer">
+                    <div class="screen-inner" style="position:relative;">
+                        <div class="inject-overlay" id="overlay"></div>
+                        <div class="browser-bar">
+                            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                            <div class="url-bar">
+                                🔒 auth.target.local/admin/users
+                            </div>
+                        </div>
+                        <div class="topnav">
+                            <div class="logo">Corp<span>Sec</span> Admin</div>
+                            <div class="user-info">
+                                <div class="avatar">A</div>
+                                <span>admin</span>
+                            </div>
+                        </div>
+                        <div class="dashboard">
+                            <div class="sidebar">
+                                <div class="sidebar-item active">👥 Gebruikers</div>
+                                <div class="sidebar-item">📊 Dashboard</div>
+                                <div class="sidebar-item">⚙️ Instellingen</div>
+                                <div class="sidebar-item">📋 Logs</div>
+                                <div class="sidebar-item">🔒 Beveiliging</div>
+                            </div>
+                            <div class="content">
+                                <h2>Gebruikersbeheer</h2>
+                                <div class="inject-banner" id="injectBanner">
+                                    ✅ UNION SELECT uitgevoerd — verborgen data zichtbaar in resultaten!
+                                </div>
+                                <table class="data-table" id="userTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Gebruikersnaam</th>
+                                            <th>E-mail</th>
+                                            <th>Rol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                        <tr><td>1</td><td>jan.de.vries</td><td>jan@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                                        <tr><td>2</td><td>lisa.bakker</td><td>lisa@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                                        <tr><td>3</td><td>mark.smit</td><td>mark@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hinge"></div>
+                <div class="base"></div>
+            </div>
+
+            <script>
+            function injectUnion() {
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('injectBanner').style.display = 'block';
+                const tbody = document.getElementById('tableBody');
+                const injRow = document.createElement('tr');
+                injRow.style.background = '#fff3cd';
+                injRow.style.fontWeight = '600';
+                injRow.innerHTML = `
+                    <td style="color:#e74c3c">UNION</td>
+                    <td style="color:#e74c3c">admin</td>
+                    <td style="color:#e74c3c">SuperSecret!</td>
+                    <td><span class="badge admin">ADMIN</span></td>
+                `;
+                tbody.appendChild(injRow);
+            }
+            window.addEventListener('message', e => { if(e.data === 'union') injectUnion(); });
+            </script>
+            """, height=520)
+
+        st.markdown("**Voer je UNION SELECT query in:**")
+        cmd = st.text_input("root@db:~#", key="sql3", placeholder="' UNION SELECT username, password, role FROM users--")
         if st.button("▶ QUERY", key="sql3_btn"):
             if "union" in cmd.lower() and "select" in cmd.lower():
                 fake_progress("DATABASE DUMPEN")
                 give_flag(user, "sql", "GV 71")
+                components.html("<script>window.parent.frames[0] && window.parent.frames[0].postMessage('union','*'); setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
                 typewriter_terminal([
                     "[+] UNION query uitgevoerd",
                     "[+] Resultaten gecombineerd:",
@@ -769,11 +956,10 @@ Taak: Extraheer admin credentials via UNION attack
                     "[✓] DATA GEËXTRAHEERD"
                 ])
                 st.success("🏴 FLAG BEHAALD: **GV 71**")
-                components.html("<script>window.parent.postMessage('success','*'); setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
             elif "union" in cmd.lower():
-                st.warning("⚠ Je hebt UNION — maar je mist nog iets...")
+                st.warning("⚠ Je hebt UNION — maar je mist nog iets... voeg SELECT toe.")
             else:
-                st.error("❌ Gebruik UNION om data te combineren.")
+                st.error("❌ Gebruik UNION SELECT om data uit andere tabellen te halen.")
         hint_widget(user, "sql", lvl)
 
 # ==========================================================
@@ -1021,9 +1207,37 @@ Welk klassiek versleutelingssysteem is hier gebruikt?
         ])
 
 # ==========================================================
-# LOGOUT
+# LOGOUT + RESET
 # ==========================================================
 st.markdown("---")
-if st.button("🔓 LOGOUT", key="logout"):
-    st.session_state.clear()
-    st.rerun()
+col_logout, col_reset = st.columns([1, 1])
+
+with col_logout:
+    if st.button("🔓 LOGOUT", key="logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+
+with col_reset:
+    if st.button("🗑 RESET PROGRESSIE", key="reset_btn", use_container_width=True):
+        st.session_state["confirm_reset"] = True
+
+if st.session_state.get("confirm_reset"):
+    st.warning("⚠️ Weet je zeker dat je alle progressie wil resetten?")
+    col_yes, col_no = st.columns([1, 1])
+    with col_yes:
+        if st.button("✅ JA, RESET ALLES", key="confirm_yes", use_container_width=True):
+            conn = sqlite3.connect("platform.db")
+            c = conn.cursor()
+            c.execute("DELETE FROM progress WHERE username=?", (user,))
+            c.execute("DELETE FROM flags WHERE username=?", (user,))
+            c.execute("DELETE FROM hints WHERE username=?", (user,))
+            conn.commit()
+            conn.close()
+            st.session_state.pop("confirm_reset", None)
+            st.success("✅ Progressie gereset!")
+            time.sleep(1)
+            st.rerun()
+    with col_no:
+        if st.button("❌ ANNULEREN", key="confirm_no", use_container_width=True):
+            st.session_state.pop("confirm_reset", None)
+            st.rerun()
