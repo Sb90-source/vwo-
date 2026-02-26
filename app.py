@@ -90,47 +90,17 @@ body::after {
     z-index: 9999;
 }
 
-/* GLITCH TITLE ANIMATION — targets our custom div, not h1 */
-@keyframes glitch {
-    0%,90%,100% { text-shadow: 0 0 15px rgba(0,255,156,0.5); transform: translate(0); clip-path: none; }
-    91% { text-shadow: -3px 0 #ff003c, 3px 0 #00ffff; transform: translate(-2px, 0); }
-    92% { text-shadow: 3px 0 #ff003c, -3px 0 #00ffff; transform: translate(2px, 0); clip-path: inset(10% 0 60% 0); }
-    93% { text-shadow: -3px 0 #ff003c, 3px 0 #00ffff; transform: translate(-1px, 0); clip-path: inset(50% 0 20% 0); }
-    94% { text-shadow: 0 0 15px rgba(0,255,156,0.5); transform: translate(0); clip-path: none; }
-}
-@keyframes glitch2 {
-    0%,88%,100% { opacity: 0; }
-    89% { opacity: 0.8; transform: translate(4px, -2px); filter: hue-rotate(90deg); }
-    91% { opacity: 0; }
-}
-.glitch-title {
-    font-family: 'Orbitron', monospace !important;
-    color: #00ff9c;
-    font-size: clamp(18px, 3vw, 36px);
-    font-weight: 900;
-    letter-spacing: 6px;
-    text-align: center;
-    animation: glitch 4s infinite;
-    position: relative;
-    display: inline-block;
-}
-.glitch-title::before {
-    content: attr(data-text);
-    position: absolute;
-    left: 0; top: 0;
-    color: #ff003c;
-    animation: glitch2 4s infinite;
-    pointer-events: none;
-}
-.glitch-wrapper { text-align: center; padding: 1rem 0 0.5rem; }
 
 @keyframes flicker {
-    0%,95%,100% { opacity:1; }
-    96% { opacity:0.5; }
+    0%,89%,91%,93%,100% { opacity:1; }
+    90% { opacity:0.3; }
+    92% { opacity:0.6; }
+    94% { opacity:0.1; }
+    95% { opacity:0.8; }
+    96% { opacity:0.2; }
     97% { opacity:1; }
-    98% { opacity:0.3; }
 }
-body { animation: flicker 8s infinite; }
+body { animation: flicker 2s infinite; }
 
 /* PROGRESS BAR OVERRIDE */
 .stProgress > div > div {
@@ -299,7 +269,12 @@ def give_flag(user, room, flag):
     conn.close()
 
 def has_completed(user, room):
-    return get_level(user, room) >= 3
+    conn = sqlite3.connect("platform.db")
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM flags WHERE username=? AND room=?", (user, room))
+    r = c.fetchone()
+    conn.close()
+    return r is not None
 
 def get_hints_used(user, room):
     conn = sqlite3.connect("platform.db")
@@ -361,52 +336,47 @@ for k, v in [("user", None), ("role", None)]:
 # LOGIN
 # ==========================================================
 if not st.session_state.user:
-    components.html("""
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    st.markdown("""
+    <div style="text-align:center; padding: 2rem 0 1rem;">
+        <div class="glitch-wrapper2">
+            <span class="glitch-t" data-text="CYBER BREACH SIMULATOR">CYBER BREACH SIMULATOR</span>
+        </div>
+        <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
+            SIMULATOR v2.0 &mdash; AUTHORIZED TRAINING ONLY
+        </p>
+    </div>
     <style>
-    @keyframes glitch {
-        0%,88%,100% { text-shadow: 0 0 15px rgba(0,255,156,0.6); transform: translate(0); }
-        89% { text-shadow: -4px 0 #ff003c, 4px 0 #00ffff; transform: translate(-3px,0); clip-path: inset(10% 0 50% 0); }
-        90% { text-shadow: 4px 0 #ff003c, -4px 0 #00ffff; transform: translate(3px,0); clip-path: inset(60% 0 5% 0); }
-        91% { text-shadow: -2px 0 #ff003c, 2px 0 #00ffff; transform: translate(-1px,0); clip-path: none; }
-        92% { text-shadow: 0 0 15px rgba(0,255,156,0.6); transform: translate(0); }
+    @keyframes gt {
+        0%,90%,100% { text-shadow:0 0 15px rgba(0,255,156,0.6); transform:translate(0); clip-path:none; }
+        91% { text-shadow:-4px 0 #ff003c,4px 0 #00ffff; transform:translate(-3px,0); clip-path:inset(5% 0 55% 0); }
+        92% { text-shadow:4px 0 #ff003c,-4px 0 #00ffff; transform:translate(3px,0); clip-path:inset(58% 0 3% 0); }
+        93% { text-shadow:-2px 0 #ff003c,2px 0 #00ffff; transform:translate(-1px,0); clip-path:none; }
+        94% { text-shadow:0 0 15px rgba(0,255,156,0.6); transform:translate(0); }
     }
-    @keyframes glitch2 {
-        0%,88%,100% { opacity:0; }
-        89% { opacity:0.6; transform:translate(6px,-3px); filter:hue-rotate(120deg) saturate(2); }
-        91% { opacity:0; }
+    @keyframes gt2 {
+        0%,90%,100% { opacity:0; }
+        91% { opacity:0.7; transform:translate(6px,-3px); filter:hue-rotate(120deg); }
+        93% { opacity:0; }
     }
-    body { margin:0; background:#020409; text-align:center; padding-top: 30px; }
-    .title {
-        font-family: 'Orbitron', monospace;
-        font-weight: 900;
-        font-size: clamp(20px, 4vw, 48px);
-        color: #00ff9c;
-        letter-spacing: 6px;
-        animation: glitch 5s infinite;
-        position: relative;
-        display: inline-block;
+    .glitch-t {
+        font-family:'Orbitron',monospace !important;
+        font-weight:900;
+        font-size:clamp(22px,3.5vw,52px);
+        color:#00ff9c;
+        letter-spacing:6px;
+        animation:gt 5s infinite;
+        position:relative;
+        display:inline-block;
     }
-    .title::before {
-        content: 'CYBER BREACH SIMULATOR';
-        position: absolute; left:0; top:0;
-        color: #ff003c;
-        animation: glitch2 5s infinite;
-        pointer-events: none;
+    .glitch-t::before {
+        content:attr(data-text);
+        position:absolute; left:0; top:0;
+        color:#ff003c;
+        animation:gt2 5s infinite;
+        pointer-events:none;
     }
-    .sub {
-        font-family: 'Share Tech Mono', monospace;
-        color: rgba(0,255,156,0.5);
-        font-size: 11px;
-        letter-spacing: 5px;
-        margin-top: 12px;
-    }
-    .line { color: rgba(0,255,156,0.2); font-family: monospace; margin-top:8px; }
     </style>
-    <div class="title">CYBER BREACH SIMULATOR</div>
-    <div class="sub">SIMULATOR v2.0 &mdash; AUTHORIZED TRAINING ONLY</div>
-    <div class="line">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</div>
-    """, height=130)
+    """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
@@ -494,7 +464,6 @@ with tabs[0]:
     st.markdown("*Infiltreer het authenticatiesysteem van het doelwit.*")
     lvl = get_level(user, "sql")
 
-    # Progress indicator
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
     if lvl == 1:
@@ -523,16 +492,242 @@ Analyseer het systeem.
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
-        st.markdown("""
-```
-[EXPLOIT FASE]
-Target: http://auth.target.local/login
-Username field: [ _________________ ]
-Password field: [ _________________ ]
+        # LAPTOP UI
+        col_l, col_m, col_r = st.columns([1, 2, 1])
+        with col_m:
+            components.html("""
+            <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; }
 
-Bypass de authenticatie via SQL injectie.
-```
-        """)
+            .laptop-wrap { display:flex; flex-direction:column; align-items:center; }
+
+            /* SCREEN */
+            .screen-outer {
+                background: #1a1a2e;
+                border: 3px solid #333;
+                border-bottom: 6px solid #222;
+                border-radius: 12px 12px 0 0;
+                width: 100%;
+                padding: 12px;
+                box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,0,0,0.5);
+                position: relative;
+            }
+            .screen-outer::before {
+                content: '';
+                position: absolute;
+                top: 6px; left: 50%; transform: translateX(-50%);
+                width: 8px; height: 8px;
+                background: #333;
+                border-radius: 50%;
+            }
+            .screen-inner {
+                background: #f0f2f5;
+                border-radius: 4px;
+                overflow: hidden;
+                min-height: 320px;
+            }
+
+            /* BROWSER CHROME */
+            .browser-bar {
+                background: #e8e8e8;
+                padding: 8px 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border-bottom: 1px solid #ccc;
+            }
+            .dot { width:10px; height:10px; border-radius:50%; }
+            .dot.r { background:#ff5f57; }
+            .dot.y { background:#febc2e; }
+            .dot.g { background:#28c840; }
+            .url-bar {
+                flex: 1;
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 3px 10px;
+                font-size: 11px;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .lock { color: #28c840; font-size: 10px; }
+
+            /* LOGIN PAGE */
+            .login-page {
+                padding: 30px 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .company-logo {
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a2e;
+                margin-bottom: 4px;
+                letter-spacing: -1px;
+            }
+            .company-logo span { color: #e74c3c; }
+            .tagline { font-size: 11px; color: #999; margin-bottom: 24px; }
+            .login-card {
+                background: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 28px 32px;
+                width: 100%;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            }
+            .login-card h3 { font-size: 16px; color: #333; margin-bottom: 20px; font-weight: 600; }
+            .field { margin-bottom: 14px; }
+            .field label { display:block; font-size:11px; color:#666; margin-bottom:4px; font-weight:500; }
+            .field input {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 13px;
+                color: #333;
+                background: #fafafa;
+                outline: none;
+            }
+            .field input:focus { border-color: #4a90e2; background: white; }
+            .login-btn {
+                width: 100%;
+                background: #4a90e2;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 10px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 6px;
+            }
+            .login-btn:hover { background: #357abd; }
+            .footer-links { display:flex; justify-content:space-between; margin-top:12px; }
+            .footer-links a { font-size:11px; color:#4a90e2; text-decoration:none; }
+
+            /* INJECTED state */
+            .injected input[name="username"] {
+                color: #e74c3c !important;
+                border-color: #e74c3c !important;
+                background: #fff5f5 !important;
+            }
+
+            /* HINGE */
+            .hinge {
+                width: 100%;
+                height: 8px;
+                background: linear-gradient(180deg, #1a1a1a, #2d2d2d);
+                border-radius: 0;
+                position: relative;
+            }
+            .hinge::after {
+                content:'';
+                position:absolute;
+                left:50%; top:50%;
+                transform:translate(-50%,-50%);
+                width:40px; height:4px;
+                background:#111;
+                border-radius:2px;
+            }
+
+            /* BASE */
+            .base {
+                background: linear-gradient(180deg, #2d2d2d, #222);
+                width: 108%;
+                height: 18px;
+                border-radius: 0 0 12px 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+                position: relative;
+            }
+            .base::after {
+                content:'';
+                position:absolute;
+                bottom:4px; left:50%;
+                transform:translateX(-50%);
+                width:50px; height:3px;
+                background:#1a1a1a;
+                border-radius:2px;
+            }
+
+            .warning {
+                background: #fff3cd;
+                border: 1px solid #ffc107;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 11px;
+                color: #856404;
+                margin-bottom: 14px;
+                display: none;
+            }
+            </style>
+
+            <div class="laptop-wrap">
+                <div class="screen-outer">
+                    <div class="screen-inner">
+                        <div class="browser-bar">
+                            <div class="dot r"></div>
+                            <div class="dot y"></div>
+                            <div class="dot g"></div>
+                            <div class="url-bar">
+                                <span class="lock">🔒</span>
+                                auth.target.local/login
+                            </div>
+                        </div>
+                        <div class="login-page">
+                            <div class="company-logo">Corp<span>Sec</span></div>
+                            <div class="tagline">Enterprise Security Portal</div>
+                            <div class="login-card" id="loginCard">
+                                <h3>Inloggen</h3>
+                                <div class="warning" id="warning">⚠️ Ongeldige inloggegevens</div>
+                                <div class="field">
+                                    <label>Gebruikersnaam</label>
+                                    <input type="text" name="username" id="uname" placeholder="gebruiker@corp.nl">
+                                </div>
+                                <div class="field">
+                                    <label>Wachtwoord</label>
+                                    <input type="password" name="password" placeholder="••••••••">
+                                </div>
+                                <button class="login-btn" onclick="tryLogin()">Inloggen</button>
+                                <div class="footer-links">
+                                    <a href="#">Wachtwoord vergeten?</a>
+                                    <a href="#">Hulp nodig?</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hinge"></div>
+                <div class="base"></div>
+            </div>
+
+            <script>
+            function tryLogin() {
+                const u = document.getElementById('uname').value;
+                const w = document.getElementById('warning');
+                if (u.includes("' or") || u.includes("' OR") || u.includes("'or") || u.toLowerCase().includes("1=1")) {
+                    document.getElementById('loginCard').style.background = '#fff5f5';
+                    document.getElementById('loginCard').style.borderColor = '#e74c3c';
+                    w.style.display = 'block';
+                    w.style.background = '#d4edda';
+                    w.style.borderColor = '#28a745';
+                    w.style.color = '#155724';
+                    w.innerHTML = '✅ SQL INJECTION GEDETECTEERD — query altijd TRUE';
+                } else {
+                    w.style.display = 'block';
+                    w.innerHTML = '⚠️ Ongeldige inloggegevens';
+                    w.style.background = '#fff3cd';
+                    w.style.borderColor = '#ffc107';
+                    w.style.color = '#856404';
+                }
+            }
+            </script>
+            """, height=500)
+
+        st.markdown("**Voer je SQL injectie payload in als gebruikersnaam:**")
         cmd = st.text_input("root@auth:~# username>", key="sql2", placeholder="voer payload in...")
         if st.button("▶ INJECT", key="sql2_btn"):
             if "' or '1'='1" in cmd.lower() or "' or 1=1" in cmd.lower():
