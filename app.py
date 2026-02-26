@@ -95,7 +95,7 @@ components.html("""
             96% { opacity:0.2; }
             97% { opacity:1; }
         }
-        body { animation: flicker 2s infinite; }
+        h1,h2,h3,h4,p,span,label,code,pre { animation: flicker 3s infinite; }
         .stProgress > div > div {
             background: linear-gradient(90deg, #00ff9c, #00ffcc) !important;
         }
@@ -459,7 +459,33 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-# Header met voortgang
+# Sidebar met logout en reset
+with st.sidebar:
+    st.markdown(f"### 🕶 {user.upper()}")
+    rooms_done_sb = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
+    st.markdown(f"**MISSIES:** {rooms_done_sb}/4")
+    st.markdown("---")
+    if st.button("🔓 LOGOUT", key="sidebar_logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+    if st.button("🗑 RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
+        st.session_state["confirm_reset"] = True
+    if st.session_state.get("confirm_reset"):
+        st.warning("Zeker weten?")
+        if st.button("✅ JA", key="sb_yes", use_container_width=True):
+            conn = sqlite3.connect("platform.db")
+            c = conn.cursor()
+            c.execute("DELETE FROM progress WHERE username=?", (user,))
+            c.execute("DELETE FROM flags WHERE username=?", (user,))
+            c.execute("DELETE FROM hints WHERE username=?", (user,))
+            conn.commit(); conn.close()
+            st.session_state.pop("confirm_reset", None)
+            st.rerun()
+        if st.button("❌ NEE", key="sb_no", use_container_width=True):
+            st.session_state.pop("confirm_reset", None)
+            st.rerun()
+
+# Header
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
 col_title, col_status = st.columns([3,1])
 with col_title:
@@ -507,243 +533,190 @@ Analyseer het systeem.
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
-        # LAPTOP UI
-        col_l, col_m, col_r = st.columns([1, 2, 1])
-        with col_m:
-            components.html("""
-            <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; }
+        components.html("""
+        <style>
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;}
+        .laptop-wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+        .screen-outer{
+            background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;
+            border-radius:16px 16px 0 0;width:100%;padding:16px;
+            box-shadow:0 0 40px rgba(0,0,0,0.9),inset 0 0 15px rgba(0,0,0,0.5);position:relative;
+        }
+        .screen-outer::before{
+            content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);
+            width:10px;height:10px;background:#333;border-radius:50%;
+        }
+        .screen-inner{background:#f0f2f5;border-radius:6px;overflow:hidden;}
+        .browser-bar{
+            background:#e8e8e8;padding:10px 14px;display:flex;align-items:center;
+            gap:10px;border-bottom:1px solid #ccc;
+        }
+        .dot{width:12px;height:12px;border-radius:50%;}
+        .dot.r{background:#ff5f57;} .dot.y{background:#febc2e;} .dot.g{background:#28c840;}
+        .url-bar{
+            flex:1;background:white;border:1px solid #ccc;border-radius:5px;
+            padding:4px 12px;font-size:12px;color:#666;display:flex;align-items:center;gap:5px;
+        }
+        .login-page{padding:30px 50px;display:flex;flex-direction:column;align-items:center;}
+        .company-logo{font-size:26px;font-weight:700;color:#1a1a2e;margin-bottom:4px;letter-spacing:-1px;}
+        .company-logo span{color:#e74c3c;}
+        .tagline{font-size:12px;color:#999;margin-bottom:28px;}
+        .login-card{
+            background:white;border:1px solid #e0e0e0;border-radius:10px;
+            padding:32px 36px;width:100%;max-width:360px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.1);transition:all 0.3s;
+        }
+        .login-card h3{font-size:18px;color:#333;margin-bottom:22px;font-weight:600;}
+        .field{margin-bottom:16px;}
+        .field label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500;}
+        .field input{
+            width:100%;border:1.5px solid #ddd;border-radius:6px;padding:10px 14px;
+            font-size:14px;color:#333;background:#fafafa;outline:none;transition:all 0.2s;
+        }
+        .field input:focus{border-color:#4a90e2;background:white;box-shadow:0 0 0 3px rgba(74,144,226,0.1);}
+        .login-btn{
+            width:100%;background:#4a90e2;color:white;border:none;border-radius:6px;
+            padding:12px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:all 0.2s;
+        }
+        .login-btn:hover{background:#357abd;transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,144,226,0.4);}
+        .login-btn:active{transform:translateY(0);}
+        .footer-links{display:flex;justify-content:space-between;margin-top:14px;}
+        .footer-links a{font-size:11px;color:#4a90e2;text-decoration:none;}
+        .footer-links a:hover{text-decoration:underline;}
+        .msg{border-radius:6px;padding:10px 14px;font-size:12px;margin-bottom:16px;display:none;}
+        .msg.error{background:#fff3cd;border:1px solid #ffc107;color:#856404;}
+        .msg.success{background:#d4edda;border:1px solid #28a745;color:#155724;}
+        .hinge{
+            width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;
+        }
+        .hinge::after{
+            content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+            width:50px;height:5px;background:#111;border-radius:3px;
+        }
+        .base{
+            background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;
+            border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;
+        }
+        .base::after{
+            content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+            width:60px;height:4px;background:#111;border-radius:2px;
+        }
+        .forgot-modal{
+            display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;
+        }
+        .modal-box{
+            background:white;border-radius:10px;padding:28px;max-width:300px;width:90%;
+            box-shadow:0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-box h4{color:#333;margin-bottom:12px;}
+        .modal-box p{font-size:12px;color:#666;margin-bottom:16px;}
+        .modal-close{
+            background:#e74c3c;color:white;border:none;border-radius:4px;
+            padding:8px 16px;cursor:pointer;font-size:12px;
+        }
+        </style>
 
-            .laptop-wrap { display:flex; flex-direction:column; align-items:center; }
-
-            /* SCREEN */
-            .screen-outer {
-                background: #1a1a2e;
-                border: 3px solid #333;
-                border-bottom: 6px solid #222;
-                border-radius: 12px 12px 0 0;
-                width: 100%;
-                padding: 12px;
-                box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,0,0,0.5);
-                position: relative;
-            }
-            .screen-outer::before {
-                content: '';
-                position: absolute;
-                top: 6px; left: 50%; transform: translateX(-50%);
-                width: 8px; height: 8px;
-                background: #333;
-                border-radius: 50%;
-            }
-            .screen-inner {
-                background: #f0f2f5;
-                border-radius: 4px;
-                overflow: hidden;
-                min-height: 320px;
-            }
-
-            /* BROWSER CHROME */
-            .browser-bar {
-                background: #e8e8e8;
-                padding: 8px 12px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                border-bottom: 1px solid #ccc;
-            }
-            .dot { width:10px; height:10px; border-radius:50%; }
-            .dot.r { background:#ff5f57; }
-            .dot.y { background:#febc2e; }
-            .dot.g { background:#28c840; }
-            .url-bar {
-                flex: 1;
-                background: white;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 3px 10px;
-                font-size: 11px;
-                color: #666;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-            .lock { color: #28c840; font-size: 10px; }
-
-            /* LOGIN PAGE */
-            .login-page {
-                padding: 30px 40px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-            .company-logo {
-                font-size: 22px;
-                font-weight: 700;
-                color: #1a1a2e;
-                margin-bottom: 4px;
-                letter-spacing: -1px;
-            }
-            .company-logo span { color: #e74c3c; }
-            .tagline { font-size: 11px; color: #999; margin-bottom: 24px; }
-            .login-card {
-                background: white;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 28px 32px;
-                width: 100%;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            }
-            .login-card h3 { font-size: 16px; color: #333; margin-bottom: 20px; font-weight: 600; }
-            .field { margin-bottom: 14px; }
-            .field label { display:block; font-size:11px; color:#666; margin-bottom:4px; font-weight:500; }
-            .field input {
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 8px 12px;
-                font-size: 13px;
-                color: #333;
-                background: #fafafa;
-                outline: none;
-            }
-            .field input:focus { border-color: #4a90e2; background: white; }
-            .login-btn {
-                width: 100%;
-                background: #4a90e2;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                padding: 10px;
-                font-size: 13px;
-                font-weight: 600;
-                cursor: pointer;
-                margin-top: 6px;
-            }
-            .login-btn:hover { background: #357abd; }
-            .footer-links { display:flex; justify-content:space-between; margin-top:12px; }
-            .footer-links a { font-size:11px; color:#4a90e2; text-decoration:none; }
-
-            /* INJECTED state */
-            .injected input[name="username"] {
-                color: #e74c3c !important;
-                border-color: #e74c3c !important;
-                background: #fff5f5 !important;
-            }
-
-            /* HINGE */
-            .hinge {
-                width: 100%;
-                height: 8px;
-                background: linear-gradient(180deg, #1a1a1a, #2d2d2d);
-                border-radius: 0;
-                position: relative;
-            }
-            .hinge::after {
-                content:'';
-                position:absolute;
-                left:50%; top:50%;
-                transform:translate(-50%,-50%);
-                width:40px; height:4px;
-                background:#111;
-                border-radius:2px;
-            }
-
-            /* BASE */
-            .base {
-                background: linear-gradient(180deg, #2d2d2d, #222);
-                width: 108%;
-                height: 18px;
-                border-radius: 0 0 12px 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-                position: relative;
-            }
-            .base::after {
-                content:'';
-                position:absolute;
-                bottom:4px; left:50%;
-                transform:translateX(-50%);
-                width:50px; height:3px;
-                background:#1a1a1a;
-                border-radius:2px;
-            }
-
-            .warning {
-                background: #fff3cd;
-                border: 1px solid #ffc107;
-                border-radius: 4px;
-                padding: 8px 12px;
-                font-size: 11px;
-                color: #856404;
-                margin-bottom: 14px;
-                display: none;
-            }
-            </style>
-
-            <div class="laptop-wrap">
-                <div class="screen-outer">
-                    <div class="screen-inner">
-                        <div class="browser-bar">
-                            <div class="dot r"></div>
-                            <div class="dot y"></div>
-                            <div class="dot g"></div>
-                            <div class="url-bar">
-                                <span class="lock">🔒</span>
-                                auth.target.local/login
-                            </div>
-                        </div>
-                        <div class="login-page">
-                            <div class="company-logo">Corp<span>Sec</span></div>
-                            <div class="tagline">Enterprise Security Portal</div>
-                            <div class="login-card" id="loginCard">
-                                <h3>Inloggen</h3>
-                                <div class="warning" id="warning">⚠️ Ongeldige inloggegevens</div>
-                                <div class="field">
-                                    <label>Gebruikersnaam</label>
-                                    <input type="text" name="username" id="uname" placeholder="gebruiker@corp.nl">
-                                </div>
-                                <div class="field">
-                                    <label>Wachtwoord</label>
-                                    <input type="password" name="password" placeholder="••••••••">
-                                </div>
-                                <button class="login-btn" onclick="tryLogin()">Inloggen</button>
-                                <div class="footer-links">
-                                    <a href="#">Wachtwoord vergeten?</a>
-                                    <a href="#">Hulp nodig?</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="laptop-wrap">
+          <div class="screen-outer">
+            <div class="screen-inner">
+              <div class="browser-bar">
+                <div class="dot r" onclick="alert('Sluiten? Dan verlies je je payload!')"></div>
+                <div class="dot y" onclick="document.body.style.opacity='0.5';setTimeout(()=>document.body.style.opacity='1',500)"></div>
+                <div class="dot g" onclick="document.body.style.transform='scale(1.02)';setTimeout(()=>document.body.style.transform='scale(1)',300)"></div>
+                <div class="url-bar">🔒 auth.target.local/login</div>
+              </div>
+              <div class="login-page">
+                <div class="company-logo">Corp<span>Sec</span></div>
+                <div class="tagline">Enterprise Security Portal — Authorized Personnel Only</div>
+                <div class="login-card" id="loginCard">
+                  <h3>Inloggen</h3>
+                  <div class="msg" id="msg"></div>
+                  <div class="field">
+                    <label>Gebruikersnaam</label>
+                    <input type="text" id="uname" placeholder="gebruiker@corp.nl" oninput="liveCheck(this)">
+                  </div>
+                  <div class="field">
+                    <label>Wachtwoord</label>
+                    <input type="password" id="pw" placeholder="••••••••">
+                  </div>
+                  <button class="login-btn" onclick="tryLogin()">Inloggen</button>
+                  <div class="footer-links">
+                    <a href="#" onclick="showForgot();return false;">Wachtwoord vergeten?</a>
+                    <a href="#" onclick="showHelp();return false;">Hulp nodig?</a>
+                  </div>
                 </div>
-                <div class="hinge"></div>
-                <div class="base"></div>
+              </div>
             </div>
+          </div>
+          <div class="hinge"></div>
+          <div class="base"></div>
+        </div>
 
-            <script>
-            function tryLogin() {
-                const u = document.getElementById('uname').value;
-                const w = document.getElementById('warning');
-                if (u.includes("' or") || u.includes("' OR") || u.includes("'or") || u.toLowerCase().includes("1=1")) {
-                    document.getElementById('loginCard').style.background = '#fff5f5';
-                    document.getElementById('loginCard').style.borderColor = '#e74c3c';
-                    w.style.display = 'block';
-                    w.style.background = '#d4edda';
-                    w.style.borderColor = '#28a745';
-                    w.style.color = '#155724';
-                    w.innerHTML = '✅ SQL INJECTION GEDETECTEERD — query altijd TRUE';
-                } else {
-                    w.style.display = 'block';
-                    w.innerHTML = '⚠️ Ongeldige inloggegevens';
-                    w.style.background = '#fff3cd';
-                    w.style.borderColor = '#ffc107';
-                    w.style.color = '#856404';
-                }
+        <div class="forgot-modal" id="forgotModal">
+          <div class="modal-box">
+            <h4>Wachtwoord vergeten?</h4>
+            <p>Neem contact op met de systeembeheerder op it-support@corp.nl of bel intern 4242.</p>
+            <button class="modal-close" onclick="document.getElementById('forgotModal').style.display='none'">Sluiten</button>
+          </div>
+        </div>
+
+        <script>
+        function liveCheck(inp) {
+            const v = inp.value.toLowerCase();
+            if (v.includes("' or") || v.includes("'or") || v.includes("1=1")) {
+                inp.style.borderColor = '#e74c3c';
+                inp.style.background = '#fff5f5';
+            } else {
+                inp.style.borderColor = '';
+                inp.style.background = '';
             }
-            </script>
-            """, height=500)
+        }
+        function tryLogin() {
+            const u = document.getElementById('uname').value;
+            const p = document.getElementById('pw').value;
+            const msg = document.getElementById('msg');
+            const card = document.getElementById('loginCard');
+            const isInjection = u.toLowerCase().includes("' or") || u.toLowerCase().includes("'or") || u.toLowerCase().includes("1=1");
+            if (isInjection) {
+                card.style.borderColor = '#28a745';
+                card.style.background = '#f0fff4';
+                msg.className = 'msg success';
+                msg.style.display = 'block';
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD — Ingelogd als: <strong>admin</strong>';
+            } else if (u === 'admin' && p === 'admin') {
+                msg.className = 'msg success';
+                msg.style.display = 'block';
+                msg.innerHTML = '✅ Welkom terug, admin!';
+            } else if (u === '' || p === '') {
+                msg.className = 'msg error';
+                msg.style.display = 'block';
+                msg.innerHTML = '⚠️ Vul alle velden in.';
+            } else {
+                msg.className = 'msg error';
+                msg.style.display = 'block';
+                msg.innerHTML = '⛔ Ongeldige inloggegevens. Probeer opnieuw.';
+                card.style.animation = 'shake 0.3s ease';
+                setTimeout(() => card.style.animation = '', 300);
+            }
+        }
+        function showForgot() {
+            document.getElementById('forgotModal').style.display = 'flex';
+        }
+        function showHelp() {
+            alert('Helpdesk: it-support@corp.nl | Tel: +31 20 555 4242\nOpeningstijden: ma-vr 08:00-17:00');
+        }
+        document.addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
 
-        st.markdown("**Voer je SQL injectie payload in als gebruikersnaam:**")
-        cmd = st.text_input("root@auth:~# username>", key="sql2", placeholder="voer payload in...")
+        const style = document.createElement('style');
+        style.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }';
+        document.head.appendChild(style);
+        </script>
+        """, height=700)
+
+        st.markdown("**Typ je payload hieronder — het wordt live ingevoerd in de laptop:**")
+        cmd = st.text_input("root@auth:~# username>", key="sql2", placeholder="' or '1'='1")
         if st.button("▶ INJECT", key="sql2_btn"):
             if "' or '1'='1" in cmd.lower() or "' or 1=1" in cmd.lower():
                 fake_progress("AUTHENTICATIE BYPASSEN")
@@ -756,7 +729,7 @@ Analyseer het systeem.
                 ])
                 st.rerun()
             else:
-                st.error("❌ Payload werkt niet. Probeer de login altijd TRUE te maken.")
+                st.error("❌ Payload werkt niet. Probeer: ' or '1'='1")
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
