@@ -963,51 +963,217 @@ Welk type aanval is hier van toepassing?
         hint_widget(user, "xss", lvl)
 
     elif lvl == 2:
-        st.markdown("""
-```
-[REFLECTED XSS]
-De searchbalk geeft jouw input direct terug.
-Injecteer een script dat wordt uitgevoerd door de browser.
-```
-        """)
-        cmd = st.text_input("payload>", key="xss2", placeholder="<...>")
-        if st.button("▶ INJECT", key="xss2_btn"):
-            if "<script>" in cmd.lower():
-                fake_progress("PAYLOAD INJECTEREN")
-                set_level(user, "xss", 3)
-                typewriter_terminal([
-                    "[+] Script tag gedetecteerd in input",
-                    "[+] Browser voert JavaScript uit in context van slachtoffer",
-                    "[✓] REFLECTED XSS GESLAAGD"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Geen script gedetecteerd. Welke HTML tag voert code uit?")
+        if st.query_params.get("xss2_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PAYLOAD INJECTEREN")
+            set_level(user, "xss", 3)
+            typewriter_terminal([
+                "[+] Script tag gedetecteerd in input",
+                "[+] Browser voert JavaScript uit in context van slachtoffer",
+                "[✓] REFLECTED XSS GESLAAGD"
+            ])
+            st.rerun()
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .topbar{background:#3c4043;padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #5f6368;}
+            .site-logo{font-size:20px;font-weight:700;color:white;letter-spacing:-1px;}
+            .site-logo span{color:#ea4335;}
+            .nav-links{display:flex;gap:20px;margin-left:20px;}
+            .nav-links a{color:#bdc1c6;font-size:13px;text-decoration:none;}
+            .nav-links a:hover{color:white;}
+            .content-area{background:white;padding:24px 32px;min-height:320px;}
+            .page-title{font-size:20px;font-weight:600;color:#202124;margin-bottom:6px;}
+            .page-sub{font-size:13px;color:#5f6368;margin-bottom:20px;}
+            .search-row{display:flex;gap:8px;margin-bottom:20px;}
+            .search-box{flex:1;border:1.5px solid #dfe1e5;border-radius:24px;padding:10px 18px;font-size:14px;color:#202124;outline:none;transition:all 0.2s;}
+            .search-box:focus{border-color:#4285f4;box-shadow:0 0 0 3px rgba(66,133,244,0.15);}
+            .search-btn{background:#4285f4;color:white;border:none;border-radius:20px;padding:10px 20px;font-size:13px;cursor:pointer;font-weight:500;}
+            .search-btn:hover{background:#3367d6;}
+            .result-area{border:1px solid #e0e0e0;border-radius:8px;padding:16px;min-height:80px;background:#fafafa;}
+            .result-label{font-size:11px;color:#5f6368;margin-bottom:8px;font-weight:500;}
+            .result-text{font-size:14px;color:#202124;}
+            .alert-box{display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:10px 14px;font-size:12px;color:#856404;margin-top:10px;}
+            .alert-box.xss{background:#d4edda;border-color:#28a745;color:#155724;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔒 portal.target.local/feedback?search=...</div>
+                  </div>
+                  <div class="topbar">
+                    <div class="site-logo">Corp<span>Search</span></div>
+                    <div class="nav-links">
+                      <a href="javascript:void(0)">Home</a>
+                      <a href="javascript:void(0)">Nieuws</a>
+                      <a href="javascript:void(0)">Contact</a>
+                    </div>
+                  </div>
+                  <div class="content-area">
+                    <div class="page-title">Zoek in ons kennisportaal</div>
+                    <div class="page-sub">Voer een zoekterm in — resultaten worden direct getoond op de pagina.</div>
+                    <div class="search-row">
+                      <input class="search-box" id="searchInput" type="text" placeholder="Zoekterm...">
+                      <button class="search-btn" onclick="doSearch()">🔍 Zoeken</button>
+                    </div>
+                    <div class="result-area">
+                      <div class="result-label">ZOEKRESULTAAT — input wordt direct weergegeven:</div>
+                      <div class="result-text" id="resultText"><em style="color:#bbb;">Voer een zoekterm in...</em></div>
+                    </div>
+                    <div class="alert-box" id="alertBox"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function doSearch() {
+                const val = document.getElementById('searchInput').value;
+                const result = document.getElementById('resultText');
+                const alert = document.getElementById('alertBox');
+                if (val.toLowerCase().includes('<script>')) {
+                    result.innerHTML = val; // deliberately vulnerable
+                    alert.className = 'alert-box xss';
+                    alert.style.display = 'block';
+                    alert.innerHTML = '✅ XSS GESLAAGD — script tag uitgevoerd in browser context!';
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?xss2_submit=1';
+                    }, 1800);
+                } else {
+                    result.textContent = val || '(leeg)';
+                    alert.className = 'alert-box';
+                    alert.style.display = val ? 'block' : 'none';
+                    alert.innerHTML = '⚠️ Input weergegeven maar geen script gedetecteerd.';
+                }
+            }
+            document.getElementById('searchInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter') doSearch();
+            });
+            </script>
+            """, height=520)
         hint_widget(user, "xss", lvl)
 
     elif lvl == 3:
-        st.markdown("""
-```
-[PERSISTENT XSS]
-Nu sla je een payload op in de database.
-Elke bezoeker die de pagina laadt voert jouw script uit.
-Injecteer een persistent payload.
-```
-        """)
-        cmd = st.text_area("persistent payload>", key="xss3", placeholder="<script>...</script>")
-        if st.button("▶ OPSLAAN & INJECTEREN", key="xss3_btn"):
-            if "<script>" in cmd.lower():
-                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                give_flag(user, "xss", "N75 ZS")
-                typewriter_terminal([
-                    "[+] Payload opgeslagen in database",
-                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                    "[✓] PERSISTENT XSS GESLAAGD"
-                ])
-                st.success("🏴 FLAG BEHAALD: **N75 ZS**")
-                components.html("<script>setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
-            else:
-                st.error("❌ Geen persistent script gedetecteerd.")
+        if st.query_params.get("xss3_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+            give_flag(user, "xss", "N75 ZS")
+            typewriter_terminal([
+                "[+] Payload opgeslagen in database",
+                "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                "[✓] PERSISTENT XSS GESLAAGD"
+            ])
+            st.success("🏴 FLAG BEHAALD: **N75 ZS**")
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .topbar{background:#1a73e8;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+            .topbar .logo{font-size:16px;font-weight:700;color:white;}
+            .topbar .logo span{color:#ffd700;}
+            .topbar .user{font-size:12px;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:8px;}
+            .av{width:26px;height:26px;border-radius:50%;background:#ffd700;color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+            .page{background:#f5f6fa;min-height:340px;padding:20px 28px;}
+            .page h2{font-size:16px;color:#333;font-weight:600;margin-bottom:4px;}
+            .page p.sub{font-size:12px;color:#888;margin-bottom:16px;}
+            .comments{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+            .comment{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:12px 14px;}
+            .comment .author{font-size:11px;font-weight:600;color:#1a73e8;margin-bottom:4px;}
+            .comment .text{font-size:13px;color:#333;}
+            .comment-form{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:14px;}
+            .comment-form label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:6px;}
+            .comment-form textarea{width:100%;border:1.5px solid #ddd;border-radius:6px;padding:8px 12px;font-size:13px;color:#333;resize:none;outline:none;font-family:inherit;}
+            .comment-form textarea:focus{border-color:#1a73e8;}
+            .post-btn{background:#1a73e8;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:500;}
+            .post-btn:hover{background:#1557b0;}
+            .xss-banner{display:none;background:#d4edda;border:1px solid #28a745;border-radius:6px;padding:10px;font-size:12px;color:#155724;margin-top:10px;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔒 portal.target.local/news/article?id=42#comments</div>
+                  </div>
+                  <div class="topbar">
+                    <div class="logo">Corp<span>News</span></div>
+                    <div class="user"><div class="av">G</div><span>guest</span></div>
+                  </div>
+                  <div class="page">
+                    <h2>Nieuwsartikel: Beveiligingsupdate Q4</h2>
+                    <p class="sub">Geplaatst op 12 jan 2025 — 3 reacties</p>
+                    <div class="comments" id="comments">
+                      <div class="comment"><div class="author">jan.de.vries</div><div class="text">Goed artikel, eindelijk een update!</div></div>
+                      <div class="comment"><div class="author">lisa.bakker</div><div class="text">Wanneer wordt dit uitgerold naar productie?</div></div>
+                    </div>
+                    <div class="comment-form">
+                      <label>Plaats een reactie:</label>
+                      <textarea id="commentInput" rows="3" placeholder="Schrijf je reactie..."></textarea>
+                      <button class="post-btn" onclick="postComment()">💬 Plaatsen</button>
+                      <div class="xss-banner" id="xssBanner">✅ PERSISTENT XSS — script opgeslagen in database en uitgevoerd bij elk paginabezoek!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function postComment() {
+                const val = document.getElementById('commentInput').value;
+                const comments = document.getElementById('comments');
+                const banner = document.getElementById('xssBanner');
+                const div = document.createElement('div');
+                div.className = 'comment';
+                div.style.borderColor = val.toLowerCase().includes('<script>') ? '#28a745' : '#e0e0e0';
+                div.innerHTML = '<div class="author" style="color:#e74c3c">jij (aanvaller)</div><div class="text">' + val + '</div>';
+                comments.appendChild(div);
+                if (val.toLowerCase().includes('<script>')) {
+                    banner.style.display = 'block';
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?xss3_submit=1';
+                    }, 2000);
+                }
+            }
+            document.getElementById('commentInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
+            });
+            </script>
+            """, height=560)
         hint_widget(user, "xss", lvl)
 
 # ==========================================================
@@ -1046,38 +1212,120 @@ Welk type aanval verschaft hogere privileges?
         hint_widget(user, "privesc", lvl)
 
     elif lvl == 2:
-        st.markdown("""
-```
-[EXPLOIT FASE]
-Huidig gebruikersobject: { "username": "guest", "role": "user" }
-Het systeem accepteert een directe rolwijziging.
-Welke rol wil je claimen?
-```
-        """)
-        cmd = st.text_input("role=user>", key="priv2", placeholder="nieuwe rol...")
-        if st.button("▶ ESCALATE", key="priv2_btn"):
-            if cmd.lower().strip() == "admin":
-                fake_progress("PRIVILEGES ESCALEREN")
-                set_level(user, "privesc", 3)
-                typewriter_terminal([
-                    "[+] Rolparameter gewijzigd: user → admin",
-                    "[+] Server accepteert nieuwe rol zonder verificatie",
-                    "[✓] ADMIN PRIVILEGES VERKREGEN"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Die rol geeft geen volledige toegang.")
+        if st.query_params.get("priv2_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PRIVILEGES ESCALEREN")
+            set_level(user, "privesc", 3)
+            typewriter_terminal([
+                "[+] Rolparameter gewijzigd: user → admin",
+                "[+] Server accepteert nieuwe rol zonder verificatie",
+                "[✓] ADMIN PRIVILEGES VERKREGEN"
+            ])
+            st.rerun()
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .devtools{background:#1e1e2e;min-height:360px;display:flex;flex-direction:column;}
+            .dt-tabs{display:flex;background:#2d2d3d;border-bottom:1px solid #444;}
+            .dt-tab{padding:8px 16px;font-size:12px;color:#888;cursor:pointer;font-family:monospace;}
+            .dt-tab.active{color:#4fc3f7;border-bottom:2px solid #4fc3f7;}
+            .dt-content{flex:1;padding:16px;display:flex;gap:12px;}
+            .req-panel,.res-panel{flex:1;display:flex;flex-direction:column;gap:8px;}
+            .panel-title{font-size:11px;color:#888;font-family:monospace;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
+            .http-block{background:#111;border:1px solid #333;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#e0e0e0;line-height:1.6;}
+            .http-method{color:#f9a825;font-weight:700;}
+            .http-header{color:#80cbc4;}
+            .http-key{color:#f48fb1;}
+            .http-val{color:#a5d6a7;}
+            .editable{background:#0d1117;border:1px solid #00ff9c;border-radius:4px;padding:8px;font-family:monospace;font-size:12px;color:#00ff9c;width:100%;outline:none;resize:none;}
+            .send-btn{background:#00897b;color:white;border:none;border-radius:4px;padding:7px 16px;font-size:12px;cursor:pointer;font-weight:600;font-family:monospace;align-self:flex-start;}
+            .send-btn:hover{background:#00695c;}
+            .response-block{background:#111;border:1px solid #333;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#e0e0e0;line-height:1.6;min-height:100px;}
+            .status-ok{color:#66bb6a;font-weight:700;}
+            .status-err{color:#ef5350;font-weight:700;}
+            .highlight{background:rgba(0,255,156,0.1);border-radius:2px;padding:0 2px;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔧 DevTools — Network — auth.target.local/api/profile</div>
+                  </div>
+                  <div class="devtools">
+                    <div class="dt-tabs">
+                      <div class="dt-tab active">📡 Network</div>
+                      <div class="dt-tab">🔍 Elements</div>
+                      <div class="dt-tab">💻 Console</div>
+                      <div class="dt-tab">📦 Storage</div>
+                    </div>
+                    <div class="dt-content">
+                      <div class="req-panel">
+                        <div class="panel-title">REQUEST — bewerk de role parameter:</div>
+                        <div class="http-block">
+                          <span class="http-method">POST</span> /api/profile HTTP/1.1<br>
+                          <span class="http-header">Host:</span> auth.target.local<br>
+                          <span class="http-header">Content-Type:</span> application/json<br>
+                          <span class="http-header">Cookie:</span> session=abc123<br>
+                          <br>
+                          {<br>
+                          &nbsp;&nbsp;<span class="http-key">"username"</span>: <span class="http-val">"guest"</span>,<br>
+                          &nbsp;&nbsp;<span class="http-key">"role"</span>: <textarea class="editable" id="roleInput" rows="1">user</textarea><br>
+                          }
+                        </div>
+                        <button class="send-btn" onclick="sendRequest()">▶ Send Request</button>
+                      </div>
+                      <div class="res-panel">
+                        <div class="panel-title">RESPONSE:</div>
+                        <div class="response-block" id="responseBlock">
+                          <span style="color:#666;">— Nog geen verzoek verstuurd —</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function sendRequest() {
+                const role = document.getElementById('roleInput').value.trim().toLowerCase();
+                const resp = document.getElementById('responseBlock');
+                if (role === 'admin') {
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 38ms<br><br>{<br>&nbsp;&nbsp;"status": "updated",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profiel bijgewerkt"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepteerde rolwijziging zonder verificatie!</span>';
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?priv2_submit=1';
+                    }, 2000);
+                } else if (role === '') {
+                    resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role mag niet leeg zijn"}';
+                } else {
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 22ms<br><br>{<br>&nbsp;&nbsp;"status": "updated",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;"role": "' + role + '",<br>&nbsp;&nbsp;"message": "Profiel bijgewerkt"<br>}<br><br><span style="color:#888;">Geen admin rechten verkregen.</span>';
+                }
+            }
+            </script>
+            """, height=520)
         hint_widget(user, "privesc", lvl)
 
     elif lvl == 3:
-        st.markdown("""
-```
-[PERSISTENTIE]
-Je hebt admin toegang. Maak deze permanent.
-Status: ADMIN — Druk op de knop om toegang te persisteren.
-```
-        """)
-        if st.button("🔒 PERSISTEER TOEGANG", key="priv3_btn", use_container_width=True):
+        if st.query_params.get("priv3_submit") == "1":
+            st.query_params.clear()
             fake_progress("BACKDOOR INSTALLEREN")
             give_flag(user, "privesc", "ZIF VH")
             typewriter_terminal([
@@ -1086,7 +1334,98 @@ Status: ADMIN — Druk op de knop om toegang te persisteren.
                 "[✓] PERMANENTE TOEGANG VERKREGEN"
             ])
             st.success("🏴 FLAG BEHAALD: **ZIF VH**")
-            components.html("<script>setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .terminal{background:#0d1117;min-height:360px;padding:0;display:flex;flex-direction:column;}
+            .term-bar{background:#1e1e2e;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #333;}
+            .term-bar span{font-size:12px;color:#888;font-family:monospace;}
+            .term-output{flex:1;padding:16px;font-family:monospace;font-size:13px;line-height:1.7;color:#00ff9c;overflow-y:auto;min-height:260px;}
+            .term-input-row{display:flex;align-items:center;padding:8px 16px;border-top:1px solid #222;gap:6px;}
+            .term-prompt{color:#00ff9c;font-family:monospace;font-size:13px;white-space:nowrap;}
+            .term-input{flex:1;background:transparent;border:none;outline:none;color:#00ff9c;font-family:monospace;font-size:13px;caret-color:#00ff9c;}
+            .dim{color:#666;}
+            .bright{color:#fff;}
+            .yellow{color:#f9a825;}
+            .green{color:#66bb6a;}
+            .red{color:#ef5350;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">root@auth.target.local:~# — SSH Session</div>
+                  </div>
+                  <div class="terminal">
+                    <div class="term-bar"><span>bash — root@auth.target.local</span></div>
+                    <div class="term-output" id="output">
+<span class="dim">Last login: Mon Jan 13 09:14:22 2025 from 192.168.1.42</span><br>
+<span class="yellow">root@auth:~#</span> whoami<br>
+<span class="bright">root</span><br>
+<span class="yellow">root@auth:~#</span> cat /etc/passwd | grep admin<br>
+<span class="bright">admin:x:1001:1001::/home/admin:/bin/bash</span><br>
+<span class="yellow">root@auth:~#</span> <span class="dim">Typ een commando om toegang te persisteren...</span><br>
+                    </div>
+                    <div class="term-input-row">
+                      <span class="term-prompt">root@auth:~#</span>
+                      <input class="term-input" id="termInput" type="text" placeholder="commando..." onkeydown="if(event.key==='Enter')runCmd()">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            const validCmds = ['backdoor', 'install backdoor', 'persist', 'crontab', 'ssh-keygen', 'echo >> authorized_keys', 'netcat', 'nc -lvp', 'chmod +s /bin/bash'];
+            function runCmd() {
+                const inp = document.getElementById('termInput');
+                const out = document.getElementById('output');
+                const cmd = inp.value.trim();
+                inp.value = '';
+                const isValid = validCmds.some(v => cmd.toLowerCase().includes(v.split(' ')[0]));
+                out.innerHTML += '<span class="yellow">root@auth:~#</span> ' + cmd + '<br>';
+                if (cmd === '') return;
+                if (cmd.toLowerCase() === 'ls') {
+                    out.innerHTML += '<span class="bright">backdoor.sh &nbsp; config.conf &nbsp; logs/ &nbsp; .ssh/</span><br>';
+                } else if (cmd.toLowerCase() === 'whoami') {
+                    out.innerHTML += '<span class="bright">root</span><br>';
+                } else if (cmd.toLowerCase().includes('cat')) {
+                    out.innerHTML += '<span class="bright">admin:x:1001:1001::/home/admin:/bin/bash</span><br>';
+                } else if (cmd.toLowerCase().includes('help')) {
+                    out.innerHTML += '<span class="dim">Suggesties: backdoor.sh, crontab, ssh-keygen, netcat...</span><br>';
+                } else if (isValid || cmd.toLowerCase().includes('backdoor') || cmd.toLowerCase().includes('persist') || cmd.toLowerCase().includes('cron') || cmd.toLowerCase().includes('authorized') || cmd.toLowerCase().includes('bash -i')) {
+                    out.innerHTML += '<span class="green">[+] Commando uitgevoerd...</span><br>';
+                    out.innerHTML += '<span class="green">[+] Persistente toegang geïnstalleerd</span><br>';
+                    out.innerHTML += '<span class="green">[✓] BACKDOOR ACTIEF — verbinding blijft behouden na reboot</span><br>';
+                    out.scrollTop = out.scrollHeight;
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?priv3_submit=1';
+                    }, 2000);
+                } else {
+                    out.innerHTML += '<span class="dim">bash: ' + cmd + ': command executed</span><br>';
+                }
+                out.scrollTop = out.scrollHeight;
+            }
+            </script>
+            """, height=520)
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
