@@ -504,11 +504,16 @@ with st.sidebar:
 
 # Header
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
-col_title, col_status = st.columns([3,1])
+col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
 with col_title:
     st.title(f"🕶 OPERATIVE: {user.upper()}")
 with col_status:
-    st.metric("MISSIES VOLTOOID", f"{rooms_done}/4")
+    st.metric("MISSIES", f"{rooms_done}/4")
+with col_logout_btn:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("🔓 LOGOUT", key="top_logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
 
 st.markdown("---")
 
