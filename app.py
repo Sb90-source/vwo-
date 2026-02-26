@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("💀 CYBER BREACH SIMULATOR", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config("💀 CYBER BREACH SIMULATOR", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
 # VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
@@ -78,6 +78,14 @@ components.html("""
         }
         #MainMenu, footer, header { visibility: hidden; }
         .block-container { padding-top: 1rem !important; }
+        [data-testid="stSidebar"] {
+            background-color: #050e08 !important;
+            border-right: 1px solid #00ff9c !important;
+        }
+        [data-testid="stSidebar"] * {
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
         body::after {
             content: '';
             position: fixed;
@@ -95,7 +103,7 @@ components.html("""
             96% { opacity:0.2; }
             97% { opacity:1; }
         }
-        h1,h2,h3,h4,p,span,label,code,pre { animation: flicker 3s infinite; }
+        h1 { animation: flicker 3s infinite; }
         .stProgress > div > div {
             background: linear-gradient(90deg, #00ff9c, #00ffcc) !important;
         }
@@ -356,13 +364,22 @@ if not st.session_state.user:
         91% { opacity:0.7; transform:translate(6px,-3px); filter:hue-rotate(120deg); }
         93% { opacity:0; }
     }
+    @keyframes flicker {
+        0%,89%,91%,93%,100% { opacity:1; }
+        90% { opacity:0.3; }
+        92% { opacity:0.6; }
+        94% { opacity:0.1; }
+        95% { opacity:0.8; }
+        96% { opacity:0.2; }
+        97% { opacity:1; }
+    }
     .glitch-t {
         font-family:'Orbitron',monospace !important;
         font-weight:900;
         font-size:clamp(22px,3.5vw,52px);
         color:#00ff9c;
         letter-spacing:6px;
-        animation:gt 5s infinite;
+        animation:gt 5s infinite, flicker 3s infinite;
         position:relative;
         display:inline-block;
     }
@@ -643,8 +660,8 @@ Analyseer het systeem.
                   </div>
                   <button class="login-btn" onclick="tryLogin()">Inloggen</button>
                   <div class="footer-links">
-                    <a href="#" onclick="showForgot();return false;">Wachtwoord vergeten?</a>
-                    <a href="#" onclick="showHelp();return false;">Hulp nodig?</a>
+                    <a href="javascript:void(0)" onclick="showForgot()">Wachtwoord vergeten?</a>
+                    <a href="javascript:void(0)" onclick="showHelp()">Hulp nodig?</a>
                   </div>
                 </div>
               </div>
@@ -684,7 +701,11 @@ Analyseer het systeem.
                 card.style.background = '#f0fff4';
                 msg.className = 'msg success';
                 msg.style.display = 'block';
-                msg.innerHTML = '✅ SQL INJECTION GESLAAGD — Ingelogd als: <strong>admin</strong>';
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD — Ingelogd als: <strong>admin</strong><br><small>Doorsturen naar admin panel...</small>';
+                // Trigger Streamlit to advance level via URL param after short delay
+                setTimeout(() => {
+                    window.parent.location.href = window.parent.location.href.split('?')[0] + '?sql2_submit=1';
+                }, 1500);
             } else if (u === 'admin' && p === 'admin') {
                 msg.className = 'msg success';
                 msg.style.display = 'block';
@@ -704,6 +725,10 @@ Analyseer het systeem.
         function showForgot() {
             document.getElementById('forgotModal').style.display = 'flex';
         }
+        // Prevent any link from navigating away
+        document.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', e => { e.preventDefault(); });
+        });
         function showHelp() {
             alert('Helpdesk: it-support@corp.nl | Tel: +31 20 555 4242\nOpeningstijden: ma-vr 08:00-17:00');
         }
@@ -715,224 +740,187 @@ Analyseer het systeem.
         </script>
         """, height=700)
 
-        st.markdown("**Typ je payload hieronder — het wordt live ingevoerd in de laptop:**")
-        cmd = st.text_input("root@auth:~# username>", key="sql2", placeholder="' or '1'='1")
-        if st.button("▶ INJECT", key="sql2_btn"):
-            if "' or '1'='1" in cmd.lower() or "' or 1=1" in cmd.lower():
-                fake_progress("AUTHENTICATIE BYPASSEN")
-                set_level(user, "sql", 3)
-                typewriter_terminal([
-                    "[+] SQL query gemanipuleerd",
-                    "[+] WHERE clause: TRUE voor alle rijen",
-                    "[+] Ingelogd als eerste gebruiker in database",
-                    "[✓] AUTHENTICATIE BYPASSED"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Payload werkt niet. Probeer: ' or '1'='1")
+        # Check if injection was submitted via laptop UI
+        if st.session_state.get("sql2_injected"):
+            fake_progress("AUTHENTICATIE BYPASSEN")
+            set_level(user, "sql", 3)
+            st.session_state.pop("sql2_injected", None)
+            typewriter_terminal([
+                "[+] SQL query gemanipuleerd",
+                "[+] WHERE clause: TRUE voor alle rijen",
+                "[+] Ingelogd als eerste gebruiker in database",
+                "[✓] AUTHENTICATIE BYPASSED"
+            ])
+            st.rerun()
+
+        # Hidden form that laptop JS can trigger via URL param
+        if st.query_params.get("sql2_submit") == "1":
+            st.query_params.clear()
+            set_level(user, "sql", 3)
+            st.rerun()
+
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
-        col_l, col_m, col_r = st.columns([1, 2, 1])
+        # Handle SQL3 submission from laptop UI
+        if st.query_params.get("sql3_submit") == "1":
+            st.query_params.clear()
+            fake_progress("DATABASE DUMPEN")
+            give_flag(user, "sql", "GV 71")
+            typewriter_terminal([
+                "[+] UNION query uitgevoerd",
+                "[+] Resultaten gecombineerd:",
+                "",
+                "  ID     | username | password     | role",
+                "  -------|----------|--------------|------",
+                "  UNION  | admin    | SuperSecret! | ADMIN",
+                "",
+                "[✓] DATA GEËXTRAHEERD"
+            ])
+            st.success("🏴 FLAG BEHAALD: **GV 71**")
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
             components.html("""
             <style>
-            * { box-sizing:border-box; margin:0; padding:0; }
-            body { background:transparent; font-family:'Segoe UI',Arial,sans-serif; }
-            .laptop-wrap { display:flex; flex-direction:column; align-items:center; }
-            .screen-outer {
-                background:#1a1a2e; border:3px solid #333; border-bottom:6px solid #222;
-                border-radius:12px 12px 0 0; width:100%; padding:12px;
-                box-shadow:0 0 30px rgba(0,0,0,0.8),inset 0 0 10px rgba(0,0,0,0.5); position:relative;
-            }
-            .screen-outer::before {
-                content:''; position:absolute; top:6px; left:50%; transform:translateX(-50%);
-                width:8px; height:8px; background:#333; border-radius:50%;
-            }
-            .screen-inner { background:#f5f6fa; border-radius:4px; overflow:hidden; min-height:420px; }
-            .browser-bar {
-                background:#e8e8e8; padding:8px 12px; display:flex; align-items:center;
-                gap:8px; border-bottom:1px solid #ccc;
-            }
-            .dot { width:10px; height:10px; border-radius:50%; }
-            .dot.r { background:#ff5f57; } .dot.y { background:#febc2e; } .dot.g { background:#28c840; }
-            .url-bar {
-                flex:1; background:white; border:1px solid #ccc; border-radius:4px;
-                padding:3px 10px; font-size:11px; color:#666; display:flex; align-items:center; gap:4px;
-            }
-
-            /* TOP NAV */
-            .topnav {
-                background:#1a73e8; color:white; padding:10px 20px;
-                display:flex; align-items:center; justify-content:space-between;
-            }
-            .topnav .logo { font-size:16px; font-weight:700; letter-spacing:-0.5px; }
-            .topnav .logo span { color:#ffd700; }
-            .topnav .user-info { display:flex; align-items:center; gap:8px; font-size:12px; }
-            .avatar {
-                width:28px; height:28px; border-radius:50%; background:#ffd700;
-                color:#1a1a2e; display:flex; align-items:center; justify-content:center;
-                font-weight:700; font-size:12px;
-            }
-
-            /* SIDEBAR + CONTENT */
-            .dashboard { display:flex; min-height:360px; }
-            .sidebar {
-                width:160px; background:#fff; border-right:1px solid #e0e0e0;
-                padding:12px 0; flex-shrink:0;
-            }
-            .sidebar-item {
-                padding:8px 16px; font-size:12px; color:#555; cursor:pointer;
-                display:flex; align-items:center; gap:8px;
-            }
-            .sidebar-item.active { background:#e8f0fe; color:#1a73e8; font-weight:600; border-left:3px solid #1a73e8; }
-            .sidebar-item:hover { background:#f5f5f5; }
-
-            .content { flex:1; padding:20px; }
-            .content h2 { font-size:15px; color:#333; margin-bottom:16px; font-weight:600; }
-
-            /* TABLE */
-            .data-table { width:100%; border-collapse:collapse; font-size:12px; }
-            .data-table th {
-                background:#f8f9fa; padding:8px 12px; text-align:left;
-                border-bottom:2px solid #dee2e6; color:#666; font-weight:600; font-size:11px;
-            }
-            .data-table td { padding:8px 12px; border-bottom:1px solid #f0f0f0; color:#444; }
-            .data-table tr:hover { background:#f8f9fa; }
-            .badge {
-                display:inline-block; padding:2px 8px; border-radius:10px;
-                font-size:10px; font-weight:600;
-            }
-            .badge.admin { background:#ffeeba; color:#856404; }
-            .badge.user { background:#d4edda; color:#155724; }
-
-            /* INJECTED overlay */
-            .inject-overlay {
-                display:none; position:absolute; top:0;left:0;right:0;bottom:0;
-                background:rgba(231,76,60,0.08); pointer-events:none; border-radius:4px;
-            }
-            .inject-banner {
-                display:none; background:#d4edda; border:1px solid #28a745;
-                color:#155724; padding:8px 12px; font-size:11px; margin-bottom:12px;
-                border-radius:4px;
-            }
-
-            /* HINGE + BASE */
-            .hinge {
-                width:100%; height:8px;
-                background:linear-gradient(180deg,#1a1a1a,#2d2d2d); position:relative;
-            }
-            .hinge::after {
-                content:''; position:absolute; left:50%; top:50%;
-                transform:translate(-50%,-50%); width:40px; height:4px;
-                background:#111; border-radius:2px;
-            }
-            .base {
-                background:linear-gradient(180deg,#2d2d2d,#222); width:108%; height:18px;
-                border-radius:0 0 12px 12px; box-shadow:0 4px 15px rgba(0,0,0,0.5); position:relative;
-            }
-            .base::after {
-                content:''; position:absolute; bottom:4px; left:50%;
-                transform:translateX(-50%); width:50px; height:3px;
-                background:#1a1a1a; border-radius:2px;
-            }
+            *{box-sizing:border-box;margin:0;padding:0;}
+            body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+            .laptop-wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+            .screen-outer{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+            .screen-outer::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+            .screen-inner{background:#f5f6fa;border-radius:6px;overflow:hidden;}
+            .browser-bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+            .dot{width:12px;height:12px;border-radius:50%;cursor:pointer;}
+            .dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+            .url-bar{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+            .topnav{background:#1a73e8;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+            .topnav .logo{font-size:16px;font-weight:700;}
+            .topnav .logo span{color:#ffd700;}
+            .topnav .user-info{display:flex;align-items:center;gap:8px;font-size:12px;}
+            .avatar{width:30px;height:30px;border-radius:50%;background:#ffd700;color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+            .dashboard{display:flex;}
+            .sidebar{width:165px;background:#fff;border-right:1px solid #e0e0e0;padding:12px 0;flex-shrink:0;}
+            .sidebar-item{padding:9px 16px;font-size:12px;color:#555;cursor:pointer;display:flex;align-items:center;gap:8px;}
+            .sidebar-item.active{background:#e8f0fe;color:#1a73e8;font-weight:600;border-left:3px solid #1a73e8;}
+            .sidebar-item:hover{background:#f5f5f5;}
+            .content{flex:1;padding:16px;display:flex;flex-direction:column;gap:10px;}
+            .content h2{font-size:14px;color:#333;font-weight:600;}
+            .sql-console{background:#1e1e2e;border-radius:8px;overflow:hidden;border:1px solid #333;}
+            .sql-header{background:#2d2d3d;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #444;}
+            .sql-header span{font-size:11px;color:#888;font-family:monospace;}
+            .db-name{color:#4fc3f7 !important;font-weight:600;}
+            .sql-input-row{display:flex;align-items:center;padding:10px 14px;gap:8px;}
+            .sql-prompt{color:#00ff9c;font-family:monospace;font-size:13px;white-space:nowrap;}
+            .sql-input{flex:1;background:transparent;border:none;outline:none;color:#e0e0e0;font-family:monospace;font-size:13px;caret-color:#00ff9c;}
+            .sql-btn{background:#1a73e8;color:white;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;font-weight:600;}
+            .sql-btn:hover{background:#1557b0;}
+            .results{padding:0 14px 14px;}
+            .result-info{font-size:11px;color:#888;padding:6px 0 8px;font-family:monospace;}
+            .result-info.ok{color:#28a745;}
+            .result-info.err{color:#e74c3c;}
+            .data-table{width:100%;border-collapse:collapse;font-size:12px;}
+            .data-table th{background:#f8f9fa;padding:8px 12px;text-align:left;border-bottom:2px solid #dee2e6;color:#666;font-weight:600;font-size:11px;}
+            .data-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#444;}
+            .inject-row td{color:#e74c3c !important;font-weight:700;background:#fff8e1 !important;}
+            .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
+            .badge.admin{background:#ffeeba;color:#856404;}
+            .badge.user{background:#d4edda;color:#155724;}
+            .hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+            .hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+            .base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+            .base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
             </style>
 
             <div class="laptop-wrap">
-                <div class="screen-outer">
-                    <div class="screen-inner" style="position:relative;">
-                        <div class="inject-overlay" id="overlay"></div>
-                        <div class="browser-bar">
-                            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                            <div class="url-bar">
-                                🔒 auth.target.local/admin/users
-                            </div>
-                        </div>
-                        <div class="topnav">
-                            <div class="logo">Corp<span>Sec</span> Admin</div>
-                            <div class="user-info">
-                                <div class="avatar">A</div>
-                                <span>admin</span>
-                            </div>
-                        </div>
-                        <div class="dashboard">
-                            <div class="sidebar">
-                                <div class="sidebar-item active">👥 Gebruikers</div>
-                                <div class="sidebar-item">📊 Dashboard</div>
-                                <div class="sidebar-item">⚙️ Instellingen</div>
-                                <div class="sidebar-item">📋 Logs</div>
-                                <div class="sidebar-item">🔒 Beveiliging</div>
-                            </div>
-                            <div class="content">
-                                <h2>Gebruikersbeheer</h2>
-                                <div class="inject-banner" id="injectBanner">
-                                    ✅ UNION SELECT uitgevoerd — verborgen data zichtbaar in resultaten!
-                                </div>
-                                <table class="data-table" id="userTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Gebruikersnaam</th>
-                                            <th>E-mail</th>
-                                            <th>Rol</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableBody">
-                                        <tr><td>1</td><td>jan.de.vries</td><td>jan@corp.nl</td><td><span class="badge user">user</span></td></tr>
-                                        <tr><td>2</td><td>lisa.bakker</td><td>lisa@corp.nl</td><td><span class="badge user">user</span></td></tr>
-                                        <tr><td>3</td><td>mark.smit</td><td>mark@corp.nl</td><td><span class="badge user">user</span></td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+              <div class="screen-outer">
+                <div class="screen-inner">
+                  <div class="browser-bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url-bar">🔒 auth.target.local/admin/users</div>
+                  </div>
+                  <div class="topnav">
+                    <div class="logo">Corp<span>Sec</span> Admin</div>
+                    <div class="user-info"><div class="avatar">A</div><span>admin</span></div>
+                  </div>
+                  <div class="dashboard">
+                    <div class="sidebar">
+                      <div class="sidebar-item active">👥 Gebruikers</div>
+                      <div class="sidebar-item" onclick="showMsg('Dashboard — geen rechten')">📊 Dashboard</div>
+                      <div class="sidebar-item" onclick="showMsg('Instellingen — geen rechten')">⚙️ Instellingen</div>
+                      <div class="sidebar-item" onclick="showMsg('Logs — geen rechten')">📋 Logs</div>
+                      <div class="sidebar-item" onclick="showMsg('Beveiliging — geen rechten')">🔒 Beveiliging</div>
                     </div>
+                    <div class="content">
+                      <h2>Gebruikersbeheer — SQL Query Interface</h2>
+                      <div class="sql-console">
+                        <div class="sql-header">
+                          <span>DB:</span><span class="db-name">corpsec_db</span>
+                          <span style="margin-left:auto;">TABLE: users</span>
+                        </div>
+                        <div class="sql-input-row">
+                          <span class="sql-prompt">sql&gt;</span>
+                          <input class="sql-input" id="sqlInput" type="text"
+                            value="SELECT * FROM users"
+                            onkeydown="if(event.key==='Enter')runQuery()">
+                          <button class="sql-btn" onclick="runQuery()">▶ RUN</button>
+                        </div>
+                        <div class="results">
+                          <div class="result-info" id="info">3 rijen gevonden</div>
+                          <table class="data-table">
+                            <thead><tr><th>ID</th><th>Gebruikersnaam</th><th>E-mail / Wachtwoord</th><th>Rol</th></tr></thead>
+                            <tbody id="tbody">
+                              <tr><td>1</td><td>jan.de.vries</td><td>jan@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                              <tr><td>2</td><td>lisa.bakker</td><td>lisa@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                              <tr><td>3</td><td>mark.smit</td><td>mark@corp.nl</td><td><span class="badge user">user</span></td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="hinge"></div>
-                <div class="base"></div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
             </div>
 
             <script>
-            function injectUnion() {
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('injectBanner').style.display = 'block';
-                const tbody = document.getElementById('tableBody');
-                const injRow = document.createElement('tr');
-                injRow.style.background = '#fff3cd';
-                injRow.style.fontWeight = '600';
-                injRow.innerHTML = `
-                    <td style="color:#e74c3c">UNION</td>
-                    <td style="color:#e74c3c">admin</td>
-                    <td style="color:#e74c3c">SuperSecret!</td>
-                    <td><span class="badge admin">ADMIN</span></td>
-                `;
-                tbody.appendChild(injRow);
+            function runQuery() {
+                const q = document.getElementById('sqlInput').value.toLowerCase();
+                const info = document.getElementById('info');
+                const tbody = document.getElementById('tbody');
+                if (q.includes('union') && q.includes('select')) {
+                    const row = document.createElement('tr');
+                    row.className = 'inject-row';
+                    row.innerHTML = '<td>UNION</td><td>admin</td><td>SuperSecret!</td><td><span class="badge admin">ADMIN</span></td>';
+                    tbody.appendChild(row);
+                    info.className = 'result-info ok';
+                    info.innerHTML = '⚠️ 4 rijen gevonden — 1 geïnjecteerde rij via UNION SELECT!';
+                    setTimeout(() => {
+                        const url = window.parent.location.href.split("?")[0] + "?sql3_submit=1";
+                        window.parent.location.href = url;
+                    }, 2000);
+                } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
+                    info.className = 'result-info err';
+                    info.innerHTML = '⛔ ERROR: Schrijfrechten geweigerd.';
+                } else if (q.includes('select') && q.includes('where')) {
+                    info.className = 'result-info';
+                    info.innerHTML = '1 rij gevonden';
+                    tbody.innerHTML = '<tr><td>1</td><td>jan.de.vries</td><td>jan@corp.nl</td><td><span class="badge user">user</span></td></tr>';
+                } else if (q.includes('select')) {
+                    info.className = 'result-info';
+                    info.innerHTML = '3 rijen gevonden';
+                    tbody.innerHTML = `<tr><td>1</td><td>jan.de.vries</td><td>jan@corp.nl</td><td><span class="badge user">user</span></td></tr><tr><td>2</td><td>lisa.bakker</td><td>lisa@corp.nl</td><td><span class="badge user">user</span></td></tr><tr><td>3</td><td>mark.smit</td><td>mark@corp.nl</td><td><span class="badge user">user</span></td></tr>`;
+                } else {
+                    info.className = 'result-info err';
+                    info.innerHTML = '⛔ SQL SYNTAX ERROR.';
+                }
             }
-            window.addEventListener('message', e => { if(e.data === 'union') injectUnion(); });
+            function showMsg(m) {
+                document.querySelector('.content').innerHTML = '<h2>' + m + '</h2><p style="color:#999;font-size:12px;margin-top:12px;">Geen toegang via SQL-interface.</p>';
+            }
             </script>
-            """, height=520)
-
-        st.markdown("**Voer je UNION SELECT query in:**")
-        cmd = st.text_input("root@db:~#", key="sql3", placeholder="' UNION SELECT username, password, role FROM users--")
-        if st.button("▶ QUERY", key="sql3_btn"):
-            if "union" in cmd.lower() and "select" in cmd.lower():
-                fake_progress("DATABASE DUMPEN")
-                give_flag(user, "sql", "GV 71")
-                components.html("<script>window.parent.frames[0] && window.parent.frames[0].postMessage('union','*'); setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
-                typewriter_terminal([
-                    "[+] UNION query uitgevoerd",
-                    "[+] Resultaten gecombineerd:",
-                    "",
-                    "  username | password     | role",
-                    "  ---------|--------------|------",
-                    "  admin    | SuperSecret! | ADMIN",
-                    "",
-                    "[✓] DATA GEËXTRAHEERD"
-                ])
-                st.success("🏴 FLAG BEHAALD: **GV 71**")
-            elif "union" in cmd.lower():
-                st.warning("⚠ Je hebt UNION — maar je mist nog iets... voeg SELECT toe.")
-            else:
-                st.error("❌ Gebruik UNION SELECT om data uit andere tabellen te halen.")
+            """, height=560)
         hint_widget(user, "sql", lvl)
 
 # ==========================================================
