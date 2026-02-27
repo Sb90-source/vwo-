@@ -419,7 +419,7 @@ with col_logout_btn:
         st.session_state.clear(); st.rerun()
 
 st.markdown("---")
-tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "🏛 TRUMP'S SLAAPKAMER"])
+tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S SLAAPKAMER"])
 
 # ==========================================================
 # ROOM 1 — DE RECEPTIE (SQL INJECTION)
@@ -789,10 +789,10 @@ document.getElementById('si').addEventListener('keydown',e=>{{if(e.key==='Enter'
 </style>
 <div class="wrap"><div class="screen"><div class="inner">
   <div class="bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-    <div class="url">🔒 internal.whitehouse.gov/security/report?id=88</div></div>
-  <div class="tb"><div class="tl">🏛 WH Security Reports</div><div class="tu"><div class="av">G</div><span>guard01</span></div></div>
+    <div class="url"> internal.whitehouse.gov/security/report?id=88</div></div>
+  <div class="tb"><div class="tl"> WH Security Reports</div><div class="tu"><div class="av">G</div><span>guard01</span></div></div>
   <div class="pg">
-    <h2>📋 Beveiligingsrapport #88 — Oost Vleugel</h2>
+    <h2>Beveiligingsrapport #88 — Oost Vleugel</h2>
     <p class="sub">Aangemaakt: 13 jan 2025 — Opmerkingen: 2</p>
     <div class="rb"><div class="rt">Onbevoegde toegangspoging gesignaleerd</div><div class="rm">📅 13 jan 10:42 | 👤 Agent Johnson</div><div class="rtx">Verdachte persoon bij oostelijke ingang. Toegang ontzegd. Systemen normaal.</div></div>
     <div class="cms">
@@ -1001,7 +1001,7 @@ function rc(){{
 # ROOM 4 — TRUMP'S SLAAPKAMER (CRYPTO / VAULT)
 # ==========================================================
 with tabs[3]:
-    st.header("🏛 TRUMP'S SLAAPKAMER")
+    st.header("TRUMP'S SLAAPKAMER")
     rooms_complete = [has_completed(user, r) for r in ["sql","xss","privesc"]]
     if not all(rooms_complete):
         missing = [{"sql":"De Receptie","xss":"De Vergaderruimte","privesc":"De Beveiligde Kamer"}[r]
