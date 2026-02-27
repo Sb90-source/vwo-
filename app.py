@@ -397,7 +397,7 @@ if not st.session_state.user:
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("**`> IDENTIFICEER JEZELF`**")
-        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je naam")
+        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je groepnaam")
         p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
         if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
             role = auth(u, p)
