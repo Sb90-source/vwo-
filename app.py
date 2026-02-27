@@ -836,7 +836,7 @@ document.getElementById('ci').addEventListener('keydown',e=>{{if(e.key==='Enter'
 # ROOM 3 — DE BEVEILIGDE KAMER (PRIVILEGE ESCALATION)
 # ==========================================================
 with tabs[2]:
-    st.header("🔐 DE BEVEILIGDE KAMER")
+    st.header("DE BEVEILIGDE KAMER")
     lvl = get_level(user, "privesc")
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
