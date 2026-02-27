@@ -517,7 +517,7 @@ with col_logout_btn:
 
 st.markdown("---")
 
-tabs = st.tabs(["💉 SQL", "🌐 XSS", "⬆ PRIVESC", "🔐 VAULT"])
+tabs = st.tabs([" Receptie", "Vergader ruimte", "Beveiligde kamer", "Trump's slaapkamer"])
 
 # ==========================================================
 # ROOM 1 — SQL INJECTION
