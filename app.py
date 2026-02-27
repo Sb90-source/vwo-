@@ -378,7 +378,7 @@ if st.session_state.role == "teacher":
         c2.commit(); c2.close(); st.success(f"✅ {rst} gereset!"); st.rerun()
 
     st.markdown("---")
-    if st.button("🔓 LOGOUT"): st.session_state.clear(); st.rerun()
+    if st.button("LOGOUT"): st.session_state.clear(); st.rerun()
     st.stop()
 
 # ==========================================================
@@ -391,7 +391,7 @@ with st.sidebar:
     rooms_done_sb = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user,r))
     st.markdown(f"**MISSIES:** {rooms_done_sb}/4")
     st.markdown("---")
-    if st.button("🔓 LOGOUT", key="sidebar_logout", use_container_width=True):
+    if st.button("LOGOUT", key="sidebar_logout", use_container_width=True):
         st.session_state.clear(); st.rerun()
     if st.button("🗑 RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
         st.session_state["confirm_reset"] = True
@@ -410,12 +410,12 @@ with st.sidebar:
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user,r))
 col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
 with col_title:
-    st.title(f"OPERATIVE: {user.upper()}")
+    st.title(f"THE WHITE HOUSE")
 with col_status:
     st.metric("MISSIES", f"{rooms_done}/4")
 with col_logout_btn:
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🔓 LOGOUT", key="top_logout", use_container_width=True):
+    if st.button("LOGOUT", key="top_logout", use_container_width=True):
         st.session_state.clear(); st.rerun()
 
 st.markdown("---")
@@ -425,7 +425,7 @@ tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "🏛
 # ROOM 1 — DE RECEPTIE (SQL INJECTION)
 # ==========================================================
 with tabs[0]:
-    st.header("🚪 DE RECEPTIE")
+    st.header("DE RECEPTIE")
     lvl = get_level(user, "sql")
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
@@ -488,12 +488,12 @@ with tabs[0]:
 </style>
 <div class="wrap"><div class="screen"><div class="inner">
   <div class="bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-    <div class="url">🔒 secure.whitehouse.gov/login</div></div>
+    <div class="url"> secure.whitehouse.gov/login</div></div>
   <div class="lp">
     <div class="logo">White<span>House</span></div>
     <div class="tag">Beveiligd medewerkers portaal — Bevoegd personeel only</div>
     <div class="card" id="loginCard">
-      <h3>🔐 Inloggen</h3>
+      <h3> Inloggen</h3>
       <div class="msg" id="msg"></div>
       <div class="fld">
         <label>Gebruikersnaam</label>
@@ -1004,7 +1004,7 @@ with tabs[3]:
     st.header("🏛 TRUMP'S SLAAPKAMER")
     rooms_complete = [has_completed(user, r) for r in ["sql","xss","privesc"]]
     if not all(rooms_complete):
-        missing = [{"sql":"🚪 De Receptie","xss":"📹 De Vergaderruimte","privesc":"🔐 De Beveiligde Kamer"}[r]
+        missing = [{"sql":"De Receptie","xss":"De Vergaderruimte","privesc":"De Beveiligde Kamer"}[r]
                    for r, done in zip(["sql","xss","privesc"], rooms_complete) if not done]
         st.error(f"⛔ TOEGANG GEBLOKKEERD — Voltooi eerst: {', '.join(missing)}")
         st.stop()
@@ -1025,7 +1025,7 @@ with tabs[3]:
 
         st.markdown("**Jouw verzamelde vlaggen:**")
         c1, c2, c3 = st.columns(3)
-        for col, (room, label) in zip([c1,c2,c3], [("sql","🚪 Receptie"),("xss","📹 Vergaderruimte"),("privesc","🔐 Bev. Kamer")]):
+        for col, (room, label) in zip([c1,c2,c3], [("sql","Receptie"),("xss","Vergaderruimte"),("privesc"," Bev. Kamer")]):
             with col:
                 if room in flag_map: st.success(f"✅ {label}: **{flag_map[room]}**")
                 else: st.error(f"❌ {label}: niet behaald")
@@ -1166,14 +1166,14 @@ with tabs[3]:
 st.markdown("---")
 c1, c2 = st.columns([1,1])
 with c1:
-    if st.button("🔓 LOGOUT", key="bot_logout", use_container_width=True):
+    if st.button("LOGOUT", key="bot_logout", use_container_width=True):
         st.session_state.clear(); st.rerun()
 with c2:
     if st.button("🗑 RESET PROGRESSIE", key="bot_reset", use_container_width=True):
         st.session_state["confirm_reset"] = True
 
 if st.session_state.get("confirm_reset"):
-    st.warning("⚠️ Weet je zeker dat je alle progressie wil resetten?")
+    st.warning("Weet je zeker dat je alle progressie wil resetten?")
     cy, cn = st.columns([1,1])
     with cy:
         if st.button("✅ JA, RESET", key="conf_yes", use_container_width=True):
