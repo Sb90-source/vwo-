@@ -345,7 +345,7 @@ if not st.session_state.user:
 # TEACHER VIEW
 # ==========================================================
 if st.session_state.role == "teacher":
-    st.title("🧑‍🏫 CONTROL PANEL")
+    st.title("CONTROL PANEL")
     conn = sqlite3.connect("platform.db")
 
     st.subheader("VOORTGANG PER STUDENT")
@@ -419,7 +419,7 @@ with col_logout_btn:
         st.session_state.clear(); st.rerun()
 
 st.markdown("---")
-tabs = st.tabs(["🚪 DE RECEPTIE", "📹 DE VERGADERRUIMTE", "🔐 DE BEVEILIGDE KAMER", "🏛 TRUMP'S SLAAPKAMER"])
+tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "🏛 TRUMP'S SLAAPKAMER"])
 
 # ==========================================================
 # ROOM 1 — DE RECEPTIE (SQL INJECTION)
