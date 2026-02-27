@@ -345,7 +345,7 @@ if not st.session_state.user:
     st.markdown("""
     <div style="text-align:center; padding: 2rem 0 1rem;">
         <div class="glitch-wrapper2">
-            <span class="glitch-t" data-text="CYBER BREACH SIMULATOR">CYBER BREACH SIMULATOR</span>
+            <span class="glitch-t" data-text="THE WHITE HOUSE">CYBER BREACH SIMULATOR</span>
         </div>
         <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
             SIMULATOR v2.0 &mdash; AUTHORIZED TRAINING ONLY
