@@ -506,7 +506,7 @@ with st.sidebar:
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
 col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
 with col_title:
-    st.title(f"🕶 OPERATIVE: {user.upper()}")
+    st.title(f"OPERATIVE: {user.upper()}")
 with col_status:
     st.metric("MISSIES", f"{rooms_done}/4")
 with col_logout_btn:
@@ -517,13 +517,13 @@ with col_logout_btn:
 
 st.markdown("---")
 
-tabs = st.tabs([" Receptie", "Vergader ruimte", "Beveiligde kamer", "Trump's slaapkamer"])
+tabs = st.tabs([" RECEPTIE", "VERGADERRUIMTE", "BEVEILIGDE KAMER", "TRUMP'S KAMER"])
 
 # ==========================================================
 # ROOM 1 — SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    st.header("FRONT DESK TERMINAL")
+    st.header("DE RECEPTIE")
     st.markdown("*Infiltreer het authenticatiesysteem van het doelwit.*")
     lvl = get_level(user, "sql")
 
@@ -932,7 +932,7 @@ Analyseer het systeem.
 # ROOM 2 — XSS
 # ==========================================================
 with tabs[1]:
-    st.header("SECURITY PORTAL")
+    st.header("DE VERGADERRUIMTE")
     st.markdown("*Injecteer kwaadaardige scripts in de webapplicatie.*")
     lvl = get_level(user, "xss")
 
@@ -1180,7 +1180,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
 # ROOM 3 — PRIVILEGE ESCALATION
 # ==========================================================
 with tabs[2]:
-    st.header("CONTROL ROOM")
+    st.header("DE BEVEILIGDE KAMER")
     st.markdown("*Verhoog je privileges om admin toegang te krijgen.*")
     lvl = get_level(user, "privesc")
 
@@ -1432,7 +1432,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
 # ROOM 4 — VAULT (CRYPTO)
 # ==========================================================
 with tabs[3]:
-    st.header("VAULT TOEGANG")
+    st.header("TRUMP'S SLAAPKAMER")
     st.markdown("*Decodeer het eindwachtwoord om de kluis te openen.*")
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
