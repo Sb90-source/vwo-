@@ -19,7 +19,7 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("🏛 THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config("THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
 # GLOBAL STYLES + MATRIX RAIN + SOUNDS
@@ -161,7 +161,7 @@ def init_db():
     c.execute("CREATE TABLE IF NOT EXISTS progress (username TEXT, room TEXT, level INTEGER, PRIMARY KEY(username,room))")
     c.execute("CREATE TABLE IF NOT EXISTS flags (username TEXT, room TEXT, flag TEXT, time TEXT)")
     c.execute("CREATE TABLE IF NOT EXISTS hints (username TEXT, room TEXT, hint_num INTEGER, PRIMARY KEY(username,room,hint_num))")
-    for u in [("student","hackme","student"),("teacher","admin123","teacher")]:
+    for u in [("leerling","epsteinfiles","student"),("teacher","admin123","teacher")]:
         c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)",(u[0],hash_pw(u[1]),u[2]))
     conn.commit(); conn.close()
 
