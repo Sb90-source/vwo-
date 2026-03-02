@@ -338,7 +338,7 @@ if not st.session_state.user:
                 fake_progress("IDENTITEIT VERIFIËREN")
                 st.session_state.user = u; st.session_state.role = role; st.rerun()
             else:
-                st.error("⛔ TOEGANG GEWEIGERD — Ongeldige inloggegevens")
+                st.error("TOEGANG GEWEIGERD — Ongeldige inloggegevens")
     st.stop()
 
 # ==========================================================
