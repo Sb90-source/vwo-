@@ -19,7 +19,7 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config("HET WITTE HUIS", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
 # GLOBAL STYLES + MATRIX RAIN + SOUNDS
@@ -330,8 +330,8 @@ if not st.session_state.user:
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("**`> IDENTIFICEER JEZELF`**")
-        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je groepsnaam")
-        p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
+        u = st.text_input("GEBRUIKERSNAAM", placeholder="Gebruikersnaam")
+        p = st.text_input("WACHTWOORD", type="password", placeholder="Wachtwoord")
         if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
             role = auth(u, p)
             if role:
@@ -431,7 +431,7 @@ with tabs[0]:
 
     if lvl == 1:
         ctx_box("MISSIE BRIEFING — DE RECEPTIE",
-            "Je bent undercover het Witte Huis binnengeslopen. Voor je staat de receptiebalie met een beveiligd login-portaal. Je moet inloggen als admin om verder te kunnen — maar je hebt geen wachtwoord. Er is echter een kwetsbaarheid in de database.",
+            "Jullie zijn binnengekomen in het witte huis. Je partner in crime heeft de receptioniste weg kunnen lokken. Nu aan jou de taak om achter de balie te kruipen en proberen om het systeem binnen te komen.Er is echter een kwetsbaarheid in de database.",
             "Noem het type aanval waarbij je database-commando's in een invoerveld injecteert om de login te omzeilen.")
         st.markdown("**Wat is de naam van de aanval waarbij je kwaadaardige SQL-code in een invoerveld typt?**")
         cmd = st.text_input("root@receptie:~#", key="sql1", placeholder="typ de naam van de aanval...")
