@@ -410,7 +410,7 @@ with st.sidebar:
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user,r))
 col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
 with col_title:
-    st.title(f"THE WHITE HOUSE")
+    st.title(f"HET WITTE HUIS")
 with col_status:
     st.metric("MISSIES", f"{rooms_done}/4")
 with col_logout_btn:
