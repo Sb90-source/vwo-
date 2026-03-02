@@ -312,7 +312,7 @@ for k, v in [("user", None), ("role", None)]:
 if not st.session_state.user:
     st.markdown("""
     <div style="text-align:center;padding:2rem 0 1rem;">
-      <span class="glitch-t" data-text="THE WHITE HOUSE">THE WHITE HOUSE</span>
+      <span class="glitch-t" data-text="HET WITTE HUIS">HET WITTE HUIS</span>
       <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
         CYBER ESCAPE ROOM &mdash; ANOUK · MARWA · FENNA · NOURA
       </p>
