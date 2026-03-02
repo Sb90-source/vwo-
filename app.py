@@ -415,7 +415,7 @@ with col_status:
     st.metric("MISSIES", f"{rooms_done}/4")
 with col_logout_btn:
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("LOGOUT", key="top_logout", use_container_width=True):
+    if st.button("UITLOGGEN", key="top_logout", use_container_width=True):
         st.session_state.clear(); st.rerun()
 
 st.markdown("---")
