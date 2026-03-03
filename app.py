@@ -332,7 +332,7 @@ if not st.session_state.user:
         
         if st.button("START"):
             role = role; st.rerun()
-    st.stop()
+    
 
 # ==========================================================
 # TEACHER pagina
