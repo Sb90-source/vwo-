@@ -331,7 +331,7 @@ if not st.session_state.user:
         st.markdown("<br>", unsafe_allow_html=True)
         
         if st.button("START"):
-            role = st.session_state.user = u; st.session_state.role = role; st.rerun()
+            role = role; st.rerun()
     st.stop()
 
 # ==========================================================
