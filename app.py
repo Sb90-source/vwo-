@@ -331,7 +331,7 @@ if not st.session_state.user:
         st.markdown("<br>", unsafe_allow_html=True)
         u = st.text_input("GEBRUIKERSNAAM")
         
-        if st.button("START", use_container_width=True):
+        if st.button("START"):
             role = auth(u, p)
             if role:
                 fake_progress("IDENTITEIT VERIFIËREN")
