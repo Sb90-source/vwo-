@@ -330,7 +330,7 @@ if not st.session_state.user:
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
         u = st.text_input("GEBRUIKERSNAAM")
-        p = st.text_input("WACHTWOORD", type="password")
+        
         if st.button("START", use_container_width=True):
             role = auth(u, p)
             if role:
