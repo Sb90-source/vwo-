@@ -332,12 +332,7 @@ if not st.session_state.user:
         u = st.text_input("GEBRUIKERSNAAM")
         
         if st.button("START"):
-            role = auth(u, p)
-            if role:
-                fake_progress("IDENTITEIT VERIFIËREN")
-                st.session_state.user = u; st.session_state.role = role; st.rerun()
-            else:
-                st.error("TOEGANG GEWEIGERD — Ongeldige inloggegevens")
+            role = st.session_state.user = u; st.session_state.role = role; st.rerun()
     st.stop()
 
 # ==========================================================
