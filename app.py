@@ -7,8 +7,7 @@ from datetime import datetime
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("Cyber Escape Room", layout="wide")
-
+st.set_page_config("Escape Room", layout="wide")
 # ==========================================================import streamlit as st
 import sqlite3
 import hashlib
@@ -331,8 +330,9 @@ if not st.session_state.user:
         st.markdown("<br>", unsafe_allow_html=True)
         
         if st.button("START"):
+            st.session_state.user 
             role = role; st.rerun()
-    
+    st.stop()
 
 # ==========================================================
 # TEACHER pagina
