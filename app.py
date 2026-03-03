@@ -329,7 +329,6 @@ if not st.session_state.user:
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        u = st.text_input("GEBRUIKERSNAAM")
         
         if st.button("START"):
             role = st.session_state.user = u; st.session_state.role = role; st.rerun()
