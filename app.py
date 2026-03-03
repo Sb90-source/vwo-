@@ -332,7 +332,7 @@ if not st.session_state.user:
         st.markdown("**`> IDENTIFICEER JEZELF`**")
         u = st.text_input("GEBRUIKERSNAAM", placeholder="Voer in")
         p = st.text_input("WACHTWOORD", type="password", placeholder="Voer in")
-        if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
+        if st.button("START", use_container_width=True):
             role = auth(u, p)
             if role:
                 fake_progress("IDENTITEIT VERIFIËREN")
@@ -342,7 +342,7 @@ if not st.session_state.user:
     st.stop()
 
 # ==========================================================
-# TEACHER VIEW
+# TEACHER pagina
 # ==========================================================
 if st.session_state.role == "teacher":
     st.title("CONTROL PANEL")
@@ -382,7 +382,7 @@ if st.session_state.role == "teacher":
     st.stop()
 
 # ==========================================================
-# STUDENT VIEW
+# leerlingen pagina
 # ==========================================================
 user = st.session_state.user
 
@@ -422,7 +422,7 @@ st.markdown("---")
 tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S SLAAPKAMER"])
 
 # ==========================================================
-# ROOM 1 — DE RECEPTIE (SQL INJECTION)
+# kamer 1 — DE RECEPTIE (SQL INJECTION)
 # ==========================================================
 with tabs[0]:
     st.header("DE RECEPTIE")
@@ -435,14 +435,14 @@ with tabs[0]:
             "Noem het type aanval waarbij je database-commando's in een invoerveld injecteert om de login te omzeilen.")
         st.markdown("**Wat is de naam van de aanval waarbij je kwaadaardige SQL-code in een invoerveld typt?**")
         cmd = st.text_input("root@receptie:~#", key="sql1", placeholder="typ de naam van de aanval...")
-        if st.button("▶ BEVESTIG AANVAL", key="sql1_btn"):
-            if cmd.lower().strip() == "sql injection":
+        if st.button("BEVESTIG AANVAL", key="sql1_btn"):
+            if cmd.lower().strip() == "sql injectie":
                 fake_progress("KWETSBAARHEID ANALYSEREN"); set_level(user, "sql", 2)
                 typewriter_terminal(["[+] Kwetsbaarheid geïdentificeerd: SQL INJECTION",
                     "[+] Login module accepteert ongefilterde input",
                     "[!] Ga naar het login-portaal en omzeil de authenticatie..."])
                 st.rerun()
-            else: st.error("❌ Niet correct. Hint: SQL staat in de naam.")
+            else: st.error("NIET CORRECT. Hint: SQL staat in de naam.")
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
@@ -611,17 +611,17 @@ document.querySelectorAll('a').forEach(a=>a.addEventListener('click',e=>e.preven
 </style>
 <div class="wrap"><div class="screen"><div class="inner">
   <div class="bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-    <div class="url">🔒 admin.whitehouse.gov/database/staff</div></div>
-  <div class="tnav"><div class="logo">🏛 White House <span>Admin</span></div><div class="ui"><div class="av">P</div><span>president</span></div></div>
+    <div class="url">admin.whitehouse.gov/database/staff</div></div>
+  <div class="tnav"><div class="logo">White House <span>Admin</span></div><div class="ui"><div class="av">P</div><span>president</span></div></div>
   <div class="dash">
     <div class="sb">
-      <div class="si active">👥 Medewerkers</div>
-      <div class="si" onclick="showMsg('Classified — geen toegang')">🔒 Geheimen</div>
-      <div class="si" onclick="showMsg('Logs — geen toegang')">📋 Audit Logs</div>
+      <div class="si active">Medewerkers</div>
+      <div class="si" onclick="showMsg('Classified — geen toegang')">Geheimen</div>
+      <div class="si" onclick="showMsg('Logs — geen toegang')">Audit Logs</div>
       <div class="si" onclick="showMsg('Settings — geen toegang')">⚙️ Instellingen</div>
     </div>
     <div class="cont" id="mc">
-      <h2>📊 Medewerkerdatabase — SQL Interface</h2>
+      <h2>Medewerkerdatabase — SQL Interface</h2>
       <div class="sqlcon">
         <div class="sqlh"><span>DB:</span><span class="dbn">whitehouse_db</span><span style="margin-left:auto;">TABLE: staff</span></div>
         <div class="sqlr"><span class="sqlp">sql&gt;</span><input class="sqli" id="sqlInput" type="text" value="SELECT * FROM staff" onkeydown="if(event.key==='Enter')rq()"><button class="sqlb" onclick="rq()">▶ RUN</button></div>
@@ -648,7 +648,7 @@ function showMsg(m){{document.getElementById('mc').innerHTML='<h2>'+m+'</h2><p s
         hint_widget(user, "sql", lvl)
 
 # ==========================================================
-# ROOM 2 — DE VERGADERRUIMTE (XSS)
+# KAMER 2 — DE VERGADERRUIMTE (XSS)
 # ==========================================================
 with tabs[1]:
     st.header("DE VERGADERRUIMTE")
