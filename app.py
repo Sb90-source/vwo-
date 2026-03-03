@@ -330,7 +330,7 @@ if not st.session_state.user:
         st.markdown("<br>", unsafe_allow_html=True)
         
         if st.button("START"):
-            st.session_state.user 
+            st.session_state.user ==  
             role = role; st.rerun()
     st.stop()
 
@@ -1265,7 +1265,7 @@ if "user" not in st.session_state:
     st.session_state.user = None
 
 if not st.session_state.user:
-    st.title("CYBER ESCAPE ROOM")
+    st.title("ESCAPE ROOM")
 
     u = st.text_input("Username")
     p = st.text_input("Password", type="password")
