@@ -8,7 +8,8 @@ from datetime import datetime
 # CONFIG
 # ==========================================================
 st.set_page_config("Escape Room", layout="wide")
-# ==========================================================import streamlit as st
+# ==========================================================
+import streamlit as st
 import sqlite3
 import hashlib
 import time
@@ -328,9 +329,17 @@ if not st.session_state.user:
     col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        
+        st.markdown("**`> IDENTIFICEER JEZELF`**")
+        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je groepnaam")
+        p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
+        if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
+            role = auth(u, p)
         if st.button("START"):
+            st.session_state.user = u
+            st.session_state.role = role
             role = role; st.rerun()
+        else:
+                st.error(" TOEGANG GEWEIGERD — Ongeldige credentials")
     st.stop()
 
 # ==========================================================
