@@ -334,7 +334,7 @@ if not st.session_state.user:
         p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
         if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
             role = auth(u, p)
-        if st.button("START"):
+        if role:
             st.session_state.user = u
             st.session_state.role = role
             role = role; st.rerun()
