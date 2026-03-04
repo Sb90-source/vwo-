@@ -339,7 +339,7 @@ if not st.session_state.user:
             st.session_state.role = role
             role = role; st.rerun()
         else:
-                st.error(" TOEGANG GEWEIGERD — Ongeldige credentials")
+            st.error(" TOEGANG GEWEIGERD — Ongeldige credentials")
     st.stop()
 
 # ==========================================================
