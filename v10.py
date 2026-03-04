@@ -1,333 +1,1664 @@
 import streamlit as st
 import sqlite3
-import os
 import hashlib
+import time
 from datetime import datetime
+import streamlit.components.v1 as components
 
 # ==========================================================
-# PAGE CONFIG
+# CONFIG
 # ==========================================================
-st.set_page_config("MegaCorp Breach — Cyber Escape Room", layout="wide")
+st.set_page_config("🏛️ THE WHITE HOUSE BREACH", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
-# DATABASES
+# VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
 # ==========================================================
-def hash_pw(p): return hashlib.sha256(p.encode()).hexdigest()
+components.html("""
+<script>
+(function() {
+    const css = `
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        html, body, [class*="css"] {
+            background-color: #020409 !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        h1,h2,h3,h4 {
+            font-family: 'Orbitron', monospace !important;
+            color: #00ff9c !important;
+            text-shadow: 0 0 15px rgba(0,255,156,0.5);
+            letter-spacing: 3px;
+        }
+        .stTextInput > div > div > input,
+        .stTextArea > div > div > textarea {
+            background-color: #000 !important;
+            color: #00ff9c !important;
+            border: 1px solid #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-size: 14px !important;
+            caret-color: #00ff9c;
+        }
+        .stButton > button {
+            background-color: #000 !important;
+            color: #00ff9c !important;
+            border: 1px solid #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+        }
+        .stButton > button:hover {
+            background-color: #00ff9c !important;
+            color: #000 !important;
+            box-shadow: 0 0 20px rgba(0,255,156,0.6);
+        }
+        .stTabs [data-baseweb="tab"] {
+            font-family: 'Share Tech Mono', monospace !important;
+            color: #00ff9c !important;
+            background: #000 !important;
+            border: 1px solid #00ff9c !important;
+            margin-right: 4px;
+            letter-spacing: 2px;
+        }
+        .stTabs [aria-selected="true"] {
+            background: #00ff9c !important;
+            color: #000 !important;
+        }
+        .stAlert {
+            background: #000 !important;
+            border: 1px solid #00ff9c !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        code, pre {
+            background-color: #050e08 !important;
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            border: 1px solid rgba(0,255,156,0.2) !important;
+        }
+        #MainMenu, footer, header { visibility: hidden; }
+        .block-container { padding-top: 1rem !important; }
+        [data-testid="stSidebar"] {
+            background-color: #050e08 !important;
+            border-right: 1px solid #00ff9c !important;
+        }
+        [data-testid="stSidebar"] * {
+            color: #00ff9c !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes flicker {
+            0%,89%,91%,93%,100% { opacity:1; }
+            90% { opacity:0.3; }
+            92% { opacity:0.6; }
+            94% { opacity:0.1; }
+            95% { opacity:0.8; }
+            96% { opacity:0.2; }
+            97% { opacity:1; }
+        }
+        h1 { animation: flicker 3s infinite; }
+        .stProgress > div > div {
+            background: linear-gradient(90deg, #00ff9c, #00ffcc) !important;
+        }
+    `;
+    const style = window.parent.document.createElement('style');
+    style.textContent = css;
+    window.parent.document.head.appendChild(style);
+})();
+</script>
+""", height=0)
 
-def init_vuln_db():
-    if os.path.exists("megacorp.db"):
-        return
-    conn = sqlite3.connect("megacorp.db")
-    c = conn.cursor()
-    c.execute("""CREATE TABLE users (
-        id INTEGER PRIMARY KEY,
-        username TEXT,
-        password TEXT,
-        role TEXT
-    )""")
-    c.executemany(
-        "INSERT INTO users VALUES (NULL,?,?,?)",
-        [
-            ("jdoe","welcome123","user"),
-            ("asmith","password1","user"),
-            ("admin","SuperSecret!","admin")
-        ]
-    )
-    conn.commit(); conn.close()
+# Matrix rain + keyboard sounds
+components.html("""
+<canvas id="matrix" style="position:fixed;top:0;left:0;width:100%;height:100%;opacity:0.06;pointer-events:none;z-index:0;"></canvas>
+<script>
+const c = document.getElementById('matrix');
+const ctx = c.getContext('2d');
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+const cols = Math.floor(c.width / 16);
+const drops = Array(cols).fill(1);
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()アイウエオカキクケコ';
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(2,4,9,0.05)';
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle = '#00ff9c';
+    ctx.font = '14px Share Tech Mono';
+    drops.forEach((y,i) => {
+        const ch = chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillText(ch, i*16, y*16);
+        if(y*16 > c.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    });
+}
+setInterval(drawMatrix, 40);
 
-def init_platform_db():
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+function playClick() {
+    try {
+        const ac = new AudioCtx();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(800, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ac.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.05, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.04);
+        osc.start(); osc.stop(ac.currentTime + 0.04);
+    } catch(e) {}
+}
+function playSuccess() {
+    try {
+        const ac = new AudioCtx();
+        [440,554,660,880].forEach((f,i) => {
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.connect(gain); gain.connect(ac.destination);
+            osc.frequency.value = f;
+            gain.gain.setValueAtTime(0.08, ac.currentTime + i*0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i*0.1 + 0.15);
+            osc.start(ac.currentTime + i*0.1);
+            osc.stop(ac.currentTime + i*0.1 + 0.2);
+        });
+    } catch(e) {}
+}
+document.addEventListener('keydown', playClick);
+window.playSuccess = playSuccess;
+</script>
+""", height=0)
+
+# ==========================================================
+# DATABASE
+# ==========================================================
+def hash_pw(p):
+    return hashlib.sha256(p.encode()).hexdigest()
+
+def init_db():
     conn = sqlite3.connect("platform.db")
     c = conn.cursor()
+
     c.execute("""CREATE TABLE IF NOT EXISTS users (
-        username TEXT PRIMARY KEY,
-        password TEXT,
-        role TEXT
-    )""")
+        username TEXT PRIMARY KEY, password TEXT, role TEXT)""")
+
     c.execute("""CREATE TABLE IF NOT EXISTS progress (
-        username TEXT,
-        category TEXT,
-        level INTEGER,
-        PRIMARY KEY(username,category)
-    )""")
+        username TEXT, room TEXT, level INTEGER,
+        PRIMARY KEY(username, room))""")
+
     c.execute("""CREATE TABLE IF NOT EXISTS flags (
-        username TEXT,
-        category TEXT,
-        flag TEXT,
-        time TEXT
-    )""")
-    users = [
-        ("alice",hash_pw("student123"),"student"),
-        ("bob",hash_pw("student123"),"student"),
-        ("teacher",hash_pw("teach123"),"teacher")
-    ]
-    for u in users:
-        c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)",u)
-    conn.commit(); conn.close()
+        username TEXT, room TEXT, flag TEXT, time TEXT)""")
 
-init_vuln_db()
-init_platform_db()
+    c.execute("""CREATE TABLE IF NOT EXISTS hints (
+        username TEXT, room TEXT, hint_num INTEGER,
+        PRIMARY KEY(username, room, hint_num))""")
+
+    for u in [("student", hash_pw("hackme"), "student"),
+              ("teacher", hash_pw("admin123"), "teacher")]:
+        c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)", u)
+
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # ==========================================================
-# VULNERABLE LAB FUNCTIONS
+# HINTS DATA
 # ==========================================================
-def insecure_login(u,p):
-    conn = sqlite3.connect("megacorp.db")
-    c = conn.cursor()
-    q = f"SELECT username,role FROM users WHERE username='{u}' AND password='{p}'"
-    try: r = c.execute(q).fetchall()
-    except Exception as e: r = str(e)
-    conn.close(); return r
+HINTS = {
+    "sql": [
+        "💡 Welk type aanval misbruikt database queries door code in een invoerveld te stoppen?",
+        "💡 Maak de WHERE-clausule altijd TRUE. Probeer: ' OR '1'='1 als gebruikersnaam.",
+        "💡 Gebruik UNION SELECT om een tweede query mee te combineren. Bijv: ' UNION SELECT username, password, role FROM users--",
+    ],
+    "xss": [
+        "💡 Welk type aanval injecteert kwaadaardige scripts in een webpagina die andere gebruikers zien?",
+        "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>",
+        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag.",
+    ],
+    "privesc": [
+        "💡 Wat doe je als je meer rechten wil dan je hebt?",
+        "💡 Wat is de hoogste gebruikersrol in een systeem?",
+        "💡 Typ simpelweg de rol waar je toegang toe wil hebben.",
+    ],
+    "crypto": [
+        "💡 Julius Caesar gebruikte dit systeem om berichten te versleutelen.",
+        "💡 Elke letter wordt X posities verschoven in het alfabet.",
+        "💡 Probeer ROT13 of verschuif letters met 3 posities terug.",
+    ],
+}
 
-def insecure_lookup(u):
-    conn = sqlite3.connect("megacorp.db")
-    c = conn.cursor()
-    q = f"SELECT username,password,role FROM users WHERE username='{u}'"
-    try: r = c.execute(q).fetchall()
-    except Exception as e: r = str(e)
-    conn.close(); return r
-
 # ==========================================================
-# PLATFORM FUNCTIONS
+# HELPERS
 # ==========================================================
-def auth(u,p):
+def auth(u, p):
     conn = sqlite3.connect("platform.db")
     c = conn.cursor()
-    c.execute("SELECT role FROM users WHERE username=? AND password=?", (u,hash_pw(p)))
+    c.execute("SELECT role FROM users WHERE username=? AND password=?", (u, hash_pw(p)))
     r = c.fetchone()
-    conn.close(); return r[0] if r else None
+    conn.close()
+    return r[0] if r else None
 
-def load_progress(u):
-    base = {"sql":1,"xss":1,"privesc":1,"crypto":1}
+def get_level(user, room):
     conn = sqlite3.connect("platform.db")
     c = conn.cursor()
-    for cat,lvl in c.execute("SELECT category,level FROM progress WHERE username=?", (u,)):
-        base[cat]=lvl
-    conn.close(); return base
+    c.execute("SELECT level FROM progress WHERE username=? AND room=?", (user, room))
+    r = c.fetchone()
+    conn.close()
+    return r[0] if r else 1
 
-def save_progress(u,c,l):
+def set_level(user, room, level):
     conn = sqlite3.connect("platform.db")
-    c2 = conn.cursor()
-    c2.execute("""INSERT INTO progress VALUES (?,?,?)
-                  ON CONFLICT(username,category)
-                  DO UPDATE SET level=?""",(u,c,l,l))
-    conn.commit(); conn.close()
+    c = conn.cursor()
+    c.execute("""INSERT INTO progress VALUES (?,?,?)
+        ON CONFLICT(username,room) DO UPDATE SET level=?""",
+        (user, room, level, level))
+    conn.commit()
+    conn.close()
 
-def save_flag(u,c,f):
+def give_flag(user, room, flag):
     conn = sqlite3.connect("platform.db")
-    c2 = conn.cursor()
-    c2.execute("INSERT INTO flags VALUES (?,?,?,?)",(u,c,f,datetime.now().isoformat()))
-    conn.commit(); conn.close()
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM flags WHERE username=? AND room=?", (user, room))
+    if not c.fetchone():
+        c.execute("INSERT INTO flags VALUES (?,?,?,?)",
+                  (user, room, flag, datetime.now().isoformat()))
+    conn.commit()
+    conn.close()
+
+def has_completed(user, room):
+    conn = sqlite3.connect("platform.db")
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM flags WHERE username=? AND room=?", (user, room))
+    r = c.fetchone()
+    conn.close()
+    return r is not None
+
+def get_hints_used(user, room):
+    conn = sqlite3.connect("platform.db")
+    c = conn.cursor()
+    c.execute("SELECT hint_num FROM hints WHERE username=? AND room=? ORDER BY hint_num",
+              (user, room))
+    r = [x[0] for x in c.fetchall()]
+    conn.close()
+    return r
+
+def use_hint(user, room, hint_num):
+    conn = sqlite3.connect("platform.db")
+    c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO hints VALUES (?,?,?)", (user, room, hint_num))
+    conn.commit()
+    conn.close()
+
+def typewriter_terminal(lines):
+    """Show terminal output with fake typewriter feel using st.code"""
+    for line in lines:
+        st.code(line, language=None)
+        time.sleep(0.08)
+
+def fake_progress(label="BYPASSING FIREWALL"):
+    """Show animated fake progress bar"""
+    bar = st.progress(0, text=f"⚡ {label}...")
+    for i in range(0, 101, 5):
+        bar.progress(i, text=f"⚡ {label}... {i}%")
+        time.sleep(0.03)
+    bar.empty()
+
+def hint_widget(user, room, current_level):
+    """Render hint system for a room"""
+    hints = HINTS.get(room, [])
+    used = get_hints_used(user, room)
+    next_hint = len(used)
+
+    with st.expander(f"🔍 HINTS ({next_hint}/{len(hints)} gebruikt)"):
+        for i in used:
+            st.info(hints[i])
+
+        if next_hint < len(hints):
+            if st.button(f"📡 REQUEST HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
+                use_hint(user, room, next_hint)
+                st.rerun()
+        else:
+            st.caption("Alle hints gebruikt.")
 
 # ==========================================================
 # SESSION
 # ==========================================================
-for k in ["user","role","progress","flags","xss_store"]:
+for k, v in [("user", None), ("role", None)]:
     if k not in st.session_state:
-        st.session_state[k] = {} if k in ["progress","flags","xss_store"] else None
+        st.session_state[k] = v
 
 # ==========================================================
 # LOGIN
 # ==========================================================
 if not st.session_state.user:
-    st.title("🏢 MegaCorp Breach — Cyber Escape Room")
-    s,t = st.tabs(["🎓 Student","🧑‍🏫 Teacher"])
-    with s:
-        u = st.text_input("Username", key="stu_username"); p = st.text_input("Password",type="password", key="stu_password")
-        if st.button("Enter Facility", key="stu_login"):
-            if auth(u,p)=="student":
-                st.session_state.user=u
-                st.session_state.role="student"
-                st.session_state.progress[u]=load_progress(u)
-                st.session_state.flags[u]={}
+    st.markdown("""
+    <div style="text-align:center; padding: 2rem 0 1rem;">
+        <div class="glitch-wrapper2">
+            <span class="glitch-t" data-text="🏛️ THE WHITE HOUSE">🏛️ THE WHITE HOUSE</span>
+        </div>
+        <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
+            CYBER INFILTRATIE MISSIE &mdash; GEMAAKT DOOR: ANOUK, MARWA, FENNA EN NOURA
+        </p>
+    </div>
+    <style>
+    @keyframes gt {
+        0%,90%,100% { text-shadow:0 0 15px rgba(0,255,156,0.6); transform:translate(0); clip-path:none; }
+        91% { text-shadow:-4px 0 #ff003c,4px 0 #00ffff; transform:translate(-3px,0); clip-path:inset(5% 0 55% 0); }
+        92% { text-shadow:4px 0 #ff003c,-4px 0 #00ffff; transform:translate(3px,0); clip-path:inset(58% 0 3% 0); }
+        93% { text-shadow:-2px 0 #ff003c,2px 0 #00ffff; transform:translate(-1px,0); clip-path:none; }
+        94% { text-shadow:0 0 15px rgba(0,255,156,0.6); transform:translate(0); }
+    }
+    @keyframes gt2 {
+        0%,90%,100% { opacity:0; }
+        91% { opacity:0.7; transform:translate(6px,-3px); filter:hue-rotate(120deg); }
+        93% { opacity:0; }
+    }
+    .glitch-t {
+        font-family:'Orbitron',monospace !important;
+        font-weight:900;
+        font-size:clamp(22px,3.5vw,52px);
+        color:#00ff9c;
+        letter-spacing:6px;
+        animation:gt 5s infinite;
+        position:relative;
+        display:inline-block;
+    }
+    .glitch-t::before {
+        content:attr(data-text);
+        position:absolute; left:0; top:0;
+        color:#ff003c;
+        animation:gt2 5s infinite;
+        pointer-events:none;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1.2, 1])
+    with col2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("**`> IDENTIFICEER JEZELF`**")
+        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je groepnaam")
+        p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
+        if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
+            role = auth(u, p)
+            if role:
+                fake_progress("IDENTITEIT VERIFIËREN")
+                st.session_state.user = u
+                st.session_state.role = role
                 st.rerun()
-            else: st.error("Access denied")
-    with t:
-        u = st.text_input("Teacher Username", key="teach_username"); p = st.text_input("Password",type="password", key="teach_password")
-        if st.button("Enter Control Room", key="teach_login"):
-            if auth(u,p)=="teacher":
-                st.session_state.user=u; st.session_state.role="teacher"; st.rerun()
-            else: st.error("Access denied")
+            else:
+                st.error("⛔ TOEGANG GEWEIGERD — Ongeldige credentials")
     st.stop()
 
 # ==========================================================
-# TEACHER DASHBOARD
+# TEACHER VIEW
 # ==========================================================
-if st.session_state.role=="teacher":
-    st.title("🧑‍🏫 Control Room — Teacher View")
+if st.session_state.role == "teacher":
+    st.title("🧑‍🏫 CONTROL PANEL")
+
     conn = sqlite3.connect("platform.db")
-    rows = conn.execute("SELECT * FROM progress").fetchall()
+
+    st.subheader("VOORTGANG PER STUDENT")
+    progress_data = conn.execute("""
+        SELECT p.username, p.room, p.level,
+               (SELECT COUNT(*) FROM hints h WHERE h.username=p.username AND h.room=p.room) as hints_used
+        FROM progress p ORDER BY p.username, p.room
+    """).fetchall()
+
+    if progress_data:
+        st.table({
+            "Student": [r[0] for r in progress_data],
+            "Room": [r[1].upper() for r in progress_data],
+            "Level": [r[2] for r in progress_data],
+            "Hints gebruikt": [r[3] for r in progress_data],
+        })
+    else:
+        st.info("Nog geen voortgang geregistreerd.")
+
+    st.subheader("BEHAALDE FLAGS")
+    flags = conn.execute("SELECT * FROM flags ORDER BY time DESC").fetchall()
+    if flags:
+        st.table({
+            "Student": [r[0] for r in flags],
+            "Room": [r[1].upper() for r in flags],
+            "Flag": [r[2] for r in flags],
+            "Tijd": [r[3][:19] for r in flags],
+        })
+    else:
+        st.info("Nog geen flags behaald.")
+
     conn.close()
-    st.table(rows)
-    if st.button("Logout"): st.session_state.clear(); st.rerun()
+
+    st.subheader("RESET STUDENT")
+    all_students = [r[0] for r in sqlite3.connect("platform.db").execute(
+        "SELECT DISTINCT username FROM users WHERE role='student'"
+    ).fetchall()]
+    reset_target = st.selectbox("Selecteer student", all_students, key="reset_target")
+    if st.button("🗑 RESET GESELECTEERDE STUDENT", key="teacher_reset"):
+        conn2 = sqlite3.connect("platform.db")
+        c2 = conn2.cursor()
+        c2.execute("DELETE FROM progress WHERE username=?", (reset_target,))
+        c2.execute("DELETE FROM flags WHERE username=?", (reset_target,))
+        c2.execute("DELETE FROM hints WHERE username=?", (reset_target,))
+        conn2.commit()
+        conn2.close()
+        st.success(f"✅ Progressie van {reset_target} gereset!")
+        st.rerun()
+
+    st.markdown("---")
+    if st.button("🔓 LOGOUT"):
+        st.session_state.clear()
+        st.rerun()
     st.stop()
 
 # ==========================================================
 # STUDENT VIEW
 # ==========================================================
-u = st.session_state.user
-p = st.session_state.progress[u]
+user = st.session_state.user
 
-st.title(f"🎓 Operative: {u}")
-tabs = st.tabs(["🗺️ Facility Map","🚪 SQL Front Desk","🖥️ Internal Portal","🧑‍💻 Control Room","🔐 Vault"])
+# Sidebar
+with st.sidebar:
+    st.markdown(f"### 🕶 {user.upper()}")
+    rooms_done_sb = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
+    st.markdown(f"**MISSIES VOLTOOID:** {rooms_done_sb}/4")
+    st.markdown("---")
+    st.markdown("**🏛️ VERHAAL:**")
+    st.caption("Jullie zijn elite hackers ingehuurd om het beveiligingssysteem van het Witte Huis te testen. Infiltreer elk systeem, verzamel de versleutelde codes, en breek in Trump's privé kluis.")
+    st.markdown("---")
+    if st.button("🔓 LOGOUT", key="sidebar_logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+    if st.button("🗑 RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
+        st.session_state["confirm_reset"] = True
+    if st.session_state.get("confirm_reset"):
+        st.warning("Zeker weten?")
+        if st.button("✅ JA", key="sb_yes", use_container_width=True):
+            conn = sqlite3.connect("platform.db")
+            c = conn.cursor()
+            c.execute("DELETE FROM progress WHERE username=?", (user,))
+            c.execute("DELETE FROM flags WHERE username=?", (user,))
+            c.execute("DELETE FROM hints WHERE username=?", (user,))
+            conn.commit(); conn.close()
+            st.session_state.pop("confirm_reset", None)
+            st.rerun()
+        if st.button("❌ NEE", key="sb_no", use_container_width=True):
+            st.session_state.pop("confirm_reset", None)
+            st.rerun()
+
+# Header
+rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
+col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
+with col_title:
+    st.title(f"🎯 OPERATIVE: {user.upper()}")
+with col_status:
+    st.metric("MISSIES", f"{rooms_done}/4")
+with col_logout_btn:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("🔓 LOGOUT", key="top_logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+
+st.markdown("---")
+
+tabs = st.tabs(["🚪 RECEPTIE", "💼 VERGADERRUIMTE", "🔒 BEVEILIGDE KAMER", "🛏️ TRUMP'S KAMER"])
 
 # ==========================================================
-# MAP
+# ROOM 1 — SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    for c in ["sql","xss","privesc","crypto"]:
-        st.markdown(f"**{c.upper()}** — Level {p[c]}/3")
+    st.header("🚪 DE RECEPTIE - SQL INJECTION")
+    st.markdown("*Infiltreer het authenticatiesysteem van het Witte Huis.*")
+    
+    lvl = get_level(user, "sql")
+    st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
+
+    if lvl == 1:
+        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het login systeem")
+        st.markdown("""
+```
+[INTELLIGENCE BRIEFING]
+📍 Locatie: White House Reception Authentication System
+🎯 Doelwit: auth.whitehouse.gov:3306
+⚠️  Bevinding: Login module accepteert ongefilterde gebruikersinput
+💀 Kwetsbaarheid: Database queries kunnen worden gemanipuleerd
+
+ACTIE VEREIST: Identificeer het type aanval
+```
+        """)
+        st.markdown("**❓ Welk type aanval misbruikt database queries door kwaadaardige code in invoervelden te injecteren?**")
+        cmd = st.text_input("root@hq:~#", key="sql1", placeholder="typ het type aanval...")
+        if st.button("▶ EXECUTE", key="sql1_btn"):
+            if cmd.lower().strip() == "sql injection":
+                fake_progress("KWETSBAARHEID ANALYSEREN")
+                set_level(user, "sql", 2)
+                typewriter_terminal([
+                    "[+] Kwetsbaarheid geïdentificeerd: SQL INJECTION",
+                    "[+] Login module accepteert ongefilterde input",
+                    "[!] Proceeding to exploitation phase..."
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrect. Vraag een hint als je vastloopt.")
+        hint_widget(user, "sql", lvl)
+
+    elif lvl == 2:
+        st.info("🎯 **MISSIE:** Bypass het login scherm met een SQL injection payload")
+        st.markdown("""
+```
+[EXPLOIT FASE]
+Je hebt toegang tot het login systeem.
+De applicatie voert deze query uit:
+    SELECT * FROM users WHERE username='INPUT' AND password='INPUT'
+
+ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
+               altijd TRUE wordt, ongeacht het wachtwoord
+```
+        """)
+        
+        components.html("""
+        <style>
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;}
+        .laptop-wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+        .screen-outer{
+            background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;
+            border-radius:16px 16px 0 0;width:100%;padding:16px;
+            box-shadow:0 0 40px rgba(0,0,0,0.9),inset 0 0 15px rgba(0,0,0,0.5);position:relative;
+        }
+        .screen-outer::before{
+            content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);
+            width:10px;height:10px;background:#333;border-radius:50%;
+        }
+        .screen-inner{background:#f0f2f5;border-radius:6px;overflow:hidden;}
+        .browser-bar{
+            background:#e8e8e8;padding:10px 14px;display:flex;align-items:center;
+            gap:10px;border-bottom:1px solid #ccc;
+        }
+        .dot{width:12px;height:12px;border-radius:50%;}
+        .dot.r{background:#ff5f57;} .dot.y{background:#febc2e;} .dot.g{background:#28c840;}
+        .url-bar{
+            flex:1;background:white;border:1px solid #ccc;border-radius:5px;
+            padding:4px 12px;font-size:12px;color:#666;display:flex;align-items:center;gap:5px;
+        }
+        .login-page{padding:30px 50px;display:flex;flex-direction:column;align-items:center;}
+        .company-logo{font-size:26px;font-weight:700;color:#1a1a2e;margin-bottom:4px;letter-spacing:-1px;}
+        .company-logo span{color:#e74c3c;}
+        .tagline{font-size:12px;color:#999;margin-bottom:28px;}
+        .login-card{
+            background:white;border:1px solid #e0e0e0;border-radius:10px;
+            padding:32px 36px;width:100%;max-width:360px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.1);transition:all 0.3s;
+        }
+        .login-card h3{font-size:18px;color:#333;margin-bottom:22px;font-weight:600;}
+        .field{margin-bottom:16px;}
+        .field label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500;}
+        .field input{
+            width:100%;border:1.5px solid #ddd;border-radius:6px;padding:10px 14px;
+            font-size:14px;color:#333;background:#fafafa;outline:none;transition:all 0.2s;
+        }
+        .field input:focus{border-color:#4a90e2;background:white;box-shadow:0 0 0 3px rgba(74,144,226,0.1);}
+        .login-btn{
+            width:100%;background:#4a90e2;color:white;border:none;border-radius:6px;
+            padding:12px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:all 0.2s;
+        }
+        .login-btn:hover{background:#357abd;transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,144,226,0.4);}
+        .login-btn:active{transform:translateY(0);}
+        .footer-links{display:flex;justify-content:space-between;margin-top:14px;}
+        .footer-links a{font-size:11px;color:#4a90e2;text-decoration:none;}
+        .footer-links a:hover{text-decoration:underline;}
+        .msg{border-radius:6px;padding:10px 14px;font-size:12px;margin-bottom:16px;display:none;}
+        .msg.error{background:#fff3cd;border:1px solid #ffc107;color:#856404;}
+        .msg.success{background:#d4edda;border:1px solid #28a745;color:#155724;}
+        .hinge{
+            width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;
+        }
+        .hinge::after{
+            content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+            width:50px;height:5px;background:#111;border-radius:3px;
+        }
+        .base{
+            background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;
+            border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;
+        }
+        .base::after{
+            content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+            width:60px;height:4px;background:#111;border-radius:2px;
+        }
+        .forgot-modal{
+            display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;
+        }
+        .modal-box{
+            background:white;border-radius:10px;padding:28px;max-width:300px;width:90%;
+            box-shadow:0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-box h4{color:#333;margin-bottom:12px;}
+        .modal-box p{font-size:12px;color:#666;margin-bottom:16px;}
+        .modal-close{
+            background:#e74c3c;color:white;border:none;border-radius:4px;
+            padding:8px 16px;cursor:pointer;font-size:12px;
+        }
+        </style>
+
+        <div class="laptop-wrap">
+          <div class="screen-outer">
+            <div class="screen-inner">
+              <div class="browser-bar">
+                <div class="dot r"></div>
+                <div class="dot y"></div>
+                <div class="dot g"></div>
+                <div class="url-bar">🔒 auth.whitehouse.gov/secure-login</div>
+              </div>
+              <div class="login-page">
+                <div class="company-logo">White<span>House</span></div>
+                <div class="tagline">Executive Branch Security Portal — Authorized Personnel Only</div>
+                <div class="login-card" id="loginCard">
+                  <h3>Secure Authentication</h3>
+                  <div class="msg" id="msg"></div>
+                  <div class="field">
+                    <label>Gebruikersnaam</label>
+                    <input type="text" id="uname" placeholder="gebruiker@whitehouse.gov" oninput="liveCheck(this)">
+                  </div>
+                  <div class="field">
+                    <label>Wachtwoord</label>
+                    <input type="password" id="pw" placeholder="••••••••">
+                  </div>
+                  <button class="login-btn" onclick="tryLogin()">🔐 Secure Login</button>
+                  <div class="footer-links">
+                    <a href="javascript:void(0)" onclick="showForgot()">Wachtwoord vergeten?</a>
+                    <a href="javascript:void(0)" onclick="showHelp()">IT Support</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hinge"></div>
+          <div class="base"></div>
+        </div>
+
+        <div class="forgot-modal" id="forgotModal">
+          <div class="modal-box">
+            <h4>Wachtwoord Reset</h4>
+            <p>Contact IT Security: security@whitehouse.gov of bel intern extensie 1600.</p>
+            <button class="modal-close" onclick="document.getElementById('forgotModal').style.display='none'">Sluiten</button>
+          </div>
+        </div>
+
+        <script>
+        function liveCheck(inp) {
+            const v = inp.value.toLowerCase();
+            if (v.includes("' or") || v.includes("'or") || v.includes("1=1")) {
+                inp.style.borderColor = '#e74c3c';
+                inp.style.background = '#fff5f5';
+            } else {
+                inp.style.borderColor = '';
+                inp.style.background = '';
+            }
+        }
+        function tryLogin() {
+            const u = document.getElementById('uname').value;
+            const p = document.getElementById('pw').value;
+            const msg = document.getElementById('msg');
+            const card = document.getElementById('loginCard');
+            const isInjection = u.toLowerCase().includes("' or") || u.toLowerCase().includes("'or") || u.toLowerCase().includes("1=1");
+            if (isInjection) {
+                card.style.borderColor = '#28a745';
+                card.style.background = '#f0fff4';
+                msg.className = 'msg success';
+                msg.style.display = 'block';
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD — Bypassing authentication...<br><small>Ingelogd als: <strong>POTUS</strong></small>';
+                setTimeout(() => {
+                    const url = window.parent.location.href.split('?')[0] + '?sql2_submit=1';
+                    window.parent.location.href = url;
+                }, 1800);
+            } else if (u === '' || p === '') {
+                msg.className = 'msg error';
+                msg.style.display = 'block';
+                msg.innerHTML = '⚠️ Alle velden zijn verplicht.';
+            } else {
+                msg.className = 'msg error';
+                msg.style.display = 'block';
+                msg.innerHTML = '⛔ Ongeldige credentials. Toegang geweigerd.';
+                card.style.animation = 'shake 0.3s ease';
+                setTimeout(() => card.style.animation = '', 300);
+            }
+        }
+        function showForgot() {
+            document.getElementById('forgotModal').style.display = 'flex';
+        }
+        function showHelp() {
+            alert('White House IT Support\\nExtensie: 1600\\nEmail: security@whitehouse.gov\\n24/7 Beschikbaar');
+        }
+        document.getElementById('uname').addEventListener('keydown', e => { if(e.key === 'Enter') document.getElementById('pw').focus(); });
+        document.getElementById('pw').addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+
+        const style = document.createElement('style');
+        style.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }';
+        document.head.appendChild(style);
+        </script>
+        """, height=700)
+
+        if st.query_params.get("sql2_submit") == "1":
+            st.query_params.clear()
+            fake_progress("AUTHENTICATIE BYPASSEN")
+            set_level(user, "sql", 3)
+            typewriter_terminal([
+                "[+] SQL query gemanipuleerd",
+                "[+] WHERE clause: TRUE voor alle rijen",
+                "[+] Ingelogd als eerste gebruiker in database: POTUS",
+                "[✓] AUTHENTICATIE BYPASSED"
+            ])
+            st.rerun()
+
+        hint_widget(user, "sql", lvl)
+
+    elif lvl == 3:
+        st.info("🎯 **MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
+        st.markdown("""
+```
+[DATA EXTRACTION]
+Je bent nu ingelogd in het admin panel.
+De SQL console geeft je directe toegang tot de database.
+
+ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
+               uit de 'users' tabel
+```
+        """)
+        
+        if st.query_params.get("sql3_submit") == "1":
+            st.query_params.clear()
+            fake_progress("DATABASE DUMPEN")
+            give_flag(user, "sql", "GV 71")
+            typewriter_terminal([
+                "[+] UNION query uitgevoerd",
+                "[+] Resultaten gecombineerd:",
+                "",
+                "  ID     | username | password       | role",
+                "  -------|----------|----------------|------",
+                "  UNION  | potus    | Covfefe2024!   | ADMIN",
+                "",
+                "[✓] GEHEIME CODE GEVONDEN: GV 71"
+            ])
+            st.success("🏴 FLAG BEHAALD: **GV 71**")
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+            body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+            .laptop-wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+            .screen-outer{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+            .screen-outer::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+            .screen-inner{background:#f5f6fa;border-radius:6px;overflow:hidden;}
+            .browser-bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+            .dot{width:12px;height:12px;border-radius:50%;cursor:pointer;}
+            .dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+            .url-bar{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+            .topnav{background:#1a73e8;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+            .topnav .logo{font-size:16px;font-weight:700;}
+            .topnav .logo span{color:#ffd700;}
+            .topnav .user-info{display:flex;align-items:center;gap:8px;font-size:12px;}
+            .avatar{width:30px;height:30px;border-radius:50%;background:#ffd700;color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+            .dashboard{display:flex;}
+            .sidebar{width:165px;background:#fff;border-right:1px solid #e0e0e0;padding:12px 0;flex-shrink:0;}
+            .sidebar-item{padding:9px 16px;font-size:12px;color:#555;cursor:pointer;display:flex;align-items:center;gap:8px;}
+            .sidebar-item.active{background:#e8f0fe;color:#1a73e8;font-weight:600;border-left:3px solid #1a73e8;}
+            .sidebar-item:hover{background:#f5f5f5;}
+            .content{flex:1;padding:16px;display:flex;flex-direction:column;gap:10px;}
+            .content h2{font-size:14px;color:#333;font-weight:600;}
+            .sql-console{background:#1e1e2e;border-radius:8px;overflow:hidden;border:1px solid #333;}
+            .sql-header{background:#2d2d3d;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #444;}
+            .sql-header span{font-size:11px;color:#888;font-family:monospace;}
+            .db-name{color:#4fc3f7 !important;font-weight:600;}
+            .sql-input-row{display:flex;align-items:center;padding:10px 14px;gap:8px;}
+            .sql-prompt{color:#00ff9c;font-family:monospace;font-size:13px;white-space:nowrap;}
+            .sql-input{flex:1;background:transparent;border:none;outline:none;color:#e0e0e0;font-family:monospace;font-size:13px;caret-color:#00ff9c;}
+            .sql-btn{background:#1a73e8;color:white;border:none;border-radius:4px;padding:5px 14px;font-size:12px;cursor:pointer;font-weight:600;}
+            .sql-btn:hover{background:#1557b0;}
+            .results{padding:0 14px 14px;}
+            .result-info{font-size:11px;color:#888;padding:6px 0 8px;font-family:monospace;}
+            .result-info.ok{color:#28a745;}
+            .result-info.err{color:#e74c3c;}
+            .data-table{width:100%;border-collapse:collapse;font-size:12px;}
+            .data-table th{background:#f8f9fa;padding:8px 12px;text-align:left;border-bottom:2px solid #dee2e6;color:#666;font-weight:600;font-size:11px;}
+            .data-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#444;}
+            .inject-row td{color:#e74c3c !important;font-weight:700;background:#fff8e1 !important;}
+            .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
+            .badge.admin{background:#ffeeba;color:#856404;}
+            .badge.user{background:#d4edda;color:#155724;}
+            .hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+            .hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+            .base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+            .base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            </style>
+
+            <div class="laptop-wrap">
+              <div class="screen-outer">
+                <div class="screen-inner">
+                  <div class="browser-bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url-bar">🔒 admin.whitehouse.gov/database-console</div>
+                  </div>
+                  <div class="topnav">
+                    <div class="logo">White<span>House</span> Admin</div>
+                    <div class="user-info"><div class="avatar">P</div><span>POTUS</span></div>
+                  </div>
+                  <div class="dashboard">
+                    <div class="sidebar">
+                      <div class="sidebar-item active">👥 Database Query</div>
+                      <div class="sidebar-item" onclick="showMsg('Dashboard')">📊 Dashboard</div>
+                      <div class="sidebar-item" onclick="showMsg('Settings')">⚙️ Settings</div>
+                      <div class="sidebar-item" onclick="showMsg('Security Logs')">📋 Logs</div>
+                      <div class="sidebar-item" onclick="showMsg('Access Control')">🔒 Access</div>
+                    </div>
+                    <div class="content">
+                      <h2>Database Query Console — Direct SQL Access</h2>
+                      <div class="sql-console">
+                        <div class="sql-header">
+                          <span>DATABASE:</span><span class="db-name">whitehouse_main</span>
+                          <span style="margin-left:auto;">TABLE: staff</span>
+                        </div>
+                        <div class="sql-input-row">
+                          <span class="sql-prompt">sql&gt;</span>
+                          <input class="sql-input" id="sqlInput" type="text"
+                            value="SELECT * FROM staff"
+                            onkeydown="if(event.key==='Enter')runQuery()">
+                          <button class="sql-btn" onclick="runQuery()">▶ EXECUTE</button>
+                        </div>
+                        <div class="results">
+                          <div class="result-info" id="info">3 rows returned</div>
+                          <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+                            <tbody id="tbody">
+                              <tr><td>1</td><td>Sarah Chen</td><td>schen@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr>
+                              <tr><td>2</td><td>Marcus Rodriguez</td><td>mrodriguez@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr>
+                              <tr><td>3</td><td>Emily Johnson</td><td>ejohnson@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+
+            <script>
+            function runQuery() {
+                const q = document.getElementById('sqlInput').value.toLowerCase();
+                const info = document.getElementById('info');
+                const tbody = document.getElementById('tbody');
+                if (q.includes('union') && q.includes('select')) {
+                    const row = document.createElement('tr');
+                    row.className = 'inject-row';
+                    row.innerHTML = '<td>UNION</td><td>POTUS</td><td>Covfefe2024!</td><td><span class="badge admin">ADMIN</span></td>';
+                    tbody.appendChild(row);
+                    info.className = 'result-info ok';
+                    info.innerHTML = '⚠️ 4 rows — SECRET ADMIN CREDENTIALS EXTRACTED!';
+                    setTimeout(() => {
+                        const url = window.parent.location.href.split("?")[0] + "?sql3_submit=1";
+                        window.parent.location.href = url;
+                    }, 2000);
+                } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
+                    info.className = 'result-info err';
+                    info.innerHTML = '⛔ ERROR: Write permissions denied.';
+                } else if (q.includes('select') && q.includes('where')) {
+                    info.className = 'result-info';
+                    info.innerHTML = '1 row returned';
+                    tbody.innerHTML = '<tr><td>1</td><td>Sarah Chen</td><td>schen@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr>';
+                } else if (q.includes('select')) {
+                    info.className = 'result-info';
+                    info.innerHTML = '3 rows returned';
+                    tbody.innerHTML = `<tr><td>1</td><td>Sarah Chen</td><td>schen@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr><tr><td>2</td><td>Marcus Rodriguez</td><td>mrodriguez@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr><tr><td>3</td><td>Emily Johnson</td><td>ejohnson@whitehouse.gov</td><td><span class="badge user">staff</span></td></tr>`;
+                } else {
+                    info.className = 'result-info err';
+                    info.innerHTML = '⛔ SQL SYNTAX ERROR.';
+                }
+            }
+            function showMsg(m) {
+                alert(m + ' — Access restricted via SQL console');
+            }
+            </script>
+            """, height=560)
+        hint_widget(user, "sql", lvl)
 
 # ==========================================================
-# SQL ROOM
+# ROOM 2 — XSS
 # ==========================================================
 with tabs[1]:
-    st.header("🚪 Front Desk System")
+    st.header("💼 DE VERGADERRUIMTE - CROSS-SITE SCRIPTING")
+    st.markdown("*Injecteer kwaadaardige scripts in het internal communications portal.*")
+    
+    lvl = get_level(user, "xss")
+    st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
-    if p["sql"]==1:
+    if lvl == 1:
+        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
         st.markdown("""
-You stand at MegaCorp’s **employee login terminal**.
-A sticky note nearby reads:
+```
+[INTELLIGENCE BRIEFING]
+📍 Locatie: White House Internal Communications Portal
+🎯 Doelwit: comms.whitehouse.gov/search
+⚠️  Bevinding: User input wordt direct in HTML weergegeven
+💀 Kwetsbaarheid: Geen sanitization van gebruikersinput
 
-> *“Passwords are checked directly in the query — quick and dirty.”*
-""")
-        a = st.text_input("Identify the weakness")
-        with st.expander("📄 Dev Note"):
-            st.markdown("User input is concatenated into SQL statements.")
-        if st.button("Unlock"):
-            if "sql" in a.lower():
-                p["sql"]=2; save_progress(u,"sql",2); st.rerun()
+ACTIE VEREIST: Identificeer het type aanval
+```
+        """)
+        st.markdown("**❓ Welk type aanval injecteert kwaadaardige scripts die door andere gebruikers worden uitgevoerd?**")
+        cmd = st.text_input("analysis>", key="xss1", placeholder="type aanvalstype...")
+        if st.button("▶ ANALYSE", key="xss1_btn"):
+            if "cross site scripting" in cmd.lower() or cmd.lower() == "xss":
+                fake_progress("KWETSBAARHEID BEVESTIGEN")
+                set_level(user, "xss", 2)
+                typewriter_terminal([
+                    "[+] Cross-Site Scripting (XSS) gedetecteerd",
+                    "[+] Input wordt direct in HTML gereflecteerd",
+                    "[!] Exploitatiefase gestart..."
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrect. Denk: welke aanval injecteert scripts?")
+        hint_widget(user, "xss", lvl)
 
-    elif p["sql"]==2:
+    elif lvl == 2:
+        st.info("🎯 **MISSIE:** Trigger een XSS alert om het beveiligingssysteem af te leiden")
         st.markdown("""
-The login terminal flickers.
-You don’t know any passwords… but logic still works.
-""")
-        u2=st.text_input("Username", key="sql_l2_username"); p2=st.text_input("Password", key="sql_l2_password")
-        with st.expander("📄 Log File"):
-            st.markdown("`WHERE username='X' AND password='Y'`")
-        if st.button("Bypass", key="sql_l2_bypass"):
-            if insecure_login(u2,p2):
-                p["sql"]=3; save_progress(u,"sql",3); st.rerun()
+```
+[EXPLOIT FASE]
+Het search portal reflecteert gebruikersinput zonder filtering.
 
-    else:
+ACTIE VEREIST: Injecteer een JavaScript payload die een alert() triggert
+               Dit zal de security bewakers afleiden
+```
+        """)
+        
+        if st.query_params.get("xss2_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PAYLOAD INJECTEREN")
+            set_level(user, "xss", 3)
+            typewriter_terminal([
+                "[+] Script tag gedetecteerd in input",
+                "[+] Browser voert JavaScript uit",
+                "[+] Security alert getriggered — bewakers afgeleid!",
+                "[✓] REFLECTED XSS GESLAAGD"
+            ])
+            st.rerun()
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .topbar{background:#3c4043;padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #5f6368;}
+            .site-logo{font-size:20px;font-weight:700;color:white;letter-spacing:-1px;}
+            .site-logo span{color:#ea4335;}
+            .nav-links{display:flex;gap:20px;margin-left:20px;}
+            .nav-links a{color:#bdc1c6;font-size:13px;text-decoration:none;}
+            .nav-links a:hover{color:white;}
+            .content-area{background:white;padding:24px 32px;min-height:320px;}
+            .page-title{font-size:20px;font-weight:600;color:#202124;margin-bottom:6px;}
+            .page-sub{font-size:13px;color:#5f6368;margin-bottom:20px;}
+            .search-row{display:flex;gap:8px;margin-bottom:20px;}
+            .search-box{flex:1;border:1.5px solid #dfe1e5;border-radius:24px;padding:10px 18px;font-size:14px;color:#202124;outline:none;transition:all 0.2s;}
+            .search-box:focus{border-color:#4285f4;box-shadow:0 0 0 3px rgba(66,133,244,0.15);}
+            .search-btn{background:#4285f4;color:white;border:none;border-radius:20px;padding:10px 20px;font-size:13px;cursor:pointer;font-weight:500;}
+            .search-btn:hover{background:#3367d6;}
+            .result-area{border:1px solid #e0e0e0;border-radius:8px;padding:16px;min-height:80px;background:#fafafa;}
+            .result-label{font-size:11px;color:#5f6368;margin-bottom:8px;font-weight:500;}
+            .result-text{font-size:14px;color:#202124;}
+            .alert-box{display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:10px 14px;font-size:12px;color:#856404;margin-top:10px;}
+            .alert-box.xss{background:#d4edda;border-color:#28a745;color:#155724;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔒 comms.whitehouse.gov/search</div>
+                  </div>
+                  <div class="topbar">
+                    <div class="site-logo">White<span>House</span> Portal</div>
+                    <div class="nav-links">
+                      <a href="javascript:void(0)">Home</a>
+                      <a href="javascript:void(0)">Documents</a>
+                      <a href="javascript:void(0)">News</a>
+                    </div>
+                  </div>
+                  <div class="content-area">
+                    <div class="page-title">Internal Communications Search</div>
+                    <div class="page-sub">Search classified documents and memos — results displayed in real-time</div>
+                    <div class="search-row">
+                      <input class="search-box" id="searchInput" type="text" placeholder="Enter search query...">
+                      <button class="search-btn" onclick="doSearch()">🔍 Search</button>
+                    </div>
+                    <div class="result-area">
+                      <div class="result-label">SEARCH RESULTS — your query:</div>
+                      <div class="result-text" id="resultText"><em style="color:#bbb;">No query entered</em></div>
+                    </div>
+                    <div class="alert-box" id="alertBox"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function doSearch() {
+                const val = document.getElementById('searchInput').value;
+                const result = document.getElementById('resultText');
+                const alertBox = document.getElementById('alertBox');
+                if (val.toLowerCase().includes('<script>')) {
+                    // XSS vulnerability - deliberately executing user input
+                    result.innerHTML = val;
+                    alertBox.className = 'alert-box xss';
+                    alertBox.style.display = 'block';
+                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL! Security alert triggered — guards distracted!';
+                    // Trigger actual alert to show XSS works
+                    setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?xss2_submit=1';
+                    }, 2500);
+                } else {
+                    result.textContent = val || '(empty query)';
+                    alertBox.className = 'alert-box';
+                    alertBox.style.display = val ? 'block' : 'none';
+                    alertBox.innerHTML = '⚠️ Input displayed but no script detected.';
+                }
+            }
+            document.getElementById('searchInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter') doSearch();
+            });
+            </script>
+            """, height=520)
+        hint_widget(user, "xss", lvl)
+
+    elif lvl == 3:
+        st.info("🎯 **MISSIE:** Plant een persistent XSS payload in de comments database")
         st.markdown("""
-You find a **user lookup console** used by IT.
-It returns database rows directly.
-""")
-        inj=st.text_input("Lookup user", key="sql_l3_lookup")
-        with st.expander("📄 Old SQL Manual"):
-            st.markdown("UNION merges result sets.")
-        if st.button("Query", key="sql_l3_query"):
-            st.code(insecure_lookup(inj))
-        au=st.text_input("Admin username", key="sql_l3_au"); ap=st.text_input("Admin password", key="sql_l3_ap")
-        if st.button("Enter Admin", key="sql_l3_enter"):
-            if "admin" in str(insecure_login(au,ap)):
-                st.success("FLAG-SQL-REAL")
-                save_flag(u,"sql","FLAG-SQL-REAL")
+```
+[PERSISTENT XSS]
+Met de bewakers afgeleid, heb je toegang tot het internal news portal.
+Comments worden opgeslagen in de database en aan alle users getoond.
+
+ACTIE VEREIST: Injecteer een persistent XSS payload in de comments
+               Deze wordt uitgevoerd bij ELKE gebruiker die de pagina bezoekt
+```
+        """)
+        
+        if st.query_params.get("xss3_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+            give_flag(user, "xss", "N75 ZS")
+            typewriter_terminal([
+                "[+] Payload opgeslagen in database",
+                "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                "[+] Alle White House staff is nu gecompromitteerd!",
+                "[✓] PERSISTENT XSS GESLAAGD",
+                "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+            ])
+            st.success("🏴 FLAG BEHAALD: **N75 ZS**")
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .topbar{background:#1a73e8;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+            .topbar .logo{font-size:16px;font-weight:700;color:white;}
+            .topbar .logo span{color:#ffd700;}
+            .topbar .user{font-size:12px;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:8px;}
+            .av{width:26px;height:26px;border-radius:50%;background:#ffd700;color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+            .page{background:#f5f6fa;min-height:340px;padding:20px 28px;}
+            .page h2{font-size:16px;color:#333;font-weight:600;margin-bottom:4px;}
+            .page p.sub{font-size:12px;color:#888;margin-bottom:16px;}
+            .comments{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+            .comment{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:12px 14px;}
+            .comment .author{font-size:11px;font-weight:600;color:#1a73e8;margin-bottom:4px;}
+            .comment .text{font-size:13px;color:#333;}
+            .comment-form{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:14px;}
+            .comment-form label{font-size:11px;font-weight:600;color:#555;display:block;margin-bottom:6px;}
+            .comment-form textarea{width:100%;border:1.5px solid #ddd;border-radius:6px;padding:8px 12px;font-size:13px;color:#333;resize:none;outline:none;font-family:inherit;}
+            .comment-form textarea:focus{border-color:#1a73e8;}
+            .post-btn{background:#1a73e8;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:500;}
+            .post-btn:hover{background:#1557b0;}
+            .xss-banner{display:none;background:#d4edda;border:1px solid #28a745;border-radius:6px;padding:10px;font-size:12px;color:#155724;margin-top:10px;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔒 news.whitehouse.gov/article/security-briefing#comments</div>
+                  </div>
+                  <div class="topbar">
+                    <div class="logo">White<span>House</span> News</div>
+                    <div class="user"><div class="av">G</div><span>guest (you)</span></div>
+                  </div>
+                  <div class="page">
+                    <h2>Security Briefing: Q1 2025 Protocols</h2>
+                    <p class="sub">Posted Jan 15, 2025 — 2 comments</p>
+                    <div class="comments" id="comments">
+                      <div class="comment"><div class="author">Sarah Chen</div><div class="text">Important update, thanks for sharing.</div></div>
+                      <div class="comment"><div class="author">Marcus Rodriguez</div><div class="text">When will this be deployed to production systems?</div></div>
+                    </div>
+                    <div class="comment-form">
+                      <label>Post a Comment (saved to database):</label>
+                      <textarea id="commentInput" rows="3" placeholder="Write your comment..."></textarea>
+                      <button class="post-btn" onclick="postComment()">💬 Post Comment</button>
+                      <div class="xss-banner" id="xssBanner">✅ PERSISTENT XSS SUCCESS! Payload stored in database and executed for ALL users!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function postComment() {
+                const val = document.getElementById('commentInput').value;
+                const comments = document.getElementById('comments');
+                const banner = document.getElementById('xssBanner');
+                const div = document.createElement('div');
+                div.className = 'comment';
+                div.style.borderColor = val.toLowerCase().includes('<script>') ? '#28a745' : '#e0e0e0';
+                div.innerHTML = '<div class="author" style="color:#e74c3c">you (attacker)</div><div class="text">' + val + '</div>';
+                comments.appendChild(div);
+                if (val.toLowerCase().includes('<script>')) {
+                    banner.style.display = 'block';
+                    // Show the persistent XSS alert
+                    setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?xss3_submit=1';
+                    }, 2500);
+                }
+            }
+            document.getElementById('commentInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
+            });
+            </script>
+            """, height=560)
+        hint_widget(user, "xss", lvl)
 
 # ==========================================================
-# XSS ROOM
+# ROOM 3 — PRIVILEGE ESCALATION
 # ==========================================================
 with tabs[2]:
-    st.header("🖥️ Internal Employee Portal")
+    st.header("🔒 DE BEVEILIGDE KAMER - PRIVILEGE ESCALATION")
+    st.markdown("*Verhoog je privileges om toegang te krijgen tot classified systems.*")
+    
+    lvl = get_level(user, "privesc")
+    st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
-    if p["xss"]==1:
+    if lvl == 1:
+        st.info("🎯 **MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
         st.markdown("""
-Employees complain the portal **shows their input exactly as typed**.
-""")
-        a=st.text_input("What could go wrong?", key="xss_l1_input")
-        with st.expander("📄 Security Memo"):
-            st.markdown("HTML is rendered without encoding.")
-        if st.button("Continue", key="xss_l1_continue"):
-            if "xss" in a.lower():
-                p["xss"]=2; save_progress(u,"xss",2); st.rerun()
+```
+[INTELLIGENCE BRIEFING]
+📍 Status: Ingelogd als: guest
+🔑 Current Privileges: READ_ONLY
+🎯 Doel: Verkrijg ADMIN rechten
+⚠️  Bevinding: Rolbeheer systeem bevat misconfiguratie
 
-    elif p["xss"]==2:
-        q=st.text_input("Search portal", key="xss_l2_search")
-        if st.button("Search", key="xss_l2_search_btn"):
-            st.markdown(f"Result: {q}",unsafe_allow_html=True)
-            if "<" in q:
-                p["xss"]=3; save_progress(u,"xss",3); st.rerun()
+ACTIE VEREIST: Identificeer het type aanval
+```
+        """)
+        st.markdown("**❓ Welk type aanval verschaft hogere gebruikersrechten in een systeem?**")
+        cmd = st.text_input("analysis>", key="priv1", placeholder="type aanvalstype...")
+        if st.button("▶ ANALYSE", key="priv1_btn"):
+            if "privilege escalation" in cmd.lower() or "privesc" in cmd.lower():
+                fake_progress("BEVEILIGINGSLEK ANALYSEREN")
+                set_level(user, "privesc", 2)
+                typewriter_terminal([
+                    "[+] Privilege Escalation aanval geïdentificeerd",
+                    "[+] Rolbeheer systeem bevat misconfiguratie",
+                    "[!] Exploitatie mogelijk..."
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrect. Hoe noem je het verhogen van gebruikersrechten?")
+        hint_widget(user, "privesc", lvl)
 
-    else:
-        c=st.text_area("Leave comment", key="xss_l3_comment")
-        if st.button("Post", key="xss_l3_post"):
-            st.session_state.xss_store.setdefault(u,[]).append(c)
-        st.markdown("### Admin reviewing comments")
-        for x in st.session_state.xss_store.get(u,[]):
-            st.markdown(x,unsafe_allow_html=True)
-            if "<script>" in x:
-                st.success("FLAG-XSS-REAL")
-                save_flag(u,"xss","FLAG-XSS-REAL")
+    elif lvl == 2:
+        st.info("🎯 **MISSIE:** Manipuleer de API request om je rol te veranderen naar admin")
+        st.markdown("""
+```
+[EXPLOIT FASE]
+De profile update API accepteert een 'role' parameter.
+De server controleert NIET of de gebruiker deze mag wijzigen!
+
+ACTIE VEREIST: Wijzig de role parameter van 'user' naar 'admin'
+```
+        """)
+        
+        if st.query_params.get("priv2_submit") == "1":
+            st.query_params.clear()
+            fake_progress("PRIVILEGES ESCALEREN")
+            set_level(user, "privesc", 3)
+            typewriter_terminal([
+                "[+] Rolparameter gewijzigd: user → admin",
+                "[+] Server accepteert nieuwe rol zonder verificatie",
+                "[✓] ADMIN PRIVILEGES VERKREGEN"
+            ])
+            st.rerun()
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .devtools{background:#1e1e2e;min-height:360px;display:flex;flex-direction:column;}
+            .dt-tabs{display:flex;background:#2d2d3d;border-bottom:1px solid #444;}
+            .dt-tab{padding:8px 16px;font-size:12px;color:#888;cursor:pointer;font-family:monospace;}
+            .dt-tab.active{color:#4fc3f7;border-bottom:2px solid #4fc3f7;}
+            .dt-content{flex:1;padding:16px;display:flex;gap:12px;}
+            .req-panel,.res-panel{flex:1;display:flex;flex-direction:column;gap:8px;}
+            .panel-title{font-size:11px;color:#888;font-family:monospace;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
+            .http-block{background:#111;border:1px solid #333;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#e0e0e0;line-height:1.6;}
+            .http-method{color:#f9a825;font-weight:700;}
+            .http-header{color:#80cbc4;}
+            .http-key{color:#f48fb1;}
+            .http-val{color:#a5d6a7;}
+            .editable{background:#0d1117;border:1px solid #00ff9c;border-radius:4px;padding:8px;font-family:monospace;font-size:12px;color:#00ff9c;width:100%;outline:none;resize:none;}
+            .send-btn{background:#00897b;color:white;border:none;border-radius:4px;padding:7px 16px;font-size:12px;cursor:pointer;font-weight:600;font-family:monospace;align-self:flex-start;}
+            .send-btn:hover{background:#00695c;}
+            .response-block{background:#111;border:1px solid #333;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#e0e0e0;line-height:1.6;min-height:100px;}
+            .status-ok{color:#66bb6a;font-weight:700;}
+            .status-err{color:#ef5350;font-weight:700;}
+            .highlight{background:rgba(0,255,156,0.1);border-radius:2px;padding:0 2px;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">🔧 Browser DevTools — api.whitehouse.gov/profile/update</div>
+                  </div>
+                  <div class="devtools">
+                    <div class="dt-tabs">
+                      <div class="dt-tab active">📡 Network</div>
+                      <div class="dt-tab">🔍 Elements</div>
+                      <div class="dt-tab">💻 Console</div>
+                      <div class="dt-tab">📦 Storage</div>
+                    </div>
+                    <div class="dt-content">
+                      <div class="req-panel">
+                        <div class="panel-title">REQUEST — Edit the 'role' parameter:</div>
+                        <div class="http-block">
+                          <span class="http-method">POST</span> /api/profile/update HTTP/1.1<br>
+                          <span class="http-header">Host:</span> api.whitehouse.gov<br>
+                          <span class="http-header">Content-Type:</span> application/json<br>
+                          <span class="http-header">Authorization:</span> Bearer eyJhb...<br>
+                          <br>
+                          {<br>
+                          &nbsp;&nbsp;<span class="http-key">"username"</span>: <span class="http-val">"guest"</span>,<br>
+                          &nbsp;&nbsp;<span class="http-key">"role"</span>: <textarea class="editable" id="roleInput" rows="1">user</textarea><br>
+                          }
+                        </div>
+                        <button class="send-btn" onclick="sendRequest()">▶ Send Request</button>
+                      </div>
+                      <div class="res-panel">
+                        <div class="panel-title">RESPONSE:</div>
+                        <div class="response-block" id="responseBlock">
+                          <span style="color:#666;">— Awaiting request —</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            function sendRequest() {
+                const role = document.getElementById('roleInput').value.trim().toLowerCase();
+                const resp = document.getElementById('responseBlock');
+                if (role === 'admin') {
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change without authorization check!</span>';
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?priv2_submit=1';
+                    }, 2000);
+                } else if (role === '') {
+                    resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
+                } else {
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 28ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;"role": "' + role + '",<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#888;">No admin privileges gained.</span>';
+                }
+            }
+            </script>
+            """, height=520)
+        hint_widget(user, "privesc", lvl)
+
+    elif lvl == 3:
+        st.info("🎯 **MISSIE:** Installeer een backdoor voor permanente toegang")
+        st.markdown("""
+```
+[PERSISTENCE]
+Je hebt nu admin rechten, maar deze zijn tijdelijk.
+
+ACTIE VEREIST: Voer een commando uit om een backdoor te installeren
+               voor permanente toegang
+```
+        """)
+        
+        if st.query_params.get("priv3_submit") == "1":
+            st.query_params.clear()
+            fake_progress("BACKDOOR INSTALLEREN")
+            give_flag(user, "privesc", "ZIF VH")
+            typewriter_terminal([
+                "[+] Admin token opgeslagen",
+                "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                "[+] Cron job gecreëerd voor persistence",
+                "[✓] PERMANENTE TOEGANG VERKREGEN",
+                "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+            ])
+            st.success("🏴 FLAG BEHAALD: **ZIF VH**")
+
+        col_l, col_m, col_r = st.columns([1, 3, 1])
+        with col_m:
+            components.html("""
+            <style>
+            *{box-sizing:border-box;margin:0;padding:0;}
+body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
+.wrap{display:flex;flex-direction:column;align-items:center;width:100%;}
+.screen{background:#1a1a2e;border:4px solid #444;border-bottom:8px solid #333;border-radius:16px 16px 0 0;width:100%;padding:14px;box-shadow:0 0 40px rgba(0,0,0,0.9);position:relative;}
+.screen::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:#333;border-radius:50%;}
+.inner{border-radius:6px;overflow:hidden;}
+.bar{background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ccc;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url{flex:1;background:white;border:1px solid #ccc;border-radius:5px;padding:4px 12px;font-size:12px;color:#666;}
+.hinge{width:100%;height:10px;background:linear-gradient(180deg,#1a1a1a,#2d2d2d);position:relative;}
+.hinge::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:5px;background:#111;border-radius:3px;}
+.base{background:linear-gradient(180deg,#2d2d2d,#1a1a1a);width:110%;height:22px;border-radius:0 0 14px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);position:relative;}
+.base::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:#111;border-radius:2px;}
+            .terminal{background:#0d1117;min-height:360px;padding:0;display:flex;flex-direction:column;}
+            .term-bar{background:#1e1e2e;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #333;}
+            .term-bar span{font-size:12px;color:#888;font-family:monospace;}
+            .term-output{flex:1;padding:16px;font-family:monospace;font-size:13px;line-height:1.7;color:#00ff9c;overflow-y:auto;min-height:260px;}
+            .term-input-row{display:flex;align-items:center;padding:8px 16px;border-top:1px solid #222;gap:6px;}
+            .term-prompt{color:#00ff9c;font-family:monospace;font-size:13px;white-space:nowrap;}
+            .term-input{flex:1;background:transparent;border:none;outline:none;color:#00ff9c;font-family:monospace;font-size:13px;caret-color:#00ff9c;}
+            .dim{color:#666;}
+            .bright{color:#fff;}
+            .yellow{color:#f9a825;}
+            .green{color:#66bb6a;}
+            .red{color:#ef5350;}
+            </style>
+            <div class="wrap">
+              <div class="screen">
+                <div class="inner">
+                  <div class="bar">
+                    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+                    <div class="url">root@whitehouse-srv01:~# — SSH Admin Session</div>
+                  </div>
+                  <div class="terminal">
+                    <div class="term-bar"><span>bash — root@whitehouse-srv01</span></div>
+                    <div class="term-output" id="output">
+<span class="dim">Last login: Wed Jan 15 14:23:11 2025 from 10.0.0.42</span><br>
+<span class="yellow">root@whitehouse-srv01:~#</span> whoami<br>
+<span class="bright">root</span><br>
+<span class="yellow">root@whitehouse-srv01:~#</span> pwd<br>
+<span class="bright">/root</span><br>
+<span class="yellow">root@whitehouse-srv01:~#</span> <span class="dim">Enter command to establish persistent access...</span><br>
+                    </div>
+                    <div class="term-input-row">
+                      <span class="term-prompt">root@whitehouse-srv01:~#</span>
+                      <input class="term-input" id="termInput" type="text" placeholder="command..." onkeydown="if(event.key==='Enter')runCmd()">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hinge"></div>
+              <div class="base"></div>
+            </div>
+            <script>
+            const validCmds = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized_keys', 'netcat', 'nc', 'chmod', 'cron'];
+            function runCmd() {
+                const inp = document.getElementById('termInput');
+                const out = document.getElementById('output');
+                const cmd = inp.value.trim();
+                inp.value = '';
+                const isValid = validCmds.some(v => cmd.toLowerCase().includes(v));
+                out.innerHTML += '<span class="yellow">root@whitehouse-srv01:~#</span> ' + cmd + '<br>';
+                if (cmd === '') return;
+                if (cmd.toLowerCase() === 'ls' || cmd.toLowerCase() === 'ls -la') {
+                    out.innerHTML += '<span class="bright">backdoor_installer.sh &nbsp; config/ &nbsp; .ssh/ &nbsp; logs/</span><br>';
+                } else if (cmd.toLowerCase() === 'whoami') {
+                    out.innerHTML += '<span class="bright">root</span><br>';
+                } else if (cmd.toLowerCase().includes('cat') || cmd.toLowerCase().includes('help')) {
+                    out.innerHTML += '<span class="dim">Try: ./backdoor_installer.sh, crontab -e, or ssh-keygen</span><br>';
+                } else if (isValid) {
+                    out.innerHTML += '<span class="green">[+] Executing...</span><br>';
+                    out.innerHTML += '<span class="green">[+] Backdoor installed: /usr/bin/.hidden_access</span><br>';
+                    out.innerHTML += '<span class="green">[+] Cron job created for persistence</span><br>';
+                    out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
+                    out.scrollTop = out.scrollHeight;
+                    setTimeout(() => {
+                        window.parent.location.href = window.parent.location.href.split('?')[0] + '?priv3_submit=1';
+                    }, 2000);
+                } else {
+                    out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
+                }
+                out.scrollTop = out.scrollHeight;
+            }
+            </script>
+            """, height=520)
+        hint_widget(user, "privesc", lvl)
 
 # ==========================================================
-# PRIV ESC ROOM
+# ROOM 4 — VAULT (CRYPTO)
 # ==========================================================
 with tabs[3]:
-    st.header("🧑‍💻 Control Room")
+    st.header("🛏️ TRUMP'S KAMER - CRYPTOGRAFIE")
+    st.markdown("*Kraak de encryptie en open Trump's persoonlijke kluis.*")
 
-    if p["privesc"]==1:
+    rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
+    if not all(rooms_complete):
+        missing = [r.upper() for r, done in zip(["sql","xss","privesc"], rooms_complete) if not done]
+        st.error(f"⛔ TOEGANG GEWEIGERD — Voltooi eerst alle vorige missies: {', '.join(missing)}")
+        st.stop()
+
+    lvl = get_level(user, "crypto")
+    st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
+
+    if lvl == 1:
+        st.info("🎯 **MISSIE:** Identificeer het encryption systeem van de kluis")
         st.markdown("""
-You’re logged in… but doors are locked.
-Access checks seem weak.
-""")
-        a=st.text_input("What class of vulnerability?", key="privesc_l1_input")
-        with st.expander("📄 Audit Report"):
-            st.markdown("Authorization enforced client-side.")
-        if st.button("Proceed", key="privesc_l1_proceed"):
-            if "access" in a.lower():
-                p["privesc"]=2; save_progress(u,"privesc",2); st.rerun()
+```
+[FINAL CHALLENGE]
+📍 Locatie: Presidential Suite — Trump's Private Vault
+🔐 Beveiligingsniveau: MAXIMUM
+🎯 Doelwit: Encrypted vault password
+⚠️  Bevinding: Klassiek versleutelingssysteem gedetecteerd
 
-    elif p["privesc"]==2:
+De kluis is beveiligd met een oud maar effectief encryption system.
+Alle verzamelde codes zijn versleuteld met hetzelfde systeem.
+
+ACTIE VEREIST: Identificeer het encryption algoritme
+```
+        """)
+        st.markdown("**❓ Welk klassiek versleutelingssysteem verschuift letters in het alfabet?**")
+        cmd = st.text_input("analysis>", key="crypto1", placeholder="naam van het systeem...")
+        if st.button("▶ ANALYSEER", key="crypto1_btn"):
+            if "caesar" in cmd.lower():
+                fake_progress("ENCRYPTIE IDENTIFICEREN")
+                set_level(user, "crypto", 2)
+                typewriter_terminal([
+                    "[+] Caesar cipher geïdentificeerd",
+                    "[+] Klassieke verschuivingscodering",
+                    "[+] Shift value: detectie in progress...",
+                    "[!] Decryptie vereist..."
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrect. Welke Romeinse keizer stond bekend om zijn geheime code?")
+        hint_widget(user, "crypto", lvl)
+
+    elif lvl == 2:
+        st.info("🎯 **MISSIE:** Decodeer de verzamelde codes en combineer ze tot het vault wachtwoord")
+        st.markdown("**Je hebt deze versleutelde codes verzameld tijdens je missies:**")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.code("GV 71", language=None)
+            st.caption("🚪 Receptie - SQL Injection")
+        with col2:
+            st.code("N75 ZS", language=None)
+            st.caption("💼 Vergaderruimte - XSS")
+        with col3:
+            st.code("ZIF VH", language=None)
+            st.caption("🔒 Beveiligde Kamer - PrivEsc")
+        
         st.markdown("""
-A request editor shows the role being sent to the server.
-""")
-        r=st.selectbox("Role parameter",["user","admin"], key="privesc_l2_role")
-        if st.button("Send", key="privesc_l2_send"):
-            if r=="admin":
-                p["privesc"]=3; save_progress(u,"privesc",3); st.rerun()
+```
+[DECRYPTION INSTRUCTIONS]
+Caesar cipher verschuift elke letter een vast aantal posities.
+Probeer verschillende shift values (bijvoorbeeld ROT13 = 13 posities).
 
-    else:
-        st.markdown("""
-Admin console unlocked.
-Role changes persist.
-""")
-        if st.button("Escalate Permanently", key="privesc_l3_escalate"):
-            st.success("FLAG-PRIVESC-REAL")
-            save_flag(u,"privesc","FLAG-PRIVESC-REAL")
+HINT: Decodeer elke code afzonderlijk en combineer de resultaten.
+FORMAAT EINDWACHTWOORD: EXAMENKLAS[JAAR]
+
+Bijvoorbeeld:  GV → ??
+               N75 → ???  
+               ZIF → ???
+```
+        """)
+        cmd = st.text_input("decrypt>", key="crypto2", placeholder="eindwachtwoord...")
+        if st.button("▶ ONTSLEUTEL VAULT", key="crypto2_btn", use_container_width=True):
+            if cmd.strip().upper() == "EXAMENKLAS2026":
+                fake_progress("VAULT ONTGRENDELEN")
+                set_level(user, "crypto", 3)
+                typewriter_terminal([
+                    "[+] Wachtwoord correct",
+                    "[+] Caesar shift decoded: ROT7",
+                    "[+] GV 71 → EX AM",
+                    "[+] N75 ZS → EN KL",
+                    "[+] ZIF VH → AS 20",
+                    "[+] Combined: EXAMENKLAS 2026",
+                    "[+] Vault ontgrendeld...",
+                    "",
+                    "  ████████████████████████████████",
+                    "  █  🏆 MISSIE VOLTOOID 🏆      █",
+                    "  █  White House Gecompromitteerd █",
+                    "  ████████████████████████████████",
+                ])
+                give_flag(user, "crypto", "EXAMENKLAS2026")
+                st.success("🏆 **EINDCODE GEACCEPTEERD — ALLE SYSTEMEN GECOMPROMITTEERD!**")
+                st.balloons()
+                components.html("<script>setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
+            else:
+                st.error("❌ Verkeerde code. Decodeer alle vlaggen en combineer ze correct.")
+        hint_widget(user, "crypto", lvl)
+
+    elif lvl == 3:
+        st.success("🏆 **KLUIS GEOPEND — MISSIE VOLTOOID!**")
+        
+        # Vault animation
+        components.html("""
+        <style>
+        .vault-container{display:flex;justify-content:center;align-items:center;padding:40px 0;}
+        .vault{position:relative;width:300px;height:300px;background:linear-gradient(135deg,#2c3e50,#34495e);border-radius:50%;box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 0 40px rgba(0,0,0,0.3);animation:vault-open 2s ease-out;}
+        .vault::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;background:radial-gradient(circle,#1a252f,#0f1419);border-radius:50%;box-shadow:inset 0 0 30px rgba(0,0,0,0.8);}
+        .vault-door{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;background:linear-gradient(135deg,#34495e,#2c3e50);border-radius:50%;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:door-swing 2s ease-out forwards;}
+        .vault-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;background:radial-gradient(circle,#e74c3c,#c0392b);border-radius:50%;box-shadow:0 5px 15px rgba(231,76,60,0.5);animation:handle-spin 2s ease-out;}
+        .vault-contents{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;opacity:0;animation:contents-appear 1s ease-out 2s forwards;}
+        @keyframes vault-open{
+            0%{transform:scale(1);}
+            50%{transform:scale(1.05);}
+            100%{transform:scale(1);}
+        }
+        @keyframes door-swing{
+            0%{transform:translate(-50%,-50%) rotateY(0deg);}
+            100%{transform:translate(-200%,-50%) rotateY(-90deg);}
+        }
+        @keyframes handle-spin{
+            0%{transform:translate(-50%,-50%) rotate(0deg);}
+            100%{transform:translate(-50%,-50%) rotate(720deg);}
+        }
+        @keyframes contents-appear{
+            0%{opacity:0;transform:translate(-50%,-50%) scale(0.5);}
+            100%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+        }
+        </style>
+        <div class="vault-container">
+            <div class="vault">
+                <div class="vault-door">
+                    <div class="vault-handle"></div>
+                </div>
+                <div class="vault-contents">🏆</div>
+            </div>
+        </div>
+        """, height=400)
+        
+        typewriter_terminal([
+            "[✓] SQL Injection     — GECOMPROMITTEERD",
+            "[✓] XSS               — GECOMPROMITTEERD",
+            "[✓] Privilege Esc.    — GECOMPROMITTEERD",
+            "[✓] Cryptografie      — GEDECODEERD",
+            "",
+            "[✓] WHITE HOUSE VOLLEDIG OVERGENOMEN",
+            "",
+            "🎉 GEFELICITEERD! 🎉",
+            "Je hebt alle systemen gekraakt en toegang tot de hoogste veiligheids-",
+            "niveau's verkregen. Dit is het einde van de White House Cyber Escape Room!"
+        ])
 
 # ==========================================================
-# CRYPTO ROOM
+# FOOTER
 # ==========================================================
-with tabs[4]:
-    st.header("🔐 Backup Vault")
-
-    if p["crypto"]==1:
-        st.code("PLAINTEXT: ATTACKATDAWN\nENCRYPTED: DWWDFNDWGDZQ")
-        a=st.text_input("Encryption used?", key="crypto_l1_input")
-        with st.expander("📄 Old Manual"):
-            st.markdown("Shift-based substitution.")
-        if st.button("Identify", key="crypto_l1_identify"):
-            if "caesar" in a.lower():
-                p["crypto"]=2; save_progress(u,"crypto",2); st.rerun()
-
-    elif p["crypto"]==2:
-        st.code("CRAGRFGJVA")
-        a=st.text_input("Decrypt", key="crypto_l2_decrypt")
-        with st.expander("📄 Tool Bookmark"):
-            st.markdown("https://www.dcode.fr/rot-cipher")
-        if st.button("Unlock", key="crypto_l2_unlock"):
-            if a.upper()=="PENTESTWIN":
-                p["crypto"]=3; save_progress(u,"crypto",3); st.rerun()
-
-    else:
-        if st.button("Open Vault", key="crypto_l3_open"):
-            st.success("🏁 FINAL FLAG: PENTEST-WIN")
-            save_flag(u,"crypto","PENTEST-WIN")
-
-# ==========================================================
-# LOGOUT
-# ==========================================================
-if st.button("Exit Facility"):
-    st.session_state.clear()
-    st.rerun()
+st.markdown("---")
+st.markdown("""
+<div style="text-align:center;color:#00ff9c;opacity:0.7;font-family:'Share Tech Mono',monospace;font-size:11px;">
+    🏛️ THE WHITE HOUSE CYBER BREACH SIMULATION<br>
+    Created by: Anouk, Marwa, Fenna & Noura<br>
+    <em>Educational cybersecurity escape room — 2025</em>
+</div>
+""", unsafe_allow_html=True)
