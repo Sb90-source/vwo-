@@ -1662,3 +1662,4 @@ st.markdown("""
     <em>Educational cybersecurity escape room — 2025</em>
 </div>
 """, unsafe_allow_html=True)
+
