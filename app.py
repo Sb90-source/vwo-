@@ -1123,7 +1123,11 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             .topbar .logo span{color:#ffd700;}
             .topbar .user{font-size:12px;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:8px;}
             .av{width:26px;height:26px;border-radius:50%;background:#ffd700;color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-            .page{background:#f5f6fa;min-height:340px;padding:20px 28px;}
+            .page{background:#f5f6fa;min-height:340px;max-height:340px;padding:20px 28px;overflow-y:auto;}
+            .page::-webkit-scrollbar{width:8px;}
+            .page::-webkit-scrollbar-track{background:#e0e0e0;border-radius:4px;}
+            .page::-webkit-scrollbar-thumb{background:#1a73e8;border-radius:4px;}
+            .page::-webkit-scrollbar-thumb:hover{background:#1557b0;}
             .page h2{font-size:16px;color:#333;font-weight:600;margin-bottom:4px;}
             .page p.sub{font-size:12px;color:#888;margin-bottom:16px;}
             .comments{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
@@ -1137,6 +1141,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             .post-btn{background:#1a73e8;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:500;}
             .post-btn:hover{background:#1557b0;}
             .xss-banner{display:none;background:#d4edda;border:1px solid #28a745;border-radius:6px;padding:10px;font-size:12px;color:#155724;margin-top:10px;}
+            @keyframes slideIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+            .comment.new-comment{animation:slideIn 0.3s ease-out;}
             </style>
             <div class="wrap">
               <div class="screen">
@@ -1173,17 +1179,27 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const val = document.getElementById('commentInput').value;
                 const comments = document.getElementById('comments');
                 const banner = document.getElementById('xssBanner');
+                const page = document.querySelector('.page');
                 const div = document.createElement('div');
-                div.className = 'comment';
+                div.className = 'comment new-comment';
                 div.style.borderColor = val.toLowerCase().includes('<script>') ? '#28a745' : '#e0e0e0';
                 div.innerHTML = '<div class="author" style="color:#e74c3c">you (attacker)</div><div class="text">' + val + '</div>';
                 comments.appendChild(div);
+                
+                // Scroll to the new comment
+                setTimeout(() => {
+                    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+                
                 if (val.toLowerCase().includes('<script>')) {
                     banner.style.display = 'block';
                     banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</strong>';
                     // Show the persistent XSS alert
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                 }
+                
+                // Clear the input
+                document.getElementById('commentInput').value = '';
             }
             document.getElementById('commentInput').addEventListener('keydown', e => {
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
