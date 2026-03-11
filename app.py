@@ -741,16 +741,28 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         """, height=700)
 
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ AUTHENTICATIE BYPASSED - GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
-            fake_progress("AUTHENTICATIE BYPASSEN")
-            set_level(user, "sql", 3)
-            typewriter_terminal([
-                "[+] SQL query gemanipuleerd",
-                "[+] WHERE clause: TRUE voor alle rijen",
-                "[+] Ingelogd als eerste gebruiker in database: POTUS",
-                "[✓] AUTHENTICATIE BYPASSED"
-            ])
-            st.rerun()
+        st.markdown("**✅ SQL Injection geslaagd? Bewijs het door de payload hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Voer de SQL injection payload in die je gebruikte:", 
+            key="sql2_verify",
+            placeholder="Typ hier de exacte payload die je in de laptop gebruikte..."
+        )
+        
+        if st.button("🔓 VERIFIEER EN GA DOOR", key="sql2_continue", use_container_width=True, type="primary"):
+            # Check if they used a valid SQL injection
+            if verify_input.lower().strip() and ("' or" in verify_input.lower() or "'or" in verify_input.lower() or ("1" in verify_input and "=" in verify_input and "1" in verify_input)):
+                fake_progress("AUTHENTICATIE BYPASSEN")
+                set_level(user, "sql", 3)
+                typewriter_terminal([
+                    "[+] SQL query gemanipuleerd",
+                    "[+] WHERE clause: TRUE voor alle rijen",
+                    "[+] Ingelogd als eerste gebruiker in database: POTUS",
+                    "[✓] AUTHENTICATIE BYPASSED"
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrecte payload. Voer de SQL injection uit in de laptop en typ de exacte payload hier.")
 
         hint_widget(user, "sql", lvl)
 
@@ -907,21 +919,33 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             """, height=560)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ DATA EXTRACTION GESLAAGD - CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
-            fake_progress("DATABASE DUMPEN")
-            give_flag(user, "sql", "GV 71")
-            typewriter_terminal([
-                "[+] UNION query uitgevoerd",
-                "[+] Resultaten gecombineerd:",
-                "",
-                "  ID     | username | password       | role",
-                "  -------|----------|----------------|------",
-                "  UNION  | potus    | Covfefe2024!   | ADMIN",
-                "",
-                "[✓] GEHEIME CODE GEVONDEN: GV 71"
-            ])
-            st.success("🏴 FLAG BEHAALD: **GV 71**")
-            st.rerun()
+        st.markdown("**✅ UNION SELECT geslaagd? Bewijs het door de payload hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Voer de UNION SELECT payload in:", 
+            key="sql3_verify",
+            placeholder="Typ hier de SQL query die je gebruikte..."
+        )
+        
+        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
+            # Check if they used UNION SELECT
+            if verify_input.lower().strip() and "union" in verify_input.lower() and "select" in verify_input.lower():
+                fake_progress("DATABASE DUMPEN")
+                give_flag(user, "sql", "GV 71")
+                typewriter_terminal([
+                    "[+] UNION query uitgevoerd",
+                    "[+] Resultaten gecombineerd:",
+                    "",
+                    "  ID     | username | password       | role",
+                    "  -------|----------|----------------|------",
+                    "  UNION  | potus    | Covfefe2024!   | ADMIN",
+                    "",
+                    "[✓] GEHEIME CODE GEVONDEN: GV 71"
+                ])
+                st.success("🏴 FLAG BEHAALD: **GV 71**")
+                st.rerun()
+            else:
+                st.error("❌ Incorrecte payload. Gebruik UNION SELECT in de SQL console.")
             
         hint_widget(user, "sql", lvl)
 
@@ -1074,16 +1098,28 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ XSS ALERT GETRIGGERED - GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary"):
-            fake_progress("PAYLOAD INJECTEREN")
-            set_level(user, "xss", 3)
-            typewriter_terminal([
-                "[+] Script tag gedetecteerd in input",
-                "[+] Browser voert JavaScript uit",
-                "[+] Security alert getriggered — bewakers afgeleid!",
-                "[✓] REFLECTED XSS GESLAAGD"
-            ])
-            st.rerun()
+        st.markdown("**✅ XSS alert getriggered? Bewijs het door de payload hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Voer de XSS payload in:", 
+            key="xss2_verify",
+            placeholder="Typ hier de script tag die je gebruikte..."
+        )
+        
+        if st.button("🔓 VERIFIEER EN GA DOOR", key="xss2_continue", use_container_width=True, type="primary"):
+            # Check if they used script tag
+            if verify_input.lower().strip() and "<script>" in verify_input.lower():
+                fake_progress("PAYLOAD INJECTEREN")
+                set_level(user, "xss", 3)
+                typewriter_terminal([
+                    "[+] Script tag gedetecteerd in input",
+                    "[+] Browser voert JavaScript uit",
+                    "[+] Security alert getriggered — bewakers afgeleid!",
+                    "[✓] REFLECTED XSS GESLAAGD"
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrecte payload. Gebruik een <script> tag in de search box.")
             
         hint_widget(user, "xss", lvl)
 
@@ -1208,18 +1244,30 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=560)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ PERSISTENT XSS PAYLOAD OPGESLAGEN - CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
-            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-            give_flag(user, "xss", "N75 ZS")
-            typewriter_terminal([
-                "[+] Payload opgeslagen in database",
-                "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                "[+] Alle White House staff is nu gecompromitteerd!",
-                "[✓] PERSISTENT XSS GESLAAGD",
-                "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
-            ])
-            st.success("🏴 FLAG BEHAALD: **N75 ZS**")
-            st.rerun()
+        st.markdown("**✅ Persistent XSS payload opgeslagen? Bewijs het door de payload hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Voer de XSS payload in:", 
+            key="xss3_verify",
+            placeholder="Typ hier de script tag die je in de comment plaatste..."
+        )
+        
+        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
+            # Check if they used script tag
+            if verify_input.lower().strip() and "<script>" in verify_input.lower():
+                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+                give_flag(user, "xss", "N75 ZS")
+                typewriter_terminal([
+                    "[+] Payload opgeslagen in database",
+                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                    "[+] Alle White House staff is nu gecompromitteerd!",
+                    "[✓] PERSISTENT XSS GESLAAGD",
+                    "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+                ])
+                st.success("🏴 FLAG BEHAALD: **N75 ZS**")
+                st.rerun()
+            else:
+                st.error("❌ Incorrecte payload. Gebruik een <script> tag in de comment box.")
             
         hint_widget(user, "xss", lvl)
 
@@ -1371,15 +1419,27 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ ADMIN PRIVILEGES VERKREGEN - GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary"):
-            fake_progress("PRIVILEGES ESCALEREN")
-            set_level(user, "privesc", 3)
-            typewriter_terminal([
-                "[+] Rolparameter gewijzigd: user → admin",
-                "[+] Server accepteert nieuwe rol zonder verificatie",
-                "[✓] ADMIN PRIVILEGES VERKREGEN"
-            ])
-            st.rerun()
+        st.markdown("**✅ Admin privileges verkregen? Bewijs het door de nieuwe role hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Welke role waarde gebruikte je?", 
+            key="priv2_verify",
+            placeholder="Typ hier de role waarde die je invulde..."
+        )
+        
+        if st.button("🔓 VERIFIEER EN GA DOOR", key="priv2_continue", use_container_width=True, type="primary"):
+            # Check if they used admin
+            if verify_input.lower().strip() == "admin":
+                fake_progress("PRIVILEGES ESCALEREN")
+                set_level(user, "privesc", 3)
+                typewriter_terminal([
+                    "[+] Rolparameter gewijzigd: user → admin",
+                    "[+] Server accepteert nieuwe rol zonder verificatie",
+                    "[✓] ADMIN PRIVILEGES VERKREGEN"
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrecte role. Verander 'user' naar 'admin' in de DevTools request.")
             
         hint_widget(user, "privesc", lvl)
 
@@ -1485,18 +1545,32 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ BACKDOOR GEÏNSTALLEERD - CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
-            fake_progress("BACKDOOR INSTALLEREN")
-            give_flag(user, "privesc", "ZIF VH")
-            typewriter_terminal([
-                "[+] Admin token opgeslagen",
-                "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
-                "[+] Cron job gecreëerd voor persistence",
-                "[✓] PERMANENTE TOEGANG VERKREGEN",
-                "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
-            ])
-            st.success("🏴 FLAG BEHAALD: **ZIF VH**")
-            st.rerun()
+        st.markdown("**✅ Backdoor geïnstalleerd? Bewijs het door een geldig commando hieronder in te voeren:**")
+        
+        verify_input = st.text_input(
+            "Welk commando gebruikte je?", 
+            key="priv3_verify",
+            placeholder="Typ hier het commando dat je uitvoerde..."
+        )
+        
+        valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
+        
+        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
+            # Check if they used a valid persistence command
+            if verify_input.lower().strip() and any(cmd in verify_input.lower() for cmd in valid_commands):
+                fake_progress("BACKDOOR INSTALLEREN")
+                give_flag(user, "privesc", "ZIF VH")
+                typewriter_terminal([
+                    "[+] Admin token opgeslagen",
+                    "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                    "[+] Cron job gecreëerd voor persistence",
+                    "[✓] PERMANENTE TOEGANG VERKREGEN",
+                    "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+                ])
+                st.success("🏴 FLAG BEHAALD: **ZIF VH**")
+                st.rerun()
+            else:
+                st.error("❌ Incorrect commando. Voer een persistence commando uit in de terminal (bijv. backdoor, crontab, etc.).")
             
         hint_widget(user, "privesc", lvl)
 
