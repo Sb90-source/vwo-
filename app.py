@@ -506,13 +506,13 @@ with col_logout_btn:
 
 st.markdown("---")
 
-tabs = st.tabs(["🚪 RECEPTIE", "💼 VERGADERRUIMTE", "🔒 BEVEILIGDE KAMER", "🛏️ TRUMP'S KAMER"])
+tabs = st.tabs(["RECEPTIE", "VERGADERRUIMTE", "BEVEILIGDE KAMER", "TRUMP'S KAMER"])
 
 # ==========================================================
 # ROOM 1 — SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    st.header("🚪 DE RECEPTIE - SQL INJECTION")
+    st.header("DE RECEPTIE")
     st.markdown("*Infiltreer het authenticatiesysteem van het Witte Huis.*")
     
     lvl = get_level(user, "sql")
