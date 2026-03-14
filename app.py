@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config("🏛️ THE WHITE HOUSE BREACH", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
 # VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
@@ -198,7 +198,7 @@ def init_db():
         username TEXT, room TEXT, hint_num INTEGER,
         PRIMARY KEY(username, room, hint_num))""")
 
-    for u in [("leerling", hash_pw("epsteinfiles"), "student"),
+    for u in [("student", hash_pw("hackme"), "student"),
               ("teacher", hash_pw("admin123"), "teacher")]:
         c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)", u)
 
@@ -506,13 +506,13 @@ with col_logout_btn:
 
 st.markdown("---")
 
-tabs = st.tabs(["RECEPTIE", "VERGADERRUIMTE", "BEVEILIGDE KAMER", "TRUMP'S KAMER"])
+tabs = st.tabs(["🚪 RECEPTIE", "💼 VERGADERRUIMTE", "🔒 BEVEILIGDE KAMER", "🛏️ TRUMP'S KAMER"])
 
 # ==========================================================
 # ROOM 1 — SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    st.header("DE RECEPTIE")
+    st.header("🚪 DE RECEPTIE - SQL INJECTION")
     st.markdown("*Infiltreer het authenticatiesysteem van het Witte Huis.*")
     
     lvl = get_level(user, "sql")
@@ -713,6 +713,18 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.className = 'msg success';
                 msg.style.display = 'block';
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>Klik op de groene knop onder dit laptop scherm om door te gaan!</div>';
+                
+                // Copy payload to parent's hidden field
+                try {
+                    const hiddenInput = window.parent.document.querySelector('input[data-testid*="sql2_hidden"]');
+                    if (hiddenInput) {
+                        hiddenInput.value = u;
+                        // Trigger change event so Streamlit picks it up
+                        hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                } catch(e) {
+                    console.log('Could not access parent', e);
+                }
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -741,17 +753,13 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         """, height=700)
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ SQL Injection geslaagd? Bewijs het door de payload hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Voer de SQL injection payload in die je gebruikte:", 
-            key="sql2_verify",
-            placeholder="Typ hier de exacte payload die je in de laptop gebruikte..."
-        )
+        # Hidden field that JavaScript will populate
+        sql2_payload = st.text_input("sql2_hidden", key="sql2_hidden", label_visibility="collapsed")
         
-        if st.button("🔓 VERIFIEER EN GA DOOR", key="sql2_continue", use_container_width=True, type="primary"):
-            # Check if they used a valid SQL injection
-            if verify_input.lower().strip() and ("' or" in verify_input.lower() or "'or" in verify_input.lower() or ("1" in verify_input and "=" in verify_input and "1" in verify_input)):
+        if st.button("✅ VERIFIEER SQL INJECTION EN GA DOOR", key="sql2_continue", use_container_width=True, type="primary"):
+            # Check the hidden field that was populated by JavaScript
+            if sql2_payload and ("' or" in sql2_payload.lower() or "'or" in sql2_payload.lower() or "1=1" in sql2_payload.lower()):
                 fake_progress("AUTHENTICATIE BYPASSEN")
                 set_level(user, "sql", 3)
                 typewriter_terminal([
@@ -762,7 +770,7 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrecte payload. Voer de SQL injection uit in de laptop en typ de exacte payload hier.")
+                st.error("❌ Voer eerst een SQL injection uit in de laptop hierboven. Gebruik `'OR '1'='1` als gebruikersnaam.")
 
         hint_widget(user, "sql", lvl)
 
@@ -896,6 +904,17 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     tbody.appendChild(row);
                     info.className = 'result-info ok';
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</strong>';
+                    
+                    // Copy query to parent's hidden field
+                    try {
+                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="sql3_hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = document.getElementById('sqlInput').value;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } catch(e) {
+                        console.log('Could not access parent', e);
+                    }
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -919,17 +938,13 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             """, height=560)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ UNION SELECT geslaagd? Bewijs het door de payload hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Voer de UNION SELECT payload in:", 
-            key="sql3_verify",
-            placeholder="Typ hier de SQL query die je gebruikte..."
-        )
+        # Hidden field that JavaScript will populate
+        sql3_payload = st.text_input("sql3_hidden", key="sql3_hidden", label_visibility="collapsed")
         
-        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
-            # Check if they used UNION SELECT
-            if verify_input.lower().strip() and "union" in verify_input.lower() and "select" in verify_input.lower():
+        if st.button("🏴 VERIFIEER UNION SELECT EN CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
+            # Check the hidden field
+            if sql3_payload and "union" in sql3_payload.lower() and "select" in sql3_payload.lower():
                 fake_progress("DATABASE DUMPEN")
                 give_flag(user, "sql", "GV 71")
                 typewriter_terminal([
@@ -945,7 +960,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                 st.success("🏴 FLAG BEHAALD: **GV 71**")
                 st.rerun()
             else:
-                st.error("❌ Incorrecte payload. Gebruik UNION SELECT in de SQL console.")
+                st.error("❌ Voer eerst een UNION SELECT query uit in de SQL console hierboven.")
             
         hint_widget(user, "sql", lvl)
 
@@ -1084,6 +1099,17 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm!</strong>';
                     // Trigger actual alert to show XSS works
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
+                    
+                    // Copy payload to parent's hidden field
+                    try {
+                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="xss2_hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = val;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } catch(e) {
+                        console.log('Could not access parent', e);
+                    }
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1098,17 +1124,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ XSS alert getriggered? Bewijs het door de payload hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Voer de XSS payload in:", 
-            key="xss2_verify",
-            placeholder="Typ hier de script tag die je gebruikte..."
-        )
+        # Hidden field that JavaScript will populate
+        xss2_payload = st.text_input("xss2_hidden", key="xss2_hidden", label_visibility="collapsed")
         
-        if st.button("🔓 VERIFIEER EN GA DOOR", key="xss2_continue", use_container_width=True, type="primary"):
-            # Check if they used script tag
-            if verify_input.lower().strip() and "<script>" in verify_input.lower():
+        if st.button("✅ VERIFIEER XSS EN GA DOOR", key="xss2_continue", use_container_width=True, type="primary"):
+            # Check the hidden field
+            if xss2_payload and "<script>" in xss2_payload.lower():
                 fake_progress("PAYLOAD INJECTEREN")
                 set_level(user, "xss", 3)
                 typewriter_terminal([
@@ -1119,7 +1141,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrecte payload. Gebruik een <script> tag in de search box.")
+                st.error("❌ Voer eerst een XSS payload uit in de search box hierboven. Gebruik een <script> tag.")
             
         hint_widget(user, "xss", lvl)
 
@@ -1232,6 +1254,17 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</strong>';
                     // Show the persistent XSS alert
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
+                    
+                    // Copy payload to parent's hidden field
+                    try {
+                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="xss3_hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = val;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } catch(e) {
+                        console.log('Could not access parent', e);
+                    }
                 }
                 
                 // Clear the input
@@ -1244,17 +1277,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=560)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ Persistent XSS payload opgeslagen? Bewijs het door de payload hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Voer de XSS payload in:", 
-            key="xss3_verify",
-            placeholder="Typ hier de script tag die je in de comment plaatste..."
-        )
+        # Hidden field that JavaScript will populate
+        xss3_payload = st.text_input("xss3_hidden", key="xss3_hidden", label_visibility="collapsed")
         
-        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
-            # Check if they used script tag
-            if verify_input.lower().strip() and "<script>" in verify_input.lower():
+        if st.button("🏴 VERIFIEER PERSISTENT XSS EN CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
+            # Check the hidden field
+            if xss3_payload and "<script>" in xss3_payload.lower():
                 fake_progress("PAYLOAD OPSLAAN IN DATABASE")
                 give_flag(user, "xss", "N75 ZS")
                 typewriter_terminal([
@@ -1267,7 +1296,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.success("🏴 FLAG BEHAALD: **N75 ZS**")
                 st.rerun()
             else:
-                st.error("❌ Incorrecte payload. Gebruik een <script> tag in de comment box.")
+                st.error("❌ Voer eerst een XSS payload uit in de comment box hierboven. Gebruik een <script> tag.")
             
         hint_widget(user, "xss", lvl)
 
@@ -1409,6 +1438,17 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const resp = document.getElementById('responseBlock');
                 if (role === 'admin') {
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm!</strong></span>';
+                    
+                    // Copy role to parent's hidden field
+                    try {
+                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="priv2_hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = role;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } catch(e) {
+                        console.log('Could not access parent', e);
+                    }
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1419,17 +1459,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ Admin privileges verkregen? Bewijs het door de nieuwe role hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Welke role waarde gebruikte je?", 
-            key="priv2_verify",
-            placeholder="Typ hier de role waarde die je invulde..."
-        )
+        # Hidden field that JavaScript will populate
+        priv2_payload = st.text_input("priv2_hidden", key="priv2_hidden", label_visibility="collapsed")
         
-        if st.button("🔓 VERIFIEER EN GA DOOR", key="priv2_continue", use_container_width=True, type="primary"):
-            # Check if they used admin
-            if verify_input.lower().strip() == "admin":
+        if st.button("✅ VERIFIEER PRIVILEGE ESCALATION EN GA DOOR", key="priv2_continue", use_container_width=True, type="primary"):
+            # Check the hidden field
+            if priv2_payload and priv2_payload.lower().strip() == "admin":
                 fake_progress("PRIVILEGES ESCALEREN")
                 set_level(user, "privesc", 3)
                 typewriter_terminal([
@@ -1439,7 +1475,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrecte role. Verander 'user' naar 'admin' in de DevTools request.")
+                st.error("❌ Voer eerst de privilege escalation uit in de DevTools hierboven. Verander 'user' naar 'admin'.")
             
         hint_widget(user, "privesc", lvl)
 
@@ -1536,6 +1572,17 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
                     out.innerHTML += '<br><span class="bright" style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</span><br>';
                     out.scrollTop = out.scrollHeight;
+                    
+                    // Copy command to parent's hidden field
+                    try {
+                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="priv3_hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.value = cmd;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } catch(e) {
+                        console.log('Could not access parent', e);
+                    }
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
@@ -1545,19 +1592,15 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             """, height=520)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("**✅ Backdoor geïnstalleerd? Bewijs het door een geldig commando hieronder in te voeren:**")
         
-        verify_input = st.text_input(
-            "Welk commando gebruikte je?", 
-            key="priv3_verify",
-            placeholder="Typ hier het commando dat je uitvoerde..."
-        )
+        # Hidden field that JavaScript will populate
+        priv3_payload = st.text_input("priv3_hidden", key="priv3_hidden", label_visibility="collapsed")
         
         valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
         
-        if st.button("🏴 VERIFIEER EN CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
-            # Check if they used a valid persistence command
-            if verify_input.lower().strip() and any(cmd in verify_input.lower() for cmd in valid_commands):
+        if st.button("🏴 VERIFIEER BACKDOOR EN CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
+            # Check the hidden field
+            if priv3_payload and any(cmd in priv3_payload.lower() for cmd in valid_commands):
                 fake_progress("BACKDOOR INSTALLEREN")
                 give_flag(user, "privesc", "ZIF VH")
                 typewriter_terminal([
@@ -1570,7 +1613,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.success("🏴 FLAG BEHAALD: **ZIF VH**")
                 st.rerun()
             else:
-                st.error("❌ Incorrect commando. Voer een persistence commando uit in de terminal (bijv. backdoor, crontab, etc.).")
+                st.error("❌ Voer eerst een persistence commando uit in de terminal hierboven (bijv. backdoor, crontab, etc.).")
             
         hint_widget(user, "privesc", lvl)
 
