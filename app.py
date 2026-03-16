@@ -198,7 +198,7 @@ def init_db():
         username TEXT, room TEXT, hint_num INTEGER,
         PRIMARY KEY(username, room, hint_num))""")
 
-    for u in [("student", hash_pw("hackme"), "student"),
+    for u in [("leerling", hash_pw("epsteinfiles"), "student"),
               ("teacher", hash_pw("admin123"), "teacher")]:
         c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)", u)
 
