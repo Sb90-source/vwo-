@@ -468,7 +468,7 @@ if not st.session_state.user:
             <span class="glitch-t" data-text="THE WHITE HOUSE">THE WHITE HOUSE</span>
         </div>
         <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
-            CYBER INFILTRATIE MISSIE &mdash; GEMAAKT DOOR: ANOUK, MARWA, FENNA EN NOURA
+            CYBERSECURITY ESCAPEROOM &mdash; GEMAAKT DOOR: ANOUK, MARWA, FENNA EN NOURA
         </p>
     </div>
     <style>
