@@ -651,8 +651,7 @@ with tabs[0]:
         # Show intro video before SQL Level 1
         check_and_show_video("sql", 1, "before")
         
-        st.info("Yes! jullie zijn binnen. Je partner in crime heeft de receptioniste weggelokt. Nu aan jou de taak om achter haar computer te kruipen en te proberen om in het systeem te komen. Kijk goed om je heen!
-")
+        st.info("Yes! Jullie zijn binnen. Je partner in crime heeft de receptioniste weggelokt. Nu aan jou de taak om achter haar computer te kruipen en te proberen om in het systeem te komen. Kijk goed om je heen!")
         st.markdown("""
 ```
 [INTELLIGENCE BRIEFING]
@@ -677,7 +676,7 @@ ACTIE VEREIST: Identificeer het type aanval
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Vraag een hint als je vastloopt.")
+                st.error("Incorrect. Vraag een hint als je vastloopt.")
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
