@@ -376,10 +376,10 @@ def show_video(video_source, title=None, caption=None, autoplay=True):
         else:
             video_id = video_source.split("v=")[1].split("&")[0]
         
-        # Embed YouTube video with cinematic styling
+        # Embed YouTube video with cinematic styling - FULL WIDTH LANDSCAPE
         autoplay_param = "?autoplay=1&mute=1" if autoplay else ""
         st.markdown(f"""
-        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 900px; margin: 20px auto; background: #000; border: 2px solid #00ff9c; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,156,0.3);">
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%; margin: 20px auto; background: #000; border: 2px solid #00ff9c; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,156,0.3);">
             <iframe 
                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
                 src="https://www.youtube.com/embed/{video_id}{autoplay_param}"
@@ -844,19 +844,11 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 card.style.background = '#f0fff4';
                 msg.className = 'msg success';
                 msg.style.display = 'block';
-                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>Klik op de groene knop onder dit laptop scherm om door te gaan!</div>';
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
-                // Copy payload to parent's hidden field
-                try {
-                    const hiddenInput = window.parent.document.querySelector('input[data-testid*="sql2_hidden"]');
-                    if (hiddenInput) {
-                        hiddenInput.value = u;
-                        // Trigger change event so Streamlit picks it up
-                        hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                } catch(e) {
-                    console.log('Could not access parent', e);
-                }
+                // Set flag in localStorage and reload
+                localStorage.setItem('sql2_unlocked', 'true');
+                setTimeout(() => location.reload(), 1000);
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -886,32 +878,33 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field that JavaScript will populate - user never sees this
-        st.markdown("""
-        <style>
-        input[aria-label="sql2_hidden"] {
-            display: none !important;
+        # Check if unlocked via custom component that reads localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('sql2_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('sql2_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        sql2_payload = st.text_input("sql2_hidden", key="sql2_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (sql2_payload and ("' or" in sql2_payload.lower() or "'or" in sql2_payload.lower() or "1=1" in sql2_payload.lower()))
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
+                fake_progress("AUTHENTICATIE BYPASSEN")
+                set_level(user, "sql", 3)
+                typewriter_terminal([
+                    "[+] SQL query gemanipuleerd",
+                    "[+] WHERE clause: TRUE voor alle rijen",
+                    "[+] Ingelogd als eerste gebruiker in database: POTUS",
+                    "[✓] AUTHENTICATIE BYPASSED"
+                ])
+                st.rerun()
+        else:
             st.info("💡 Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
-        
-        if st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("AUTHENTICATIE BYPASSEN")
-            set_level(user, "sql", 3)
-            typewriter_terminal([
-                "[+] SQL query gemanipuleerd",
-                "[+] WHERE clause: TRUE voor alle rijen",
-                "[+] Ingelogd als eerste gebruiker in database: POTUS",
-                "[✓] AUTHENTICATIE BYPASSED"
-            ])
-            st.rerun()
+            st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue_disabled", use_container_width=True, type="primary", disabled=True)
 
         hint_widget(user, "sql", lvl)
 
