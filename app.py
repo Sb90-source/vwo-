@@ -1447,10 +1447,10 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         hint_widget(user, "xss", lvl)
 
 # ==========================================================
-# ROOM 3 — PRIVILEGE ESCALATION
+# KAMER 3, DE BEVEILIGDE RUIMTE - PRIVILEGE ESCALATION
 # ==========================================================
 with tabs[2]:
-    st.header("🔒 DE BEVEILIGDE KAMER - PRIVILEGE ESCALATION")
+    st.header("DE BEVEILIGDE KAMER")
     st.markdown("*Verhoog je privileges om toegang te krijgen tot classified systems.*")
     
     lvl = get_level(user, "privesc")
