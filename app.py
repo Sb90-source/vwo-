@@ -234,6 +234,36 @@ HINTS = {
 }
 
 # ==========================================================
+# VIDEO CONFIGURATION
+# ==========================================================
+# Videos that play before or after certain levels
+# Format: "room_level_position": {"source": "url", "title": "...", "caption": "..."}
+# position can be "before" or "after"
+VIDEOS = {
+    # Example: Video before SQL Level 1
+    # "sql_1_before": {
+    #     "source": "https://www.youtube.com/watch?v=example",
+    #     "title": "Introductie: SQL Injection",
+    #     "caption": "Bekijk deze video voordat je begint met SQL Injection",
+    #     "autoplay": True
+    # },
+    
+    # Example: Video after completing SQL room
+    # "sql_complete": {
+    #     "source": "/mnt/user-data/uploads/sql_complete.mp4",
+    #     "title": "Gefeliciteerd! SQL Room Voltooid",
+    #     "caption": "Je hebt alle SQL levels behaald!",
+    #     "autoplay": False
+    # },
+    
+    # Add your videos here:
+    # Format options:
+    # - YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
+    # - Local file: "/mnt/user-data/uploads/video.mp4"
+    # - Direct URL: "https://example.com/video.mp4"
+}
+
+# ==========================================================
 # HELPERS
 # ==========================================================
 def auth(u, p):
@@ -300,6 +330,84 @@ def typewriter_terminal(lines):
     for line in lines:
         st.code(line, language=None)
         time.sleep(0.08)
+
+def show_video(video_source, title=None, caption=None, autoplay=True):
+    """
+    Display a video with cinematic styling
+    video_source can be:
+    - YouTube URL: "https://www.youtube.com/watch?v=..."
+    - Local file path: "/mnt/user-data/uploads/video.mp4"
+    - Embedded video URL: "https://example.com/video.mp4"
+    """
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if title:
+        st.markdown(f"<h3 style='text-align:center; color:#00ff9c; text-shadow: 0 0 15px rgba(0,255,156,0.5);'>🎬 {title}</h3>", unsafe_allow_html=True)
+    
+    if caption:
+        st.markdown(f"<p style='text-align:center; color:#00ff9c; opacity:0.8; font-size:14px;'>{caption}</p>", unsafe_allow_html=True)
+    
+    # Check if it's a YouTube URL
+    if "youtube.com" in video_source or "youtu.be" in video_source:
+        # Extract video ID
+        if "youtu.be/" in video_source:
+            video_id = video_source.split("youtu.be/")[1].split("?")[0]
+        else:
+            video_id = video_source.split("v=")[1].split("&")[0]
+        
+        # Embed YouTube video with cinematic styling
+        autoplay_param = "?autoplay=1&mute=1" if autoplay else ""
+        st.markdown(f"""
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 900px; margin: 20px auto; background: #000; border: 2px solid #00ff9c; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,156,0.3);">
+            <iframe 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                src="https://www.youtube.com/embed/{video_id}{autoplay_param}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Local or direct video file
+    else:
+        try:
+            # Try to read as local file
+            if video_source.startswith("/"):
+                with open(video_source, 'rb') as video_file:
+                    video_bytes = video_file.read()
+                    st.video(video_bytes)
+            else:
+                # Direct URL
+                st.video(video_source)
+        except Exception as e:
+            st.error(f"⚠️ Kon video niet laden: {video_source}")
+            st.error(f"Error: {str(e)}")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+
+def check_and_show_video(room, level, position="before"):
+    """
+    Check if there's a video configured for this room/level and show it
+    position: "before" or "after" the level
+    Also supports "complete" for after completing all levels in a room
+    """
+    video_key = f"{room}_{level}_{position}"
+    
+    # Check for room completion video
+    if position == "complete":
+        video_key = f"{room}_complete"
+    
+    if video_key in VIDEOS:
+        video_config = VIDEOS[video_key]
+        show_video(
+            video_source=video_config.get("source"),
+            title=video_config.get("title"),
+            caption=video_config.get("caption"),
+            autoplay=video_config.get("autoplay", True)
+        )
+        return True
+    return False
 
 def fake_progress(label="BYPASSING FIREWALL"):
     """Show animated fake progress bar"""
@@ -754,23 +862,32 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field that JavaScript will populate - user never sees this
+        st.markdown("""
+        <style>
+        input[aria-label="sql2_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         sql2_payload = st.text_input("sql2_hidden", key="sql2_hidden", label_visibility="collapsed")
         
-        if st.button("✅ VERIFIEER SQL INJECTION EN GA DOOR", key="sql2_continue", use_container_width=True, type="primary"):
-            # Check the hidden field that was populated by JavaScript
-            if sql2_payload and ("' or" in sql2_payload.lower() or "'or" in sql2_payload.lower() or "1=1" in sql2_payload.lower()):
-                fake_progress("AUTHENTICATIE BYPASSEN")
-                set_level(user, "sql", 3)
-                typewriter_terminal([
-                    "[+] SQL query gemanipuleerd",
-                    "[+] WHERE clause: TRUE voor alle rijen",
-                    "[+] Ingelogd als eerste gebruiker in database: POTUS",
-                    "[✓] AUTHENTICATIE BYPASSED"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst een SQL injection uit in de laptop hierboven. Gebruik `'OR '1'='1` als gebruikersnaam.")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (sql2_payload and ("' or" in sql2_payload.lower() or "'or" in sql2_payload.lower() or "1=1" in sql2_payload.lower()))
+        
+        if button_disabled:
+            st.info("💡 Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
+        
+        if st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("AUTHENTICATIE BYPASSEN")
+            set_level(user, "sql", 3)
+            typewriter_terminal([
+                "[+] SQL query gemanipuleerd",
+                "[+] WHERE clause: TRUE voor alle rijen",
+                "[+] Ingelogd als eerste gebruiker in database: POTUS",
+                "[✓] AUTHENTICATIE BYPASSED"
+            ])
+            st.rerun()
 
         hint_widget(user, "sql", lvl)
 
@@ -939,28 +1056,37 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field
+        st.markdown("""
+        <style>
+        input[aria-label="sql3_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         sql3_payload = st.text_input("sql3_hidden", key="sql3_hidden", label_visibility="collapsed")
         
-        if st.button("🏴 VERIFIEER UNION SELECT EN CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
-            # Check the hidden field
-            if sql3_payload and "union" in sql3_payload.lower() and "select" in sql3_payload.lower():
-                fake_progress("DATABASE DUMPEN")
-                give_flag(user, "sql", "GV 71")
-                typewriter_terminal([
-                    "[+] UNION query uitgevoerd",
-                    "[+] Resultaten gecombineerd:",
-                    "",
-                    "  ID     | username | password       | role",
-                    "  -------|----------|----------------|------",
-                    "  UNION  | potus    | Covfefe2024!   | ADMIN",
-                    "",
-                    "[✓] GEHEIME CODE GEVONDEN: GV 71"
-                ])
-                st.success("🏴 FLAG BEHAALD: **GV 71**")
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst een UNION SELECT query uit in de SQL console hierboven.")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (sql3_payload and "union" in sql3_payload.lower() and "select" in sql3_payload.lower())
+        
+        if button_disabled:
+            st.info("💡 Voer eerst de UNION SELECT query uit in de SQL console hierboven. De knop wordt actief zodra de exploit slaagt.")
+        
+        if st.button("🏴 CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("DATABASE DUMPEN")
+            give_flag(user, "sql", "GV 71")
+            typewriter_terminal([
+                "[+] UNION query uitgevoerd",
+                "[+] Resultaten gecombineerd:",
+                "",
+                "  ID     | username | password       | role",
+                "  -------|----------|----------------|------",
+                "  UNION  | potus    | Covfefe2024!   | ADMIN",
+                "",
+                "[✓] GEHEIME CODE GEVONDEN: GV 71"
+            ])
+            st.success("🏴 FLAG BEHAALD: **GV 71**")
+            st.rerun()
             
         hint_widget(user, "sql", lvl)
 
@@ -1125,23 +1251,32 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field
+        st.markdown("""
+        <style>
+        input[aria-label="xss2_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         xss2_payload = st.text_input("xss2_hidden", key="xss2_hidden", label_visibility="collapsed")
         
-        if st.button("✅ VERIFIEER XSS EN GA DOOR", key="xss2_continue", use_container_width=True, type="primary"):
-            # Check the hidden field
-            if xss2_payload and "<script>" in xss2_payload.lower():
-                fake_progress("PAYLOAD INJECTEREN")
-                set_level(user, "xss", 3)
-                typewriter_terminal([
-                    "[+] Script tag gedetecteerd in input",
-                    "[+] Browser voert JavaScript uit",
-                    "[+] Security alert getriggered — bewakers afgeleid!",
-                    "[✓] REFLECTED XSS GESLAAGD"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst een XSS payload uit in de search box hierboven. Gebruik een <script> tag.")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (xss2_payload and "<script>" in xss2_payload.lower())
+        
+        if button_disabled:
+            st.info("💡 Voer eerst de XSS payload uit in de search box hierboven. De knop wordt actief zodra de alert verschijnt.")
+        
+        if st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("PAYLOAD INJECTEREN")
+            set_level(user, "xss", 3)
+            typewriter_terminal([
+                "[+] Script tag gedetecteerd in input",
+                "[+] Browser voert JavaScript uit",
+                "[+] Security alert getriggered — bewakers afgeleid!",
+                "[✓] REFLECTED XSS GESLAAGD"
+            ])
+            st.rerun()
             
         hint_widget(user, "xss", lvl)
 
@@ -1278,25 +1413,34 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field
+        st.markdown("""
+        <style>
+        input[aria-label="xss3_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         xss3_payload = st.text_input("xss3_hidden", key="xss3_hidden", label_visibility="collapsed")
         
-        if st.button("🏴 VERIFIEER PERSISTENT XSS EN CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
-            # Check the hidden field
-            if xss3_payload and "<script>" in xss3_payload.lower():
-                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                give_flag(user, "xss", "N75 ZS")
-                typewriter_terminal([
-                    "[+] Payload opgeslagen in database",
-                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                    "[+] Alle White House staff is nu gecompromitteerd!",
-                    "[✓] PERSISTENT XSS GESLAAGD",
-                    "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
-                ])
-                st.success("🏴 FLAG BEHAALD: **N75 ZS**")
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst een XSS payload uit in de comment box hierboven. Gebruik een <script> tag.")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (xss3_payload and "<script>" in xss3_payload.lower())
+        
+        if button_disabled:
+            st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
+        
+        if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+            give_flag(user, "xss", "N75 ZS")
+            typewriter_terminal([
+                "[+] Payload opgeslagen in database",
+                "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                "[+] Alle White House staff is nu gecompromitteerd!",
+                "[✓] PERSISTENT XSS GESLAAGD",
+                "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+            ])
+            st.success("🏴 FLAG BEHAALD: **N75 ZS**")
+            st.rerun()
             
         hint_widget(user, "xss", lvl)
 
@@ -1460,22 +1604,31 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field
+        st.markdown("""
+        <style>
+        input[aria-label="priv2_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         priv2_payload = st.text_input("priv2_hidden", key="priv2_hidden", label_visibility="collapsed")
         
-        if st.button("✅ VERIFIEER PRIVILEGE ESCALATION EN GA DOOR", key="priv2_continue", use_container_width=True, type="primary"):
-            # Check the hidden field
-            if priv2_payload and priv2_payload.lower().strip() == "admin":
-                fake_progress("PRIVILEGES ESCALEREN")
-                set_level(user, "privesc", 3)
-                typewriter_terminal([
-                    "[+] Rolparameter gewijzigd: user → admin",
-                    "[+] Server accepteert nieuwe rol zonder verificatie",
-                    "[✓] ADMIN PRIVILEGES VERKREGEN"
-                ])
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst de privilege escalation uit in de DevTools hierboven. Verander 'user' naar 'admin'.")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (priv2_payload and priv2_payload.lower().strip() == "admin")
+        
+        if button_disabled:
+            st.info("💡 Voer eerst de privilege escalation uit in de DevTools hierboven. De knop wordt actief zodra 'admin' role is ingesteld.")
+        
+        if st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("PRIVILEGES ESCALEREN")
+            set_level(user, "privesc", 3)
+            typewriter_terminal([
+                "[+] Rolparameter gewijzigd: user → admin",
+                "[+] Server accepteert nieuwe rol zonder verificatie",
+                "[✓] ADMIN PRIVILEGES VERKREGEN"
+            ])
+            st.rerun()
             
         hint_widget(user, "privesc", lvl)
 
@@ -1593,27 +1746,36 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Hidden field that JavaScript will populate
+        # Completely hidden field
+        st.markdown("""
+        <style>
+        input[aria-label="priv3_hidden"] {
+            display: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         priv3_payload = st.text_input("priv3_hidden", key="priv3_hidden", label_visibility="collapsed")
         
         valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
         
-        if st.button("🏴 VERIFIEER BACKDOOR EN CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
-            # Check the hidden field
-            if priv3_payload and any(cmd in priv3_payload.lower() for cmd in valid_commands):
-                fake_progress("BACKDOOR INSTALLEREN")
-                give_flag(user, "privesc", "ZIF VH")
-                typewriter_terminal([
-                    "[+] Admin token opgeslagen",
-                    "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
-                    "[+] Cron job gecreëerd voor persistence",
-                    "[✓] PERMANENTE TOEGANG VERKREGEN",
-                    "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
-                ])
-                st.success("🏴 FLAG BEHAALD: **ZIF VH**")
-                st.rerun()
-            else:
-                st.error("❌ Voer eerst een persistence commando uit in de terminal hierboven (bijv. backdoor, crontab, etc.).")
+        # Button is only enabled if hidden field has valid payload
+        button_disabled = not (priv3_payload and any(cmd in priv3_payload.lower() for cmd in valid_commands))
+        
+        if button_disabled:
+            st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
+        
+        if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary", disabled=button_disabled):
+            fake_progress("BACKDOOR INSTALLEREN")
+            give_flag(user, "privesc", "ZIF VH")
+            typewriter_terminal([
+                "[+] Admin token opgeslagen",
+                "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                "[+] Cron job gecreëerd voor persistence",
+                "[✓] PERMANENTE TOEGANG VERKREGEN",
+                "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+            ])
+            st.success("🏴 FLAG BEHAALD: **ZIF VH**")
+            st.rerun()
             
         hint_widget(user, "privesc", lvl)
 
