@@ -246,8 +246,8 @@ VIDEOS = {
     # Video 1: Before SQL Room (Level 1)
     "sql_1_before": {
         "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "SQL Injection Introductie",
-        "caption": "Bekijk deze video voordat je begint met SQL Injection",
+        "title": "Introductie",
+        "caption": "Bekijk deze video voordat je aan kamer 1 begint.",
         "autoplay": True
     },
     
