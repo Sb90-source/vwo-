@@ -651,7 +651,8 @@ with tabs[0]:
         # Show intro video before SQL Level 1
         check_and_show_video("sql", 1, "before")
         
-        st.info("Opdracht Geef de naam van de aanval waarbij je kwaadaardige code in een invoerveld typt?")
+        st.info("Yes! jullie zijn binnen. Je partner in crime heeft de receptioniste weggelokt. Nu aan jou de taak om achter haar computer te kruipen en te proberen om in het systeem te komen. Kijk goed om je heen!
+")
         st.markdown("""
 ```
 [INTELLIGENCE BRIEFING]
