@@ -237,11 +237,7 @@ HINTS = {
 # VIDEO CONFIGURATION
 # ==========================================================
 # Videos that play before or after certain levels
-# 
-# OPTIONS FOR GITHUB + STREAMLIT CLOUD:
-# 1. YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
-# 2. GitHub Raw URL: "https://raw.githubusercontent.com/USERNAME/REPO/main/videos/video.mp4"
-# 3. External hosting: Google Drive, Vimeo, etc (see guide below)
+#
 VIDEOS = {
     # Video 1: voor kamer 1,  SQL(Level 1)
     "sql_1_before": {
