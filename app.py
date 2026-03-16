@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("🏛️ THE WHITE HOUSE BREACH", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config("THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================================
 # VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
