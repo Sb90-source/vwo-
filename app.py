@@ -237,30 +237,46 @@ HINTS = {
 # VIDEO CONFIGURATION
 # ==========================================================
 # Videos that play before or after certain levels
-# Format: "room_level_position": {"source": "url", "title": "...", "caption": "..."}
-# position can be "before" or "after"
 VIDEOS = {
-    # Example: Video before SQL Level 1
-    # "sql_1_before": {
-    #     "source": "https://www.youtube.com/watch?v=example",
-    #     "title": "Introductie: SQL Injection",
-    #     "caption": "Bekijk deze video voordat je begint met SQL Injection",
-    #     "autoplay": True
-    # },
+    # Video 1: Before SQL Room (Level 1)
+    "sql_1_before": {
+        "source": "/mnt/user-data/uploads/video_sql_intro.mp4",  # Update with your actual filename
+        "title": "SQL Injection Introductie",
+        "caption": "Bekijk deze video voordat je begint met SQL Injection",
+        "autoplay": True
+    },
     
-    # Example: Video after completing SQL room
-    # "sql_complete": {
-    #     "source": "/mnt/user-data/uploads/sql_complete.mp4",
-    #     "title": "Gefeliciteerd! SQL Room Voltooid",
-    #     "caption": "Je hebt alle SQL levels behaald!",
-    #     "autoplay": False
-    # },
+    # Video 2: Before XSS Room (Level 1)
+    "xss_1_before": {
+        "source": "/mnt/user-data/uploads/video_xss_intro.mp4",  # Update with your actual filename
+        "title": "Cross-Site Scripting (XSS) Introductie",
+        "caption": "Leer over XSS voordat je aan de slag gaat",
+        "autoplay": True
+    },
     
-    # Add your videos here:
-    # Format options:
-    # - YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
-    # - Local file: "/mnt/user-data/uploads/video.mp4"
-    # - Direct URL: "https://example.com/video.mp4"
+    # Video 3: Before PrivEsc Room (Level 1)
+    "privesc_1_before": {
+        "source": "/mnt/user-data/uploads/video_privesc_intro.mp4",  # Update with your actual filename
+        "title": "Privilege Escalation Introductie",
+        "caption": "Ontdek hoe privilege escalation werkt",
+        "autoplay": True
+    },
+    
+    # Video 4: Before Crypto Room (Level 1)
+    "crypto_1_before": {
+        "source": "/mnt/user-data/uploads/video_crypto_intro.mp4",  # Update with your actual filename
+        "title": "Cryptografie & Caesar Cipher",
+        "caption": "Leer over klassieke encryptie methodes",
+        "autoplay": True
+    },
+    
+    # Video 5: After Crypto Room Complete (Final Victory)
+    "crypto_complete": {
+        "source": "/mnt/user-data/uploads/video_finale.mp4",  # Update with your actual filename
+        "title": "🎉 MISSIE GESLAAGD!",
+        "caption": "Je hebt het White House succesvol gehackt!",
+        "autoplay": True
+    },
 }
 
 # ==========================================================
@@ -627,6 +643,9 @@ with tabs[0]:
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
     if lvl == 1:
+        # Show intro video before SQL Level 1
+        check_and_show_video("sql", 1, "before")
+        
         st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het login systeem")
         st.markdown("""
 ```
@@ -1101,6 +1120,9 @@ with tabs[1]:
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
     if lvl == 1:
+        # Show intro video before XSS Level 1
+        check_and_show_video("xss", 1, "before")
+        
         st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
         st.markdown("""
 ```
@@ -1455,6 +1477,9 @@ with tabs[2]:
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
     if lvl == 1:
+        # Show intro video before PrivEsc Level 1
+        check_and_show_video("privesc", 1, "before")
+        
         st.info("🎯 **MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
         st.markdown("""
 ```
@@ -1796,6 +1821,9 @@ with tabs[3]:
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
 
     if lvl == 1:
+        # Show intro video before Crypto Level 1
+        check_and_show_video("crypto", 1, "before")
+        
         st.info("🎯 **MISSIE:** Identificeer het encryption systeem van de kluis")
         st.markdown("""
 ```
@@ -1885,6 +1913,9 @@ Bijvoorbeeld:  GV → ??
 
     elif lvl == 3:
         st.success("🏆 **KLUIS GEOPEND — MISSIE VOLTOOID!**")
+        
+        # Show finale video after completing everything
+        check_and_show_video("crypto", position="complete")
         
         # Vault animation
         components.html("""
