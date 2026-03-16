@@ -237,10 +237,15 @@ HINTS = {
 # VIDEO CONFIGURATION
 # ==========================================================
 # Videos that play before or after certain levels
+# 
+# OPTIONS FOR GITHUB + STREAMLIT CLOUD:
+# 1. YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
+# 2. GitHub Raw URL: "https://raw.githubusercontent.com/USERNAME/REPO/main/videos/video.mp4"
+# 3. External hosting: Google Drive, Vimeo, etc (see guide below)
 VIDEOS = {
     # Video 1: Before SQL Room (Level 1)
     "sql_1_before": {
-        "source": "/mnt/user-data/uploads/video_sql_intro.mp4",  # Update with your actual filename
+        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
         "title": "SQL Injection Introductie",
         "caption": "Bekijk deze video voordat je begint met SQL Injection",
         "autoplay": True
@@ -248,7 +253,7 @@ VIDEOS = {
     
     # Video 2: Before XSS Room (Level 1)
     "xss_1_before": {
-        "source": "/mnt/user-data/uploads/video_xss_intro.mp4",  # Update with your actual filename
+        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
         "title": "Cross-Site Scripting (XSS) Introductie",
         "caption": "Leer over XSS voordat je aan de slag gaat",
         "autoplay": True
@@ -256,7 +261,7 @@ VIDEOS = {
     
     # Video 3: Before PrivEsc Room (Level 1)
     "privesc_1_before": {
-        "source": "/mnt/user-data/uploads/video_privesc_intro.mp4",  # Update with your actual filename
+        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
         "title": "Privilege Escalation Introductie",
         "caption": "Ontdek hoe privilege escalation werkt",
         "autoplay": True
@@ -264,7 +269,7 @@ VIDEOS = {
     
     # Video 4: Before Crypto Room (Level 1)
     "crypto_1_before": {
-        "source": "/mnt/user-data/uploads/video_crypto_intro.mp4",  # Update with your actual filename
+        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
         "title": "Cryptografie & Caesar Cipher",
         "caption": "Leer over klassieke encryptie methodes",
         "autoplay": True
@@ -272,7 +277,7 @@ VIDEOS = {
     
     # Video 5: After Crypto Room Complete (Final Victory)
     "crypto_complete": {
-        "source": "/mnt/user-data/uploads/video_finale.mp4",  # Update with your actual filename
+        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
         "title": "🎉 MISSIE GESLAAGD!",
         "caption": "Je hebt het White House succesvol gehackt!",
         "autoplay": True
