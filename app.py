@@ -1102,10 +1102,10 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         hint_widget(user, "sql", lvl)
 
 # ==========================================================
-# ROOM 2 — XSS
+# KAMER 2, DE VERGADERRUIMTE - XSS
 # ==========================================================
 with tabs[1]:
-    st.header("💼 DE VERGADERRUIMTE - CROSS-SITE SCRIPTING")
+    st.header("DE VERGADERRUIMTE - CROSS-SITE SCRIPTING")
     st.markdown("*Injecteer kwaadaardige scripts in het internal communications portal.*")
     
     lvl = get_level(user, "xss")
