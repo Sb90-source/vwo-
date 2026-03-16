@@ -245,7 +245,7 @@ HINTS = {
 VIDEOS = {
     # Video 1: Before SQL Room (Level 1)
     "sql_1_before": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
+        "source": "https://youtu.be/nD8rPj7Db5o?feature=shared",  # Update with your YouTube URL
         "title": "Introductie",
         "caption": "Bekijk deze video voordat je aan kamer 1 begint.",
         "autoplay": True
