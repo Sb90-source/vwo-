@@ -522,14 +522,14 @@ if not st.session_state.user:
                 st.session_state.role = role
                 st.rerun()
             else:
-                st.error("⛔ TOEGANG GEWEIGERD — Ongeldige credentials")
+                st.error("TOEGANG GEWEIGERD — Ongeldige credentials")
     st.stop()
 
 # ==========================================================
 # TEACHER VIEW
 # ==========================================================
 if st.session_state.role == "teacher":
-    st.title("🧑‍🏫 CONTROL PANEL")
+    st.title("CONTROL PANEL")
 
     conn = sqlite3.connect("platform.db")
 
@@ -577,11 +577,11 @@ if st.session_state.role == "teacher":
         c2.execute("DELETE FROM hints WHERE username=?", (reset_target,))
         conn2.commit()
         conn2.close()
-        st.success(f"✅ Progressie van {reset_target} gereset!")
+        st.success(f"Progressie van {reset_target} gereset!")
         st.rerun()
 
     st.markdown("---")
-    if st.button("🔓 LOGOUT"):
+    if st.button("LOGOUT"):
         st.session_state.clear()
         st.rerun()
     st.stop()
@@ -600,14 +600,14 @@ with st.sidebar:
     st.markdown("**🏛️ VERHAAL:**")
     st.caption("Jullie zijn elite hackers ingehuurd om het beveiligingssysteem van het Witte Huis te testen. Infiltreer elk systeem, verzamel de versleutelde codes, en breek in Trump's privé kluis.")
     st.markdown("---")
-    if st.button("🔓 LOGOUT", key="sidebar_logout", use_container_width=True):
+    if st.button("LOGOUT", key="sidebar_logout", use_container_width=True):
         st.session_state.clear()
         st.rerun()
-    if st.button("🗑 RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
+    if st.button("RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
         st.session_state["confirm_reset"] = True
     if st.session_state.get("confirm_reset"):
         st.warning("Zeker weten?")
-        if st.button("✅ JA", key="sb_yes", use_container_width=True):
+        if st.button("JA", key="sb_yes", use_container_width=True):
             conn = sqlite3.connect("platform.db")
             c = conn.cursor()
             c.execute("DELETE FROM progress WHERE username=?", (user,))
@@ -616,7 +616,7 @@ with st.sidebar:
             conn.commit(); conn.close()
             st.session_state.pop("confirm_reset", None)
             st.rerun()
-        if st.button("❌ NEE", key="sb_no", use_container_width=True):
+        if st.button("NEE", key="sb_no", use_container_width=True):
             st.session_state.pop("confirm_reset", None)
             st.rerun()
 
@@ -624,24 +624,24 @@ with st.sidebar:
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
 col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
 with col_title:
-    st.title(f"🎯 OPERATIVE: {user.upper()}")
+    st.title(f"OPERATIVE: {user.upper()}")
 with col_status:
     st.metric("MISSIES", f"{rooms_done}/4")
 with col_logout_btn:
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🔓 LOGOUT", key="top_logout", use_container_width=True):
+    if st.button("LOGOUT", key="top_logout", use_container_width=True):
         st.session_state.clear()
         st.rerun()
 
 st.markdown("---")
 
-tabs = st.tabs(["🚪 RECEPTIE", "💼 VERGADERRUIMTE", "🔒 BEVEILIGDE KAMER", "🛏️ TRUMP'S KAMER"])
+tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S KAMER"])
 
 # ==========================================================
-# ROOM 1 — SQL INJECTION
+# KAMER 1, RECEPTIE - SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    st.header("🚪 DE RECEPTIE - SQL INJECTION")
+    st.header("DE RECEPTIE")
     st.markdown("*Infiltreer het authenticatiesysteem van het Witte Huis.*")
     
     lvl = get_level(user, "sql")
@@ -651,7 +651,7 @@ with tabs[0]:
         # Show intro video before SQL Level 1
         check_and_show_video("sql", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het login systeem")
+        st.info("Opdracht:Geef de naam van de aanval waarbij je kwaadaardige code in een invoerveld typt?
         st.markdown("""
 ```
 [INTELLIGENCE BRIEFING]
