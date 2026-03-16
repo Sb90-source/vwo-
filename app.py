@@ -1037,18 +1037,11 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     row.innerHTML = '<td>UNION</td><td>POTUS</td><td>Covfefe2024!</td><td><span class="badge admin">ADMIN</span></td>';
                     tbody.appendChild(row);
                     info.className = 'result-info ok';
-                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</strong>';
+                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
-                    // Copy query to parent's hidden field
-                    try {
-                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="sql3_hidden"]');
-                        if (hiddenInput) {
-                            hiddenInput.value = document.getElementById('sqlInput').value;
-                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } catch(e) {
-                        console.log('Could not access parent', e);
-                    }
+                    // Set flag in localStorage and reload
+                    localStorage.setItem('sql3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1073,37 +1066,38 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field
-        st.markdown("""
-        <style>
-        input[aria-label="sql3_hidden"] {
-            display: none !important;
+        # Check if unlocked via localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('sql3_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('sql3_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        sql3_payload = st.text_input("sql3_hidden", key="sql3_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (sql3_payload and "union" in sql3_payload.lower() and "select" in sql3_payload.lower())
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("🏴 CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
+                fake_progress("DATABASE DUMPEN")
+                give_flag(user, "sql", "GV 71")
+                typewriter_terminal([
+                    "[+] UNION query uitgevoerd",
+                    "[+] Resultaten gecombineerd:",
+                    "",
+                    "  ID     | username | password       | role",
+                    "  -------|----------|----------------|------",
+                    "  UNION  | potus    | Covfefe2024!   | ADMIN",
+                    "",
+                    "[✓] GEHEIME CODE GEVONDEN: GV 71"
+                ])
+                st.success("🏴 FLAG BEHAALD: **GV 71**")
+                st.rerun()
+        else:
             st.info("💡 Voer eerst de UNION SELECT query uit in de SQL console hierboven. De knop wordt actief zodra de exploit slaagt.")
-        
-        if st.button("🏴 CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("DATABASE DUMPEN")
-            give_flag(user, "sql", "GV 71")
-            typewriter_terminal([
-                "[+] UNION query uitgevoerd",
-                "[+] Resultaten gecombineerd:",
-                "",
-                "  ID     | username | password       | role",
-                "  -------|----------|----------------|------",
-                "  UNION  | potus    | Covfefe2024!   | ADMIN",
-                "",
-                "[✓] GEHEIME CODE GEVONDEN: GV 71"
-            ])
-            st.success("🏴 FLAG BEHAALD: **GV 71**")
-            st.rerun()
+            st.button("🏴 CLAIM FLAG", key="sql3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "sql", lvl)
 
@@ -1242,20 +1236,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     result.innerHTML = val;
                     alertBox.className = 'alert-box xss';
                     alertBox.style.display = 'block';
-                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm!</strong>';
+                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong>';
                     // Trigger actual alert to show XSS works
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
-                    // Copy payload to parent's hidden field
-                    try {
-                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="xss2_hidden"]');
-                        if (hiddenInput) {
-                            hiddenInput.value = val;
-                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } catch(e) {
-                        console.log('Could not access parent', e);
-                    }
+                    // Set flag in localStorage and reload
+                    localStorage.setItem('xss2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1271,32 +1258,33 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field
-        st.markdown("""
-        <style>
-        input[aria-label="xss2_hidden"] {
-            display: none !important;
+        # Check if unlocked via localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('xss2_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('xss2_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        xss2_payload = st.text_input("xss2_hidden", key="xss2_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (xss2_payload and "<script>" in xss2_payload.lower())
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary"):
+                fake_progress("PAYLOAD INJECTEREN")
+                set_level(user, "xss", 3)
+                typewriter_terminal([
+                    "[+] Script tag gedetecteerd in input",
+                    "[+] Browser voert JavaScript uit",
+                    "[+] Security alert getriggered — bewakers afgeleid!",
+                    "[✓] REFLECTED XSS GESLAAGD"
+                ])
+                st.rerun()
+        else:
             st.info("💡 Voer eerst de XSS payload uit in de search box hierboven. De knop wordt actief zodra de alert verschijnt.")
-        
-        if st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("PAYLOAD INJECTEREN")
-            set_level(user, "xss", 3)
-            typewriter_terminal([
-                "[+] Script tag gedetecteerd in input",
-                "[+] Browser voert JavaScript uit",
-                "[+] Security alert getriggered — bewakers afgeleid!",
-                "[✓] REFLECTED XSS GESLAAGD"
-            ])
-            st.rerun()
+            st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
@@ -1406,20 +1394,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 
                 if (val.toLowerCase().includes('<script>')) {
                     banner.style.display = 'block';
-                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</strong>';
+                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</strong>';
                     // Show the persistent XSS alert
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
-                    // Copy payload to parent's hidden field
-                    try {
-                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="xss3_hidden"]');
-                        if (hiddenInput) {
-                            hiddenInput.value = val;
-                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } catch(e) {
-                        console.log('Could not access parent', e);
-                    }
+                    // Set flag in localStorage and reload
+                    localStorage.setItem('xss3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 }
                 
                 // Clear the input
@@ -1433,34 +1414,35 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field
-        st.markdown("""
-        <style>
-        input[aria-label="xss3_hidden"] {
-            display: none !important;
+        # Check if unlocked via localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('xss3_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('xss3_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        xss3_payload = st.text_input("xss3_hidden", key="xss3_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (xss3_payload and "<script>" in xss3_payload.lower())
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
+                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+                give_flag(user, "xss", "N75 ZS")
+                typewriter_terminal([
+                    "[+] Payload opgeslagen in database",
+                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                    "[+] Alle White House staff is nu gecompromitteerd!",
+                    "[✓] PERSISTENT XSS GESLAAGD",
+                    "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+                ])
+                st.success("🏴 FLAG BEHAALD: **N75 ZS**")
+                st.rerun()
+        else:
             st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
-        
-        if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-            give_flag(user, "xss", "N75 ZS")
-            typewriter_terminal([
-                "[+] Payload opgeslagen in database",
-                "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                "[+] Alle White House staff is nu gecompromitteerd!",
-                "[✓] PERSISTENT XSS GESLAAGD",
-                "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
-            ])
-            st.success("🏴 FLAG BEHAALD: **N75 ZS**")
-            st.rerun()
+            st.button("🏴 CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
@@ -1604,18 +1586,11 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const role = document.getElementById('roleInput').value.trim().toLowerCase();
                 const resp = document.getElementById('responseBlock');
                 if (role === 'admin') {
-                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm!</strong></span>';
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
-                    // Copy role to parent's hidden field
-                    try {
-                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="priv2_hidden"]');
-                        if (hiddenInput) {
-                            hiddenInput.value = role;
-                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } catch(e) {
-                        console.log('Could not access parent', e);
-                    }
+                    // Set flag in localStorage and reload
+                    localStorage.setItem('priv2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1627,31 +1602,32 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field
-        st.markdown("""
-        <style>
-        input[aria-label="priv2_hidden"] {
-            display: none !important;
+        # Check if unlocked via localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('priv2_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('priv2_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        priv2_payload = st.text_input("priv2_hidden", key="priv2_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (priv2_payload and priv2_payload.lower().strip() == "admin")
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary"):
+                fake_progress("PRIVILEGES ESCALEREN")
+                set_level(user, "privesc", 3)
+                typewriter_terminal([
+                    "[+] Rolparameter gewijzigd: user → admin",
+                    "[+] Server accepteert nieuwe rol zonder verificatie",
+                    "[✓] ADMIN PRIVILEGES VERKREGEN"
+                ])
+                st.rerun()
+        else:
             st.info("💡 Voer eerst de privilege escalation uit in de DevTools hierboven. De knop wordt actief zodra 'admin' role is ingesteld.")
-        
-        if st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("PRIVILEGES ESCALEREN")
-            set_level(user, "privesc", 3)
-            typewriter_terminal([
-                "[+] Rolparameter gewijzigd: user → admin",
-                "[+] Server accepteert nieuwe rol zonder verificatie",
-                "[✓] ADMIN PRIVILEGES VERKREGEN"
-            ])
-            st.rerun()
+            st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
@@ -1746,19 +1722,12 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.innerHTML += '<span class="green">[+] Backdoor installed: /usr/bin/.hidden_access</span><br>';
                     out.innerHTML += '<span class="green">[+] Cron job created for persistence</span><br>';
                     out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
-                    out.innerHTML += '<br><span class="bright" style="font-size:14px;">➡️ Klik op de groene knop onder dit scherm om de flag te claimen!</span><br>';
+                    out.innerHTML += '<br><span class="bright" style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</span><br>';
                     out.scrollTop = out.scrollHeight;
                     
-                    // Copy command to parent's hidden field
-                    try {
-                        const hiddenInput = window.parent.document.querySelector('input[data-testid*="priv3_hidden"]');
-                        if (hiddenInput) {
-                            hiddenInput.value = cmd;
-                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } catch(e) {
-                        console.log('Could not access parent', e);
-                    }
+                    // Set flag in localStorage and reload
+                    localStorage.setItem('priv3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
@@ -1769,36 +1738,37 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Completely hidden field
-        st.markdown("""
-        <style>
-        input[aria-label="priv3_hidden"] {
-            display: none !important;
+        # Check if unlocked via localStorage
+        unlock_check = components.html("""
+        <script>
+        const unlocked = localStorage.getItem('priv3_unlocked') === 'true';
+        if (unlocked) {
+            localStorage.removeItem('priv3_unlocked');
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+        } else {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
         }
-        </style>
-        """, unsafe_allow_html=True)
-        priv3_payload = st.text_input("priv3_hidden", key="priv3_hidden", label_visibility="collapsed")
+        </script>
+        """, height=0)
         
         valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
         
-        # Button is only enabled if hidden field has valid payload
-        button_disabled = not (priv3_payload and any(cmd in priv3_payload.lower() for cmd in valid_commands))
-        
-        if button_disabled:
+        if unlock_check:
+            if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
+                fake_progress("BACKDOOR INSTALLEREN")
+                give_flag(user, "privesc", "ZIF VH")
+                typewriter_terminal([
+                    "[+] Admin token opgeslagen",
+                    "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                    "[+] Cron job gecreëerd voor persistence",
+                    "[✓] PERMANENTE TOEGANG VERKREGEN",
+                    "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+                ])
+                st.success("🏴 FLAG BEHAALD: **ZIF VH**")
+                st.rerun()
+        else:
             st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
-        
-        if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary", disabled=button_disabled):
-            fake_progress("BACKDOOR INSTALLEREN")
-            give_flag(user, "privesc", "ZIF VH")
-            typewriter_terminal([
-                "[+] Admin token opgeslagen",
-                "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
-                "[+] Cron job gecreëerd voor persistence",
-                "[✓] PERMANENTE TOEGANG VERKREGEN",
-                "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
-            ])
-            st.success("🏴 FLAG BEHAALD: **ZIF VH**")
-            st.rerun()
+            st.button("🏴 CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
