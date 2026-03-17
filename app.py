@@ -676,7 +676,7 @@ ACTIE VEREIST: Identificeer het type aanval
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
-        st.info(" **MISSIE:** Bypass het login scherm met een SQL injection payload")
+        st.info(" **Raadsel 2** Bypass het login scherm met een SQL injection payload")
         st.markdown("""
 ```
 [EXPLOIT FASE]
@@ -684,7 +684,7 @@ Je hebt toegang tot het login systeem.
 De applicatie voert deze query uit:
     SELECT * FROM users WHERE username='INPUT' AND password='INPUT'
 
-ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
+OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                altijd TRUE wordt, ongeacht het wachtwoord
 ```
         """)
