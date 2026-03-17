@@ -888,7 +888,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         """, height=0)
         
         if unlock_check:
-            if st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
+            if st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
                 fake_progress("AUTHENTICATIE BYPASSEN")
                 set_level(user, "sql", 3)
                 typewriter_terminal([
@@ -899,13 +899,13 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 ])
                 st.rerun()
         else:
-            st.info("💡 Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
-            st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.info("Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
+            st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue_disabled", use_container_width=True, type="primary", disabled=True)
 
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
-        st.info("🎯 **MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
+        st.info("**MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
         st.markdown("""
 ```
 [DATA EXTRACTION]
