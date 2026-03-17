@@ -619,12 +619,14 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-# Process unlock signals from JS redirects
-_unlock_param = st.query_params.get("unlock", "")
-if _unlock_param:
-    set_unlock(user, _unlock_param)
-    st.query_params.clear()
-    st.rerun()
+# Hidden unlock inputs - JS fills these via aria-label selector
+# Streamlit sets aria-label = label text, so label IS the selector
+st.markdown('<style>[data-testid="stTextInput"].unlock-hidden{display:none!important;}</style>', unsafe_allow_html=True)
+for _challenge in ["sql2","sql3","xss2","xss3","priv2","priv3"]:
+    _val = st.text_input(f"unlock_{_challenge}", key=f"unlock_signal_{_challenge}", label_visibility="hidden")
+    if _val == "yes" and not is_unlocked(user, _challenge):
+        set_unlock(user, _challenge)
+        st.rerun()
 
 
 
@@ -843,7 +845,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
                 // Set flag in localStorage and reload
-                window.location.href = window.location.pathname + '?unlock=sql2';
+                var inp=window.parent.document.querySelector('input[aria-label="unlock_sql2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -1024,7 +1026,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
                     // Set flag in localStorage and reload
-                    window.location.href = window.location.pathname + '?unlock=sql3';
+                    var inp=window.parent.document.querySelector('input[aria-label="unlock_sql3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1216,7 +1218,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
                     // Set flag in localStorage and reload
-                    window.location.href = window.location.pathname + '?unlock=xss2';
+                    var inp=window.parent.document.querySelector('input[aria-label="unlock_xss2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1362,7 +1364,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
                     // Set flag in localStorage and reload
-                    window.location.href = window.location.pathname + '?unlock=xss3';
+                    var inp=window.parent.document.querySelector('input[aria-label="unlock_xss3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
                 }
                 
                 // Clear the input
@@ -1543,7 +1545,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
                     // Set flag in localStorage and reload
-                    window.location.href = window.location.pathname + '?unlock=priv2';
+                    var inp=window.parent.document.querySelector('input[aria-label="unlock_priv2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1668,7 +1670,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.scrollTop = out.scrollHeight;
                     
                     // Set flag in localStorage and reload
-                    window.location.href = window.location.pathname + '?unlock=priv3';
+                    var inp=window.parent.document.querySelector('input[aria-label="unlock_priv3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
