@@ -440,12 +440,12 @@ def hint_widget(user, room, current_level):
     used = get_hints_used(user, room)
     next_hint = len(used)
 
-    with st.expander(f"🔍 HINTS ({next_hint}/{len(hints)} gebruikt)"):
+    with st.expander(f"HINTS ({next_hint}/{len(hints)} gebruikt)"):
         for i in used:
             st.info(hints[i])
 
         if next_hint < len(hints):
-            if st.button(f"📡 REQUEST HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
+            if st.button(f"VRAAG OM EEN HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
                 use_hint(user, room, next_hint)
                 st.rerun()
         else:
