@@ -1448,7 +1448,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
 # ==========================================================
 with tabs[2]:
     st.header("DE BEVEILIGDE KAMER")
-    st.markdown("*Verhoog je privileges om toegang te krijgen tot classified systems.*")
+    st.markdown("*Verhoog je rechten om toegang te krijgen tot classified systems.*")
     
     lvl = get_level(user, "privesc")
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
