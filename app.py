@@ -1769,15 +1769,15 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
-# ROOM 4 — VAULT (CRYPTO)
+# KAMER 4, Trump's kamer - encryptie
 # ==========================================================
 with tabs[3]:
-    st.header("🛏️ TRUMP'S KAMER - CRYPTOGRAFIE")
+    st.header("TRUMP'S KAMER - CRYPTOGRAFIE")
     st.markdown("*Kraak de encryptie en open Trump's persoonlijke kluis.*")
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
     if not all(rooms_complete):
-        missing = [r.upper() for r, done in zip(["sql","xss","privesc"], rooms_complete) if not done]
+        missing = [r.upper() for r, done in zip(["Kamer 1","xss","privesc"], rooms_complete) if not done]
         st.error(f"⛔ TOEGANG GEWEIGERD — Voltooi eerst alle vorige missies: {', '.join(missing)}")
         st.stop()
 
