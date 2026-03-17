@@ -660,7 +660,7 @@ ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
         st.markdown("**Welk type aanval misbruikt de database queries door kwaadaardige code in de invoervelden te injecteren?**")
-        cmd = st.text_input("root@hq:~#", key="sql1", placeholder="typ het type aanval...")
+        cmd = st.text_input("Raadsel 1", key="sql1", placeholder="typ het type aanval...")
         if st.button("▶ EXECUTE", key="sql1_btn"):
             if cmd.lower().strip() == "sql injection":
                 fake_progress("KWETSBAARHEID ANALYSEREN")
