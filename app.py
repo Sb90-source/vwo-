@@ -619,15 +619,6 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-# Hidden unlock inputs - JS fills these via aria-label selector
-# Streamlit sets aria-label = label text, so label IS the selector
-st.markdown('<style>[data-testid="stTextInput"].unlock-hidden{display:none!important;}</style>', unsafe_allow_html=True)
-for _challenge in ["sql2","sql3","xss2","xss3","priv2","priv3"]:
-    _val = st.text_input(f"unlock_{_challenge}", key=f"unlock_signal_{_challenge}", label_visibility="hidden")
-    if _val == "yes" and not is_unlocked(user, _challenge):
-        set_unlock(user, _challenge)
-        st.rerun()
-
 
 
 
@@ -845,7 +836,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
                 // Set flag in localStorage and reload
-                var inp=window.parent.document.querySelector('input[aria-label="unlock_sql2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                localStorage.setItem('sql2_unlocked', 'true');
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -875,7 +866,24 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        unlock_check = is_unlocked(user, "sql2")
+        # Check if unlocked via custom component that reads localStorage
+        _poll_sql2 = components.html("""
+        <script>
+        (function poll() {
+            const v = localStorage.getItem('sql2_unlocked');
+            if (v === 'true') {
+                localStorage.removeItem('sql2_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'sql2'}, '*');
+            } else {
+                setTimeout(poll, 300);
+            }
+        })();
+        </script>
+        """, height=0)
+        if _poll_sql2 == 'sql2':
+            set_unlock(user, 'sql2')
+            st.rerun()
+        unlock_check = is_unlocked(user, 'sql2')
         
         if unlock_check:
             if st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
@@ -1026,7 +1034,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
                     // Set flag in localStorage and reload
-                    var inp=window.parent.document.querySelector('input[aria-label="unlock_sql3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                    localStorage.setItem('sql3_unlocked', 'true');
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1054,7 +1062,23 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         if has_completed(user, "sql"):
             st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
         else:
-            unlock_check = is_unlocked(user, "sql3")
+            _poll_sql3 = components.html("""
+            <script>
+            (function poll() {
+                const v = localStorage.getItem('sql3_unlocked');
+                if (v === 'true') {
+                    localStorage.removeItem('sql3_unlocked');
+                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'sql3'}, '*');
+                } else {
+                    setTimeout(poll, 300);
+                }
+            })();
+            </script>
+            """, height=0)
+            if _poll_sql3 == 'sql3':
+                set_unlock(user, 'sql3')
+                st.rerun()
+            unlock_check = is_unlocked(user, 'sql3')
             
             if unlock_check:
                 if st.button("CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
@@ -1218,7 +1242,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
                     // Set flag in localStorage and reload
-                    var inp=window.parent.document.querySelector('input[aria-label="unlock_xss2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                    localStorage.setItem('xss2_unlocked', 'true');
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1234,7 +1258,24 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        unlock_check = is_unlocked(user, "xss2")
+        # Check if unlocked via localStorage
+        _poll_xss2 = components.html("""
+        <script>
+        (function poll() {
+            const v = localStorage.getItem('xss2_unlocked');
+            if (v === 'true') {
+                localStorage.removeItem('xss2_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'xss2'}, '*');
+            } else {
+                setTimeout(poll, 300);
+            }
+        })();
+        </script>
+        """, height=0)
+        if _poll_xss2 == 'xss2':
+            set_unlock(user, 'xss2')
+            st.rerun()
+        unlock_check = is_unlocked(user, 'xss2')
         
         if unlock_check:
             if st.button("GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary"):
@@ -1364,7 +1405,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
                     // Set flag in localStorage and reload
-                    var inp=window.parent.document.querySelector('input[aria-label="unlock_xss3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                    localStorage.setItem('xss3_unlocked', 'true');
                 }
                 
                 // Clear the input
@@ -1378,27 +1419,43 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
+        # Check if unlocked via localStorage
+        _poll_xss3 = components.html("""
+        <script>
+        (function poll() {
+            const v = localStorage.getItem('xss3_unlocked');
+            if (v === 'true') {
+                localStorage.removeItem('xss3_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'xss3'}, '*');
+            } else {
+                setTimeout(poll, 300);
+            }
+        })();
+        </script>
+        """, height=0)
+        if _poll_xss3 == 'xss3':
+            set_unlock(user, 'xss3')
+            st.rerun()
+        unlock_check = is_unlocked(user, 'xss3')
+        
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
+        elif unlock_check:
+            if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
+                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+                give_flag(user, "xss", "N75 ZS")
+                clear_unlock(user, "xss3")
+                typewriter_terminal([
+                    "[+] Payload opgeslagen in database",
+                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                    "[+] Alle White House staff is nu gecompromitteerd!",
+                    "[✓] PERSISTENT XSS GESLAAGD",
+                    "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+                ])
+                st.rerun()
         else:
-            unlock_check = is_unlocked(user, "xss3")
-            
-            if unlock_check:
-                if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
-                    fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                    give_flag(user, "xss", "N75 ZS")
-                    clear_unlock(user, "xss3")
-                    typewriter_terminal([
-                        "[+] Payload opgeslagen in database",
-                        "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                        "[+] Alle White House staff is nu gecompromitteerd!",
-                        "[✓] PERSISTENT XSS GESLAAGD",
-                        "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
-                    ])
-                    st.rerun()
-            else:
-                st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
-                st.button("CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
+            st.button("CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
@@ -1545,7 +1602,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
                     // Set flag in localStorage and reload
-                    var inp=window.parent.document.querySelector('input[aria-label="unlock_priv2"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                    localStorage.setItem('priv2_unlocked', 'true');
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1557,7 +1614,24 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        unlock_check = is_unlocked(user, "priv2")
+        # Check if unlocked via localStorage
+        _poll_priv2 = components.html("""
+        <script>
+        (function poll() {
+            const v = localStorage.getItem('priv2_unlocked');
+            if (v === 'true') {
+                localStorage.removeItem('priv2_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'priv2'}, '*');
+            } else {
+                setTimeout(poll, 300);
+            }
+        })();
+        </script>
+        """, height=0)
+        if _poll_priv2 == 'priv2':
+            set_unlock(user, 'priv2')
+            st.rerun()
+        unlock_check = is_unlocked(user, 'priv2')
         
         if unlock_check:
             if st.button("GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary"):
@@ -1670,7 +1744,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.scrollTop = out.scrollHeight;
                     
                     // Set flag in localStorage and reload
-                    var inp=window.parent.document.querySelector('input[aria-label="unlock_priv3"]');if(inp){inp.focus();var nativeInputValueSetter=Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype,'value').set;nativeInputValueSetter.call(inp,'yes');inp.dispatchEvent(new Event('input',{bubbles:true}));}
+                    localStorage.setItem('priv3_unlocked', 'true');
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
@@ -1681,31 +1755,44 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        unlock_check = is_unlocked(user, "priv3")
+        # Check if unlocked via localStorage
+        _poll_priv3 = components.html("""
+        <script>
+        (function poll() {
+            const v = localStorage.getItem('priv3_unlocked');
+            if (v === 'true') {
+                localStorage.removeItem('priv3_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'priv3'}, '*');
+            } else {
+                setTimeout(poll, 300);
+            }
+        })();
+        </script>
+        """, height=0)
+        if _poll_priv3 == 'priv3':
+            set_unlock(user, 'priv3')
+            st.rerun()
+        unlock_check = is_unlocked(user, 'priv3')
         
         valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
-        
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
+        elif unlock_check:
+            if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
+                fake_progress("BACKDOOR INSTALLEREN")
+                give_flag(user, "privesc", "ZIF VH")
+                clear_unlock(user, "priv3")
+                typewriter_terminal([
+                    "[+] Admin token opgeslagen",
+                    "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                    "[+] Cron job gecreëerd voor persistence",
+                    "[✓] PERMANENTE TOEGANG VERKREGEN",
+                    "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+                ])
+                st.rerun()
         else:
-            unlock_check = is_unlocked(user, "priv3")
-            
-            if unlock_check:
-                if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
-                    fake_progress("BACKDOOR INSTALLEREN")
-                    give_flag(user, "privesc", "ZIF VH")
-                    clear_unlock(user, "priv3")
-                    typewriter_terminal([
-                        "[+] Admin token opgeslagen",
-                        "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
-                        "[+] Cron job gecreëerd voor persistence",
-                        "[✓] PERMANENTE TOEGANG VERKREGEN",
-                        "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
-                    ])
-                    st.rerun()
-            else:
-                st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
-                st.button("CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
+            st.button("CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
