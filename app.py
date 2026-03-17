@@ -212,7 +212,7 @@ init_db()
 # ==========================================================
 HINTS = {
     "sql": [
-        "💡 Kijk op je cheat sheet, eht type aanval staat in het rijtje! En heb je goed naar de sticky note gekeken?"
+        "💡 Kijk op je cheat sheet, het type aanval staat in het rijtje! En heb je goed naar de sticky note gekeken?",
         "💡 Maak de WHERE-clausule altijd TRUE. Probeer: ' OR '1'='1 als gebruikersnaam.",
         "💡 Gebruik UNION SELECT om een tweede query mee te combineren. Bijv: ' UNION SELECT username, password, role FROM users--",
     ],
