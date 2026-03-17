@@ -1774,7 +1774,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
 # ==========================================================
 with tabs[3]:
     st.header("TRUMP'S KAMER - CRYPTOGRAFIE")
-    st.markdown("*Kraak de encryptie en open Trump's persoonlijke kluis.*")
+    st.markdown("*Kraak Trump's persoonlijke kluis.*")
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
     if not all(rooms_complete):
