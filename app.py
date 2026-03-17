@@ -445,7 +445,7 @@ def hint_widget(user, room, current_level):
             st.info(hints[i])
 
         if next_hint < len(hints):
-            if st.button(f"VRAAG OM EEN HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
+            if st.button(f"VRAAG OM HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
                 use_hint(user, room, next_hint)
                 st.rerun()
         else:
