@@ -250,8 +250,8 @@ VIDEOS = {
     # Video 2: voor kamer 2, XSS  (Level 1)
     "xss_1_before": {
         "source": "https://youtu.be/_s4KIIH8U6E?si=QhbEE3LVcAF7EnMb",  # link video 2
-        "title": "Cross-Site Scripting (XSS) Introductie",
-        "caption": "Leer over XSS voordat je aan de slag gaat",
+        "title": "Kijk deze video",
+        "caption": "Goed! Jullie zijn langs de receptie! Kijk nu deze video en begin daarna aan kamer 2.",
         "autoplay": True
     },
     
