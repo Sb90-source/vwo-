@@ -1029,40 +1029,40 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Check if unlocked via localStorage
-        unlock_check = components.html("""
-        <script>
-        const unlocked = localStorage.getItem('sql3_unlocked') === 'true';
-        if (unlocked) {
-            localStorage.removeItem('sql3_unlocked');
-            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-        } else {
-            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
-        }
-        </script>
-        """, height=0)
-        
         if has_completed(user, "sql"):
-    st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
-elif unlock_check:
-            if st.button("CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
-                fake_progress("DATABASE DUMPEN")
-                give_flag(user, "sql", "GV 71")
-                typewriter_terminal([
-                    "[+] UNION query uitgevoerd",
-                    "[+] Resultaten gecombineerd:",
-                    "",
-                    "  ID     | username | password       | role",
-                    "  -------|----------|----------------|------",
-                    "  UNION  | Potus    | Covfefe2024!   | ADMIN",      #potus is president of the united states
-                    "",
-                    "[✓] GEHEIME CODE GEVONDEN: GV 71"
-                ])
-                st.success(" FLAG BEHAALD: **GV 71**")
-                st.rerun()
+            st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
         else:
-            st.info("💡 Voer eerst de UNION SELECT query uit in de SQL console hierboven. De knop wordt actief zodra de exploit slaagt.")
-            st.button("CLAIM FLAG", key="sql3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            # Check if unlocked via localStorage
+            unlock_check = components.html("""
+            <script>
+            const unlocked = localStorage.getItem('sql3_unlocked') === 'true';
+            if (unlocked) {
+                localStorage.removeItem('sql3_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+            } else {
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
+            }
+            </script>
+            """, height=0)
+            
+            if unlock_check:
+                if st.button("CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
+                    fake_progress("DATABASE DUMPEN")
+                    give_flag(user, "sql", "GV 71")
+                    typewriter_terminal([
+                        "[+] UNION query uitgevoerd",
+                        "[+] Resultaten gecombineerd:",
+                        "",
+                        "  ID     | username | password       | role",
+                        "  -------|----------|----------------|------",
+                        "  UNION  | Potus    | Covfefe2024!   | ADMIN",
+                        "",
+                        "[✓] GEHEIME CODE GEVONDEN: GV 71"
+                    ])
+                    st.rerun()
+            else:
+                st.info("💡 Voer eerst de UNION SELECT query uit in de SQL console hierboven. De knop wordt actief zodra de exploit slaagt.")
+                st.button("CLAIM FLAG", key="sql3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "sql", lvl)
 
@@ -1379,35 +1379,37 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Check if unlocked via localStorage
-        unlock_check = components.html("""
-        <script>
-        const unlocked = localStorage.getItem('xss3_unlocked') === 'true';
-        if (unlocked) {
-            localStorage.removeItem('xss3_unlocked');
-            window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-        } else {
-            window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
-        }
-        </script>
-        """, height=0)
-        
-        if unlock_check:
-            if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
-                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                give_flag(user, "xss", "N75 ZS")
-                typewriter_terminal([
-                    "[+] Payload opgeslagen in database",
-                    "[+] Script wordt uitgevoerd bij elke paginabezoek",
-                    "[+] Alle White House staff is nu gecompromitteerd!",
-                    "[✓] PERSISTENT XSS GESLAAGD",
-                    "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
-                ])
-                st.success("🏴 FLAG BEHAALD: **N75 ZS**")
-                st.rerun()
+        if has_completed(user, "xss"):
+            st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
         else:
-            st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
-            st.button("CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            # Check if unlocked via localStorage
+            unlock_check = components.html("""
+            <script>
+            const unlocked = localStorage.getItem('xss3_unlocked') === 'true';
+            if (unlocked) {
+                localStorage.removeItem('xss3_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+            } else {
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
+            }
+            </script>
+            """, height=0)
+            
+            if unlock_check:
+                if st.button("🏴 CLAIM FLAG", key="xss3_continue", use_container_width=True, type="primary"):
+                    fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+                    give_flag(user, "xss", "N75 ZS")
+                    typewriter_terminal([
+                        "[+] Payload opgeslagen in database",
+                        "[+] Script wordt uitgevoerd bij elke paginabezoek",
+                        "[+] Alle White House staff is nu gecompromitteerd!",
+                        "[✓] PERSISTENT XSS GESLAAGD",
+                        "[✓] GEHEIME CODE GEVONDEN: N75 ZS"
+                    ])
+                    st.rerun()
+            else:
+                st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
+                st.button("CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
@@ -1718,22 +1720,37 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         valid_commands = ['backdoor', 'install', 'persist', 'crontab', 'ssh-keygen', 'authorized', 'netcat', 'nc', 'chmod', 'cron', 'bash']
         
-        if unlock_check:
-            if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
-                fake_progress("BACKDOOR INSTALLEREN")
-                give_flag(user, "privesc", "ZIF VH")
-                typewriter_terminal([
-                    "[+] Admin token opgeslagen",
-                    "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
-                    "[+] Cron job gecreëerd voor persistence",
-                    "[✓] PERMANENTE TOEGANG VERKREGEN",
-                    "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
-                ])
-                st.success("🏴 FLAG BEHAALD: **ZIF VH**")
-                st.rerun()
+        if has_completed(user, "privesc"):
+            st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
         else:
-            st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
-            st.button("CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            # Check if unlocked via localStorage
+            unlock_check = components.html("""
+            <script>
+            const unlocked = localStorage.getItem('priv3_unlocked') === 'true';
+            if (unlocked) {
+                localStorage.removeItem('priv3_unlocked');
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+            } else {
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: false}, '*');
+            }
+            </script>
+            """, height=0)
+            
+            if unlock_check:
+                if st.button("🏴 CLAIM FLAG", key="priv3_continue", use_container_width=True, type="primary"):
+                    fake_progress("BACKDOOR INSTALLEREN")
+                    give_flag(user, "privesc", "ZIF VH")
+                    typewriter_terminal([
+                        "[+] Admin token opgeslagen",
+                        "[+] Backdoor geïnstalleerd: /usr/bin/.hidden_access",
+                        "[+] Cron job gecreëerd voor persistence",
+                        "[✓] PERMANENTE TOEGANG VERKREGEN",
+                        "[✓] GEHEIME CODE GEVONDEN: ZIF VH"
+                    ])
+                    st.rerun()
+            else:
+                st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
+                st.button("CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
@@ -1751,7 +1768,7 @@ with tabs[3]:
         st.stop()
 
     lvl = get_level(user, "crypto")
-    st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
+    st.progress(min((lvl-1)/4, 1.0), text=f"Voortgang: Stap {min(lvl,4)}/4")
 
     if lvl == 1:
         # Show intro video before Crypto Level 1
@@ -1790,6 +1807,38 @@ ACTIE VEREIST: Identificeer het encryption algoritme
         hint_widget(user, "crypto", lvl)
 
     elif lvl == 2:
+        st.info(" **RAADSEL:** Ontcijfer de kolomtranspositie code")
+        st.markdown("""
+```
+[DUBBELE BEVEILIGING]
+De kluis heeft een tweede laag beveiliging: kolomtranspositie.
+
+Code: MAAUANST!AGGKRAEEI
+Sleutelwoord: Epstein (te vinden in de video)
+
+INSTRUCTIES:
+1. Haal dubbele letters uit sleutelwoord: EPSTEIN → EPSTIN
+2. Nummer de letters alfabetisch: E=1, P=4, S=5, T=6, I=2, N=3
+3. Lees de code in kolommen volgens de nummering
+```
+        """)
+        cmd = st.text_input("decrypt>", key="crypto_kolomtransp", placeholder="ontcijferd wachtwoord...")
+        if st.button("▶ CONTROLEER", key="crypto2_check"):
+            if cmd.strip().upper() == "MAKEUSAGREATAGAIN!":
+                fake_progress("KOLOMTRANSPOSITIE DECODEREN")
+                set_level(user, "crypto", 3)
+                typewriter_terminal([
+                    "[+] Kolomtranspositie ontcijferd",
+                    "[+] Sleutelwoord: EPSTIN",
+                    "[+] Code: MAKE USA GREAT AGAIN!",
+                    "[✓] TWEEDE BEVEILIGINGSLAAG DOORBROKEN"
+                ])
+                st.rerun()
+            else:
+                st.error("❌ Incorrect. Volg de instructies zorgvuldig.")
+        hint_widget(user, "crypto", lvl)
+
+    elif lvl == 3:
         st.info(" **MISSIE:** Decodeer de verzamelde codes en combineer ze tot het vault wachtwoord")
         st.markdown("**Je hebt deze versleutelde codes verzameld tijdens je missies:**")
         col1, col2, col3 = st.columns(3)
@@ -1821,7 +1870,7 @@ Bijvoorbeeld:  GV → ??
         if st.button("▶ ONTSLEUTEL VAULT", key="crypto2_btn", use_container_width=True):
             if cmd.strip().upper() == "EXAMENKLAS2026":
                 fake_progress("VAULT ONTGRENDELEN")
-                set_level(user, "crypto", 3)
+                set_level(user, "crypto", 4)
                 typewriter_terminal([
                     "[+] Wachtwoord correct",
                     "[+] Caesar shift decoded: ROT7",
@@ -1844,7 +1893,7 @@ Bijvoorbeeld:  GV → ??
                 st.error("❌ Verkeerde code. Decodeer alle vlaggen en combineer ze correct.")
         hint_widget(user, "crypto", lvl)
 
-    elif lvl == 3:
+    elif lvl >= 4:
         st.success("**KLUIS GEOPEND — MISSIE VOLTOOID!**")
         
         # Show finale video after completing everything
