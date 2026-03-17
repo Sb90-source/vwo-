@@ -650,16 +650,16 @@ with tabs[0]:
         st.info("Yes! Jullie zijn binnen. Je partner in crime heeft de receptioniste weggelokt. Nu aan jou de taak om achter haar computer te kruipen en te proberen om in het systeem te komen. Kijk goed om je heen!")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
-📍 Locatie: White House Reception Authentication System
-🎯 Doelwit: auth.whitehouse.gov:3306
-⚠️  Bevinding: Login module accepteert ongefilterde gebruikersinput
-💀 Kwetsbaarheid: Database queries kunnen worden gemanipuleerd
+[INFORMATIE]
+Locatie: White House Reception Authentication System
+Doelwit: auth.whitehouse.gov:3306
+Bevinding: Login module accepteert ongefilterde gebruikersinput
+Kwetsbaarheid: Database queries kunnen worden gemanipuleerd
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
-        st.markdown("**❓ Welk type aanval misbruikt database queries door kwaadaardige code in invoervelden te injecteren?**")
+        st.markdown("**Welk type aanval misbruikt de database queries door kwaadaardige code in de invoervelden te injecteren?**")
         cmd = st.text_input("root@hq:~#", key="sql1", placeholder="typ het type aanval...")
         if st.button("▶ EXECUTE", key="sql1_btn"):
             if cmd.lower().strip() == "sql injection":
@@ -676,7 +676,7 @@ ACTIE VEREIST: Identificeer het type aanval
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Bypass het login scherm met een SQL injection payload")
+        st.info(" **MISSIE:** Bypass het login scherm met een SQL injection payload")
         st.markdown("""
 ```
 [EXPLOIT FASE]
