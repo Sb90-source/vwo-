@@ -8,8 +8,14 @@ import streamlit.components.v1 as components
 # ==========================================================
 # CONFIG
 # ==========================================================
-st.set_page_config("🏛️ THE WHITE HOUSE BREACH", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config("THE WHITE HOUSE", layout="wide", initial_sidebar_state="expanded")
 
+st.markdown("""
+<style>
+[data-testid="stSidebar"] { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
 # ==========================================================
 # VIBE — MATRIX RAIN + SCANLINES + SOUNDS + FONTS
 # ==========================================================
@@ -198,7 +204,7 @@ def init_db():
         username TEXT, room TEXT, hint_num INTEGER,
         PRIMARY KEY(username, room, hint_num))""")
 
-    for u in [("student", hash_pw("hackme"), "student"),
+    for u in [("undercover", hash_pw("epsteinfiles"), "student"),
               ("teacher", hash_pw("admin123"), "teacher")]:
         c.execute("INSERT OR IGNORE INTO users VALUES (?,?,?)", u)
 
@@ -212,7 +218,7 @@ init_db()
 # ==========================================================
 HINTS = {
     "sql": [
-        "💡 Welk type aanval misbruikt database queries door code in een invoerveld te stoppen?",
+        "💡 Kijk op je cheat sheet, het type aanval staat in het rijtje! En heb je goed naar de sticky note gekeken?",
         "💡 Maak de WHERE-clausule altijd TRUE. Probeer: ' OR '1'='1 als gebruikersnaam.",
         "💡 Gebruik UNION SELECT om een tweede query mee te combineren. Bijv: ' UNION SELECT username, password, role FROM users--",
     ],
@@ -234,51 +240,47 @@ HINTS = {
 }
 
 # ==========================================================
-# VIDEO CONFIGURATION
+# VIDEO'S
 # ==========================================================
-# Videos that play before or after certain levels
-# 
-# OPTIONS FOR GITHUB + STREAMLIT CLOUD:
-# 1. YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
-# 2. GitHub Raw URL: "https://raw.githubusercontent.com/USERNAME/REPO/main/videos/video.mp4"
-# 3. External hosting: Google Drive, Vimeo, etc (see guide below)
+# Videos die tussen de kamers door zich afspelen
+#
 VIDEOS = {
-    # Video 1: Before SQL Room (Level 1)
+    # Video 1: voor kamer 1,  SQL(Level 1)
     "sql_1_before": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "SQL Injection Introductie",
-        "caption": "Bekijk deze video voordat je begint met SQL Injection",
+        "source": "https://youtu.be/nD8rPj7Db5o?feature=shared",  # link video 1
+        "title": "Wat is jullie opdracht?",
+        "caption": "Bekijk deze video voordat je aan kamer 1 begint.",
         "autoplay": True
     },
     
-    # Video 2: Before XSS Room (Level 1)
+    # Video 2: voor kamer 2, XSS  (Level 1)
     "xss_1_before": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "Cross-Site Scripting (XSS) Introductie",
-        "caption": "Leer over XSS voordat je aan de slag gaat",
+        "source": "https://youtu.be/_s4KIIH8U6E?si=QhbEE3LVcAF7EnMb",  # link video 2
+        "title": "De volgende stap...",
+        "caption": "Goed! Jullie zijn langs de receptie! Kijk nu deze video en begin daarna aan kamer 2.",
         "autoplay": True
     },
     
-    # Video 3: Before PrivEsc Room (Level 1)
+    # Video 3: voor PrivEsc  (Level 1)
     "privesc_1_before": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "Privilege Escalation Introductie",
-        "caption": "Ontdek hoe privilege escalation werkt",
+        "source": "https://youtu.be/hDX17X3wbkg?si=jnUEtKS6Z5ztWefk",  # link video 3
+        "title": "Goed bezig! Nog 2 kamers te gaan!",
+        "caption": "Houd je ogen open en oren gespitst. Bekijk deze video en vergeet niet om goed op te letten",
         "autoplay": True
     },
     
-    # Video 4: Before Crypto Room (Level 1)
+    # Video 4: voor encryptie (Level 1)
     "crypto_1_before": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "Cryptografie & Caesar Cipher",
-        "caption": "Leer over klassieke encryptie methodes",
+        "source": "https://youtu.be/4HohWyqEV2E?si=BXnV3ZXNOJJVrQ7s",  # link video 4
+        "title": "Jullie zijn er bijna, nog even en dan hebben jullie alle macht om de epsteinfiles te publiceren!",
+        "caption": "SHHHH! Wees stil!",
         "autoplay": True
     },
     
-    # Video 5: After Crypto Room Complete (Final Victory)
+    # Video 5: na encryptie kamer (Final Victory)
     "crypto_complete": {
-        "source": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE",  # Update with your YouTube URL
-        "title": "🎉 MISSIE GESLAAGD!",
+        "source": "https://youtu.be/W8vu-yWcLsg?si=Zd0KmOoyg5sOjnzz",  # link video 5
+        "title": "MISSIE GESLAAGD!",
         "caption": "Je hebt het White House succesvol gehackt!",
         "autoplay": True
     },
@@ -407,17 +409,17 @@ def show_video(video_source, title=None, caption=None, autoplay=True):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-def check_and_show_video(room, level=None, position="before"):
+def check_and_show_video(room, level, position="before"):
     """
     Check if there's a video configured for this room/level and show it
     position: "before" or "after" the level
     Also supports "complete" for after completing all levels in a room
     """
-    # Check for room completion video first
+    video_key = f"{room}_{level}_{position}"
+    
+    # Check for room completion video
     if position == "complete":
         video_key = f"{room}_complete"
-    else:
-        video_key = f"{room}_{level}_{position}"
     
     if video_key in VIDEOS:
         video_config = VIDEOS[video_key]
@@ -444,12 +446,12 @@ def hint_widget(user, room, current_level):
     used = get_hints_used(user, room)
     next_hint = len(used)
 
-    with st.expander(f"🔍 HINTS ({next_hint}/{len(hints)} gebruikt)"):
+    with st.expander(f"HINTS ({next_hint}/{len(hints)} gebruikt)"):
         for i in used:
             st.info(hints[i])
 
         if next_hint < len(hints):
-            if st.button(f"📡 REQUEST HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
+            if st.button(f"VRAAG OM HINT {next_hint + 1}", key=f"hint_{room}_{next_hint}"):
                 use_hint(user, room, next_hint)
                 st.rerun()
         else:
@@ -469,10 +471,10 @@ if not st.session_state.user:
     st.markdown("""
     <div style="text-align:center; padding: 2rem 0 1rem;">
         <div class="glitch-wrapper2">
-            <span class="glitch-t" data-text="🏛️ THE WHITE HOUSE">🏛️ THE WHITE HOUSE</span>
+            <span class="glitch-t" data-text="THE WHITE HOUSE">THE WHITE HOUSE</span>
         </div>
         <p style="letter-spacing:6px;color:rgba(0,255,156,0.5);font-size:11px;margin-top:12px;font-family:'Share Tech Mono',monospace;">
-            CYBER INFILTRATIE MISSIE &mdash; GEMAAKT DOOR: ANOUK, MARWA, FENNA EN NOURA
+            CYBERSECURITY ESCAPEROOM &mdash; GEMAAKT DOOR: ANOUK, MARWA, FENNA EN NOURA
         </p>
     </div>
     <style>
@@ -512,7 +514,7 @@ if not st.session_state.user:
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("**`> IDENTIFICEER JEZELF`**")
-        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je groepnaam")
+        u = st.text_input("GEBRUIKERSNAAM", placeholder="geef je gebruikersnaam")
         p = st.text_input("WACHTWOORD", type="password", placeholder="••••••••")
         if st.button("▶ TOEGANG AANVRAGEN", use_container_width=True):
             role = auth(u, p)
@@ -522,14 +524,14 @@ if not st.session_state.user:
                 st.session_state.role = role
                 st.rerun()
             else:
-                st.error("⛔ TOEGANG GEWEIGERD — Ongeldige credentials")
+                st.error("TOEGANG GEWEIGERD — Ongeldige credentials")
     st.stop()
 
 # ==========================================================
 # TEACHER VIEW
 # ==========================================================
 if st.session_state.role == "teacher":
-    st.title("🧑‍🏫 CONTROL PANEL")
+    st.title("CONTROL PANEL")
 
     conn = sqlite3.connect("platform.db")
 
@@ -577,11 +579,11 @@ if st.session_state.role == "teacher":
         c2.execute("DELETE FROM hints WHERE username=?", (reset_target,))
         conn2.commit()
         conn2.close()
-        st.success(f"✅ Progressie van {reset_target} gereset!")
+        st.success(f"Progressie van {reset_target} gereset!")
         st.rerun()
 
     st.markdown("---")
-    if st.button("🔓 LOGOUT"):
+    if st.button("LOGOUT"):
         st.session_state.clear()
         st.rerun()
     st.stop()
@@ -591,57 +593,18 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-# Sidebar
-with st.sidebar:
-    st.markdown(f"### 🕶 {user.upper()}")
-    rooms_done_sb = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
-    st.markdown(f"**MISSIES VOLTOOID:** {rooms_done_sb}/4")
-    st.markdown("---")
-    st.markdown("**🏛️ VERHAAL:**")
-    st.caption("Jullie zijn elite hackers ingehuurd om het beveiligingssysteem van het Witte Huis te testen. Infiltreer elk systeem, verzamel de versleutelde codes, en breek in Trump's privé kluis.")
-    st.markdown("---")
-    if st.button("🔓 LOGOUT", key="sidebar_logout", use_container_width=True):
-        st.session_state.clear()
-        st.rerun()
-    if st.button("🗑 RESET PROGRESSIE", key="sidebar_reset", use_container_width=True):
-        st.session_state["confirm_reset"] = True
-    if st.session_state.get("confirm_reset"):
-        st.warning("Zeker weten?")
-        if st.button("✅ JA", key="sb_yes", use_container_width=True):
-            conn = sqlite3.connect("platform.db")
-            c = conn.cursor()
-            c.execute("DELETE FROM progress WHERE username=?", (user,))
-            c.execute("DELETE FROM flags WHERE username=?", (user,))
-            c.execute("DELETE FROM hints WHERE username=?", (user,))
-            conn.commit(); conn.close()
-            st.session_state.pop("confirm_reset", None)
-            st.rerun()
-        if st.button("❌ NEE", key="sb_no", use_container_width=True):
-            st.session_state.pop("confirm_reset", None)
-            st.rerun()
 
-# Header
-rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
-col_title, col_status, col_logout_btn = st.columns([3, 0.7, 0.7])
-with col_title:
-    st.title(f"🎯 OPERATIVE: {user.upper()}")
-with col_status:
-    st.metric("MISSIES", f"{rooms_done}/4")
-with col_logout_btn:
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🔓 LOGOUT", key="top_logout", use_container_width=True):
-        st.session_state.clear()
-        st.rerun()
+
 
 st.markdown("---")
 
-tabs = st.tabs(["🚪 RECEPTIE", "💼 VERGADERRUIMTE", "🔒 BEVEILIGDE KAMER", "🛏️ TRUMP'S KAMER"])
+tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S KAMER"])
 
 # ==========================================================
-# ROOM 1 — SQL INJECTION
+# KAMER 1, RECEPTIE - SQL INJECTION
 # ==========================================================
 with tabs[0]:
-    st.header("🚪 DE RECEPTIE - SQL INJECTION")
+    st.header("DE RECEPTIE")
     st.markdown("*Infiltreer het authenticatiesysteem van het Witte Huis.*")
     
     lvl = get_level(user, "sql")
@@ -651,20 +614,20 @@ with tabs[0]:
         # Show intro video before SQL Level 1
         check_and_show_video("sql", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het login systeem")
+        st.info("Yes! Jullie zijn binnen. Je partner in crime heeft de receptioniste weggelokt. Nu aan jou de taak om achter haar computer te kruipen en te proberen om in het systeem te komen. Kijk goed om je heen!")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
-📍 Locatie: White House Reception Authentication System
-🎯 Doelwit: auth.whitehouse.gov:3306
-⚠️  Bevinding: Login module accepteert ongefilterde gebruikersinput
-💀 Kwetsbaarheid: Database queries kunnen worden gemanipuleerd
+[INFORMATIE]
+Locatie: White House Reception Authentication System
+Doelwit: auth.whitehouse.gov:3306
+Bevinding: Login module accepteert ongefilterde gebruikersinput
+Kwetsbaarheid: Database queries kunnen worden gemanipuleerd
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
-        st.markdown("**❓ Welk type aanval misbruikt database queries door kwaadaardige code in invoervelden te injecteren?**")
-        cmd = st.text_input("root@hq:~#", key="sql1", placeholder="typ het type aanval...")
+        st.markdown("**Welk type aanval misbruikt de database queries door kwaadaardige code in de invoervelden te injecteren?**")
+        cmd = st.text_input("Raadsel 1", key="sql1", placeholder="typ het type aanval...")
         if st.button("▶ EXECUTE", key="sql1_btn"):
             if cmd.lower().strip() == "sql injection":
                 fake_progress("KWETSBAARHEID ANALYSEREN")
@@ -676,11 +639,11 @@ ACTIE VEREIST: Identificeer het type aanval
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Vraag een hint als je vastloopt.")
+                st.error("Incorrect. Vraag een hint als je vastloopt.")
         hint_widget(user, "sql", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Bypass het login scherm met een SQL injection payload")
+        st.info(" **Raadsel 2** Bypass het login scherm met een SQL injection payload")
         st.markdown("""
 ```
 [EXPLOIT FASE]
@@ -688,7 +651,7 @@ Je hebt toegang tot het login systeem.
 De applicatie voert deze query uit:
     SELECT * FROM users WHERE username='INPUT' AND password='INPUT'
 
-ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
+OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                altijd TRUE wordt, ongeacht het wachtwoord
 ```
         """)
@@ -844,10 +807,11 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 card.style.background = '#f0fff4';
                 msg.className = 'msg success';
                 msg.style.display = 'block';
-                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#28a745;color:white;padding:12px;margin-top:12px;border-radius:6px;font-weight:bold;font-size:14px;">✅ LEVEL 1 VOLTOOID!<br><br>➡️ Scroll naar beneden en klik op de groene knop om naar LEVEL 2 te gaan.</div>';
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
-                // Set flag in localStorage and reload (NO auto-reload - user clicks button)
+                // Set flag in localStorage and reload
                 localStorage.setItem('sql2_unlocked', 'true');
+                setTimeout(() => location.reload(), 1000);
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -891,7 +855,7 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         """, height=0)
         
         if unlock_check:
-            if st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
+            if st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue", use_container_width=True, type="primary"):
                 fake_progress("AUTHENTICATIE BYPASSEN")
                 set_level(user, "sql", 3)
                 typewriter_terminal([
@@ -902,13 +866,13 @@ ACTIE VEREIST: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 ])
                 st.rerun()
         else:
-            st.info("💡 Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
-            st.button("✅ GA DOOR NAAR LEVEL 3", key="sql2_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.info("Voer eerst de SQL injection uit in de laptop hierboven. De knop wordt actief zodra de exploit slaagt.")
+            st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue_disabled", use_container_width=True, type="primary", disabled=True)
 
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
-        st.info("🎯 **MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
+        st.info("**MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
         st.markdown("""
 ```
 [DATA EXTRACTION]
@@ -1036,10 +1000,11 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     row.innerHTML = '<td>UNION</td><td>POTUS</td><td>Covfefe2024!</td><td><span class="badge admin">ADMIN</span></td>';
                     tbody.appendChild(row);
                     info.className = 'result-info ok';
-                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><div style="background:#28a745;color:white;padding:10px;margin-top:10px;border-radius:6px;font-weight:bold;">✅ RECEPTIE VOLTOOID! Je hebt de FLAG verdiend.<br><br>➡️ Scroll naar beneden en claim de flag. Daarna ga je naar de VERGADERRUIMTE.</div>';
+                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
-                    // Set flag in localStorage (NO auto-reload)
+                    // Set flag in localStorage and reload
                     localStorage.setItem('sql3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1077,8 +1042,10 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         </script>
         """, height=0)
         
-        if unlock_check:
-            if st.button("🏴 CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
+        if has_completed(user, "sql"):
+    st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
+elif unlock_check:
+            if st.button("CLAIM FLAG", key="sql3_continue", use_container_width=True, type="primary"):
                 fake_progress("DATABASE DUMPEN")
                 give_flag(user, "sql", "GV 71")
                 typewriter_terminal([
@@ -1087,23 +1054,23 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     "",
                     "  ID     | username | password       | role",
                     "  -------|----------|----------------|------",
-                    "  UNION  | potus    | Covfefe2024!   | ADMIN",
+                    "  UNION  | Potus    | Covfefe2024!   | ADMIN",      #potus is president of the united states
                     "",
                     "[✓] GEHEIME CODE GEVONDEN: GV 71"
                 ])
-                st.success("🏴 FLAG BEHAALD: **GV 71**")
+                st.success(" FLAG BEHAALD: **GV 71**")
                 st.rerun()
         else:
             st.info("💡 Voer eerst de UNION SELECT query uit in de SQL console hierboven. De knop wordt actief zodra de exploit slaagt.")
-            st.button("🏴 CLAIM FLAG", key="sql3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.button("CLAIM FLAG", key="sql3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "sql", lvl)
 
 # ==========================================================
-# ROOM 2 — XSS
+# KAMER 2, DE VERGADERRUIMTE - XSS
 # ==========================================================
 with tabs[1]:
-    st.header("💼 DE VERGADERRUIMTE - CROSS-SITE SCRIPTING")
+    st.header("DE VERGADERRUIMTE")
     st.markdown("*Injecteer kwaadaardige scripts in het internal communications portal.*")
     
     lvl = get_level(user, "xss")
@@ -1113,19 +1080,19 @@ with tabs[1]:
         # Show intro video before XSS Level 1
         check_and_show_video("xss", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
+        st.info("**MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
-📍 Locatie: White House Internal Communications Portal
-🎯 Doelwit: comms.whitehouse.gov/search
-⚠️  Bevinding: User input wordt direct in HTML weergegeven
-💀 Kwetsbaarheid: Geen sanitization van gebruikersinput
+[INFORMATIE]
+Locatie: White House Internal Communications Portal
+Doelwit: comms.whitehouse.gov/search
+Bevinding: User input wordt direct in HTML weergegeven
+Kwetsbaarheid: Geen sanitization van gebruikersinput
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
-        st.markdown("**❓ Welk type aanval injecteert kwaadaardige scripts die door andere gebruikers worden uitgevoerd?**")
+        st.markdown("**Welk type aanval injecteert kwaadaardige scripts die door andere gebruikers worden uitgevoerd?**")
         cmd = st.text_input("analysis>", key="xss1", placeholder="type aanvalstype...")
         if st.button("▶ ANALYSE", key="xss1_btn"):
             if "cross site scripting" in cmd.lower() or cmd.lower() == "xss":
@@ -1138,11 +1105,11 @@ ACTIE VEREIST: Identificeer het type aanval
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Denk: welke aanval injecteert scripts?")
+                st.error("Incorrect. Denk: welke aanval injecteert scripts?")
         hint_widget(user, "xss", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Trigger een XSS alert om het beveiligingssysteem af te leiden")
+        st.info(" **MISSIE:** Trigger een XSS alert om het beveiligingssysteem af te leiden")
         st.markdown("""
 ```
 [EXPLOIT FASE]
@@ -1234,12 +1201,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     result.innerHTML = val;
                     alertBox.className = 'alert-box xss';
                     alertBox.style.display = 'block';
-                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><div style="background:#28a745;color:white;padding:10px;margin-top:8px;border-radius:6px;font-weight:bold;">✅ LEVEL 2 VOLTOOID!<br><br>➡️ Scroll naar beneden en klik op de groene knop om naar LEVEL 3 te gaan.</div>';
+                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong>';
                     // Trigger actual alert to show XSS works
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
-                    // Set flag in localStorage (NO auto-reload)
+                    // Set flag in localStorage and reload
                     localStorage.setItem('xss2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1269,7 +1237,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         """, height=0)
         
         if unlock_check:
-            if st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary"):
+            if st.button("GA DOOR NAAR LEVEL 3", key="xss2_continue", use_container_width=True, type="primary"):
                 fake_progress("PAYLOAD INJECTEREN")
                 set_level(user, "xss", 3)
                 typewriter_terminal([
@@ -1281,12 +1249,12 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.rerun()
         else:
             st.info("💡 Voer eerst de XSS payload uit in de search box hierboven. De knop wordt actief zodra de alert verschijnt.")
-            st.button("✅ GA DOOR NAAR LEVEL 3", key="xss2_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.button("GA DOOR NAAR LEVEL 3", key="xss2_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
     elif lvl == 3:
-        st.info("🎯 **MISSIE:** Plant een persistent XSS payload in de comments database")
+        st.info(" **MISSIE:** Plant een persistent XSS payload in de comments database")
         st.markdown("""
 ```
 [PERSISTENT XSS]
@@ -1391,12 +1359,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 
                 if (val.toLowerCase().includes('<script>')) {
                     banner.style.display = 'block';
-                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><div style="background:#28a745;color:white;padding:10px;margin-top:8px;border-radius:6px;font-weight:bold;">✅ VERGADERRUIMTE VOLTOOID! Je hebt de FLAG verdiend.<br><br>➡️ Scroll naar beneden en claim de flag. Daarna ga je naar de BEVEILIGDE KAMER.</div>';
+                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</strong>';
                     // Show the persistent XSS alert
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
-                    // Set flag in localStorage (NO auto-reload)
+                    // Set flag in localStorage and reload
                     localStorage.setItem('xss3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 }
                 
                 // Clear the input
@@ -1438,16 +1407,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.rerun()
         else:
             st.info("💡 Voer eerst de XSS payload uit in de comment box hierboven. De knop wordt actief zodra de alert verschijnt.")
-            st.button("🏴 CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.button("CLAIM FLAG", key="xss3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "xss", lvl)
 
 # ==========================================================
-# ROOM 3 — PRIVILEGE ESCALATION
+# KAMER 3, DE BEVEILIGDE RUIMTE - PRIVILEGE ESCALATION
 # ==========================================================
 with tabs[2]:
-    st.header("🔒 DE BEVEILIGDE KAMER - PRIVILEGE ESCALATION")
-    st.markdown("*Verhoog je privileges om toegang te krijgen tot classified systems.*")
+    st.header("DE BEVEILIGDE KAMER")
+    st.markdown("*Verhoog je rechten om toegang te krijgen tot classified systems.*")
     
     lvl = get_level(user, "privesc")
     st.progress(min((lvl-1)/3, 1.0), text=f"Voortgang: Stap {min(lvl,3)}/3")
@@ -1456,19 +1425,19 @@ with tabs[2]:
         # Show intro video before PrivEsc Level 1
         check_and_show_video("privesc", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
+        st.info("**MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
-📍 Status: Ingelogd als: guest
-🔑 Current Privileges: READ_ONLY
-🎯 Doel: Verkrijg ADMIN rechten
-⚠️  Bevinding: Rolbeheer systeem bevat misconfiguratie
+[INFORMATIE]
+Status: Ingelogd als: guest
+Current Privileges: READ_ONLY
+Doel: Verkrijg ADMIN rechten
+Bevinding: Rolbeheer systeem bevat misconfiguratie
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
-        st.markdown("**❓ Welk type aanval verschaft hogere gebruikersrechten in een systeem?**")
+        st.markdown("**Welk type aanval verschaft hogere gebruikersrechten in een systeem?**")
         cmd = st.text_input("analysis>", key="priv1", placeholder="type aanvalstype...")
         if st.button("▶ ANALYSE", key="priv1_btn"):
             if "privilege escalation" in cmd.lower() or "privesc" in cmd.lower():
@@ -1481,11 +1450,11 @@ ACTIE VEREIST: Identificeer het type aanval
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Hoe noem je het verhogen van gebruikersrechten?")
+                st.error("Incorrect. Hoe noem je het verhogen van gebruikersrechten?")
         hint_widget(user, "privesc", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Manipuleer de API request om je rol te veranderen naar admin")
+        st.info("**MISSIE:** Manipuleer de API request om je rol te veranderen naar admin")
         st.markdown("""
 ```
 [EXPLOIT FASE]
@@ -1582,10 +1551,11 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const role = document.getElementById('roleInput').value.trim().toLowerCase();
                 const resp = document.getElementById('responseBlock');
                 if (role === 'admin') {
-                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!</span><br><br><div style="background:#28a745;color:white;padding:10px;margin-top:10px;border-radius:6px;font-weight:bold;">✅ LEVEL 2 VOLTOOID!<br><br>➡️ Scroll naar beneden en klik op de groene knop om naar LEVEL 3 te gaan.</div>';
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
-                    // Set flag in localStorage (NO auto-reload)
+                    // Set flag in localStorage and reload
                     localStorage.setItem('priv2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1611,7 +1581,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         """, height=0)
         
         if unlock_check:
-            if st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary"):
+            if st.button("GA DOOR NAAR LEVEL 3", key="priv2_continue", use_container_width=True, type="primary"):
                 fake_progress("PRIVILEGES ESCALEREN")
                 set_level(user, "privesc", 3)
                 typewriter_terminal([
@@ -1622,12 +1592,12 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.rerun()
         else:
             st.info("💡 Voer eerst de privilege escalation uit in de DevTools hierboven. De knop wordt actief zodra 'admin' role is ingesteld.")
-            st.button("✅ GA DOOR NAAR LEVEL 3", key="priv2_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.button("GA DOOR NAAR LEVEL 3", key="priv2_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
     elif lvl == 3:
-        st.info("🎯 **MISSIE:** Installeer een backdoor voor permanente toegang")
+        st.info("**MISSIE:** Installeer een backdoor voor permanente toegang")
         st.markdown("""
 ```
 [PERSISTENCE]
@@ -1717,11 +1687,12 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.innerHTML += '<span class="green">[+] Backdoor installed: /usr/bin/.hidden_access</span><br>';
                     out.innerHTML += '<span class="green">[+] Cron job created for persistence</span><br>';
                     out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
-                    out.innerHTML += '<br><div style="background:#28a745;color:#000;padding:10px;margin-top:10px;border-radius:6px;font-weight:bold;">✅ BEVEILIGDE KAMER VOLTOOID! Je hebt de FLAG verdiend.<br><br>➡️ Scroll naar beneden en claim de flag. Daarna ga je naar TRUMP\'S KAMER voor de finale!</div><br>';
+                    out.innerHTML += '<br><span class="bright" style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</span><br>';
                     out.scrollTop = out.scrollHeight;
                     
-                    // Set flag in localStorage (NO auto-reload)
+                    // Set flag in localStorage and reload
                     localStorage.setItem('priv3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
@@ -1762,20 +1733,20 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 st.rerun()
         else:
             st.info("💡 Voer eerst een persistence commando uit in de terminal hierboven. De knop wordt actief zodra de backdoor is geïnstalleerd.")
-            st.button("🏴 CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
+            st.button("CLAIM FLAG", key="priv3_continue_disabled", use_container_width=True, type="primary", disabled=True)
             
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
-# ROOM 4 — VAULT (CRYPTO)
+# KAMER 4, Trump's kamer - encryptie
 # ==========================================================
 with tabs[3]:
-    st.header("🛏️ TRUMP'S KAMER - CRYPTOGRAFIE")
-    st.markdown("*Kraak de encryptie en open Trump's persoonlijke kluis.*")
+    st.header("TRUMP'S KAMER - CRYPTOGRAFIE")
+    st.markdown("*Kraak Trump's persoonlijke kluis.*")
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
     if not all(rooms_complete):
-        missing = [r.upper() for r, done in zip(["sql","xss","privesc"], rooms_complete) if not done]
+        missing = [r.upper() for r, done in zip(["Kamer 1","Kamer 2","kamer 3"], rooms_complete) if not done]
         st.error(f"⛔ TOEGANG GEWEIGERD — Voltooi eerst alle vorige missies: {', '.join(missing)}")
         st.stop()
 
@@ -1786,14 +1757,14 @@ with tabs[3]:
         # Show intro video before Crypto Level 1
         check_and_show_video("crypto", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer het encryption systeem van de kluis")
+        st.info(" **MISSIE:** Identificeer het encryption systeem van de kluis")
         st.markdown("""
 ```
 [FINAL CHALLENGE]
-📍 Locatie: Presidential Suite — Trump's Private Vault
-🔐 Beveiligingsniveau: MAXIMUM
-🎯 Doelwit: Encrypted vault password
-⚠️  Bevinding: Klassiek versleutelingssysteem gedetecteerd
+Locatie: Presidential Suite — Trump's privé ruimte
+Beveiligingsniveau: MAXIMUM
+Doelwit: Encrypted vault password
+Bevinding: Klassiek versleutelingssysteem gedetecteerd
 
 De kluis is beveiligd met een oud maar effectief encryption system.
 Alle verzamelde codes zijn versleuteld met hetzelfde systeem.
@@ -1801,7 +1772,7 @@ Alle verzamelde codes zijn versleuteld met hetzelfde systeem.
 ACTIE VEREIST: Identificeer het encryption algoritme
 ```
         """)
-        st.markdown("**❓ Welk klassiek versleutelingssysteem verschuift letters in het alfabet?**")
+        st.markdown("**Welk klassiek versleutelingssysteem verschuift letters in het alfabet?**")
         cmd = st.text_input("analysis>", key="crypto1", placeholder="naam van het systeem...")
         if st.button("▶ ANALYSEER", key="crypto1_btn"):
             if "caesar" in cmd.lower():
@@ -1815,22 +1786,22 @@ ACTIE VEREIST: Identificeer het encryption algoritme
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Welke Romeinse keizer stond bekend om zijn geheime code?")
+                st.error("Incorrect. Welke Romeinse keizer stond bekend om zijn geheime code?")
         hint_widget(user, "crypto", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Decodeer de verzamelde codes en combineer ze tot het vault wachtwoord")
+        st.info(" **MISSIE:** Decodeer de verzamelde codes en combineer ze tot het vault wachtwoord")
         st.markdown("**Je hebt deze versleutelde codes verzameld tijdens je missies:**")
         col1, col2, col3 = st.columns(3)
         with col1:
             st.code("GV 71", language=None)
-            st.caption("🚪 Receptie - SQL Injection")
+            st.caption("Receptie - SQL Injection")
         with col2:
             st.code("N75 ZS", language=None)
-            st.caption("💼 Vergaderruimte - XSS")
+            st.caption("Vergaderruimte - XSS")
         with col3:
             st.code("ZIF VH", language=None)
-            st.caption("🔒 Beveiligde Kamer - PrivEsc")
+            st.caption("Beveiligde Kamer - PrivEsc")
         
         st.markdown("""
 ```
@@ -1866,7 +1837,7 @@ Bijvoorbeeld:  GV → ??
                     "  ████████████████████████████████",
                 ])
                 give_flag(user, "crypto", "EXAMENKLAS2026")
-                st.success("🏆 **EINDCODE GEACCEPTEERD — ALLE SYSTEMEN GECOMPROMITTEERD!**")
+                st.success(" **EINDCODE GEACCEPTEERD — ALLE SYSTEMEN GECOMPROMITTEERD!**")
                 st.balloons()
                 components.html("<script>setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
             else:
@@ -1874,7 +1845,7 @@ Bijvoorbeeld:  GV → ??
         hint_widget(user, "crypto", lvl)
 
     elif lvl == 3:
-        st.success("🏆 **KLUIS GEOPEND — MISSIE VOLTOOID!**")
+        st.success("**KLUIS GEOPEND — MISSIE VOLTOOID!**")
         
         # Show finale video after completing everything
         check_and_show_video("crypto", position="complete")
@@ -1924,7 +1895,7 @@ Bijvoorbeeld:  GV → ??
             "",
             "[✓] WHITE HOUSE VOLLEDIG OVERGENOMEN",
             "",
-            "🎉 GEFELICITEERD! 🎉",
+            "GEFELICITEERD!",
             "Je hebt alle systemen gekraakt en toegang tot de hoogste veiligheids-",
             "niveau's verkregen. Dit is het einde van de White House Cyber Escape Room!"
         ])
@@ -1935,8 +1906,8 @@ Bijvoorbeeld:  GV → ??
 st.markdown("---")
 st.markdown("""
 <div style="text-align:center;color:#00ff9c;opacity:0.7;font-family:'Share Tech Mono',monospace;font-size:11px;">
-    🏛️ THE WHITE HOUSE CYBER BREACH SIMULATION<br>
-    Created by: Anouk, Marwa, Fenna & Noura<br>
-    <em>Educational cybersecurity escape room — 2025</em>
+    THE WHITE HOUSE<br>
+    Gemaakt door: Anouk, Marwa, Fenna en Noura<br>
+    <em>Cybersecurity escape room — 2025</em>
 </div>
 """, unsafe_allow_html=True)
