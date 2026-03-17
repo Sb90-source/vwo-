@@ -1112,10 +1112,10 @@ with tabs[1]:
         # Show intro video before XSS Level 1
         check_and_show_video("xss", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
+        st.info("**MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
+[INFORMATIE]
 Locatie: White House Internal Communications Portal
 Doelwit: comms.whitehouse.gov/search
 Bevinding: User input wordt direct in HTML weergegeven
@@ -1137,11 +1137,11 @@ ACTIE VEREIST: Identificeer het type aanval
                 ])
                 st.rerun()
             else:
-                st.error("❌ Incorrect. Denk: welke aanval injecteert scripts?")
+                st.error("Incorrect. Denk: welke aanval injecteert scripts?")
         hint_widget(user, "xss", lvl)
 
     elif lvl == 2:
-        st.info("🎯 **MISSIE:** Trigger een XSS alert om het beveiligingssysteem af te leiden")
+        st.info(" **MISSIE:** Trigger een XSS alert om het beveiligingssysteem af te leiden")
         st.markdown("""
 ```
 [EXPLOIT FASE]
@@ -1457,14 +1457,14 @@ with tabs[2]:
         # Show intro video before PrivEsc Level 1
         check_and_show_video("privesc", 1, "before")
         
-        st.info("🎯 **MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
+        st.info("**MISSIE:** Identificeer hoe je hogere privileges kunt verkrijgen")
         st.markdown("""
 ```
-[INTELLIGENCE BRIEFING]
-📍 Status: Ingelogd als: guest
-🔑 Current Privileges: READ_ONLY
-🎯 Doel: Verkrijg ADMIN rechten
-⚠️  Bevinding: Rolbeheer systeem bevat misconfiguratie
+[INFORMATIE]
+Status: Ingelogd als: guest
+Current Privileges: READ_ONLY
+Doel: Verkrijg ADMIN rechten
+Bevinding: Rolbeheer systeem bevat misconfiguratie
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
