@@ -1777,7 +1777,7 @@ with tabs[3]:
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
     if not all(rooms_complete):
-        missing = [r.upper() for r, done in zip(["Kamer 1","xss","privesc"], rooms_complete) if not done]
+        missing = [r.upper() for r, done in zip(["Kamer 1","Kamer 2","kamer 3"], rooms_complete) if not done]
         st.error(f"⛔ TOEGANG GEWEIGERD — Voltooi eerst alle vorige missies: {', '.join(missing)}")
         st.stop()
 
