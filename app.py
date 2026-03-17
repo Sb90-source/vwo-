@@ -587,14 +587,15 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-# Sidebar
+
+#Sidebar
 with st.sidebar:
     st.markdown(f"### 🕶 {user.upper()}")
     rooms_done_sb = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
     st.markdown(f"**MISSIES VOLTOOID:** {rooms_done_sb}/4")
     st.markdown("---")
-    st.markdown("**🏛️ VERHAAL:**")
-    st.caption("Jullie zijn elite hackers ingehuurd om het beveiligingssysteem van het Witte Huis te testen. Infiltreer elk systeem, verzamel de versleutelde codes, en breek in Trump's privé kluis.")
+    st.markdown("**VERHAAL:**")
+    st.caption("Jullie zijn hackers ingehuurd om de epsteinfiles uit het Witte Huis te stelen. Leer meer over cyber security en pas het toe! Verzamel de versleutelde codes en kraak Trump's kluis.")
     st.markdown("---")
     if st.button("LOGOUT", key="sidebar_logout", use_container_width=True):
         st.session_state.clear()
@@ -614,7 +615,7 @@ with st.sidebar:
             st.rerun()
         if st.button("NEE", key="sb_no", use_container_width=True):
             st.session_state.pop("confirm_reset", None)
-            st.rerun()
+            st.rerun() 
 
 # Header
 rooms_done = sum(1 for r in ["sql","xss","privesc","crypto"] if has_completed(user, r))
