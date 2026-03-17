@@ -1115,15 +1115,15 @@ with tabs[1]:
         st.markdown("""
 ```
 [INTELLIGENCE BRIEFING]
-📍 Locatie: White House Internal Communications Portal
-🎯 Doelwit: comms.whitehouse.gov/search
-⚠️  Bevinding: User input wordt direct in HTML weergegeven
-💀 Kwetsbaarheid: Geen sanitization van gebruikersinput
+Locatie: White House Internal Communications Portal
+Doelwit: comms.whitehouse.gov/search
+Bevinding: User input wordt direct in HTML weergegeven
+Kwetsbaarheid: Geen sanitization van gebruikersinput
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
         """)
-        st.markdown("**❓ Welk type aanval injecteert kwaadaardige scripts die door andere gebruikers worden uitgevoerd?**")
+        st.markdown("**Welk type aanval injecteert kwaadaardige scripts die door andere gebruikers worden uitgevoerd?**")
         cmd = st.text_input("analysis>", key="xss1", placeholder="type aanvalstype...")
         if st.button("▶ ANALYSE", key="xss1_btn"):
             if "cross site scripting" in cmd.lower() or cmd.lower() == "xss":
