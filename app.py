@@ -242,7 +242,7 @@ VIDEOS = {
     # Video 1: voor kamer 1,  SQL(Level 1)
     "sql_1_before": {
         "source": "https://youtu.be/nD8rPj7Db5o?feature=shared",  # link video 1
-        "title": "Introductie",
+        "title": "Wat is jullie opdracht?",
         "caption": "Bekijk deze video voordat je aan kamer 1 begint.",
         "autoplay": True
     },
@@ -250,7 +250,7 @@ VIDEOS = {
     # Video 2: voor kamer 2, XSS  (Level 1)
     "xss_1_before": {
         "source": "https://youtu.be/_s4KIIH8U6E?si=QhbEE3LVcAF7EnMb",  # link video 2
-        "title": "Kijk deze video",
+        "title": "De volgende stap...",
         "caption": "Goed! Jullie zijn langs de receptie! Kijk nu deze video en begin daarna aan kamer 2.",
         "autoplay": True
     },
@@ -258,16 +258,16 @@ VIDEOS = {
     # Video 3: voor PrivEsc  (Level 1)
     "privesc_1_before": {
         "source": "https://youtu.be/hDX17X3wbkg?si=jnUEtKS6Z5ztWefk",  # link video 3
-        "title": "Privilege Escalation Introductie",
-        "caption": "Ontdek hoe privilege escalation werkt",
+        "title": "Goed bezig! Nog 2 kamers te gaan!",
+        "caption": "Houd je ogen open en oren gespitst. Bekijk deze video en vergeet niet om goed op te letten",
         "autoplay": True
     },
     
     # Video 4: voor encryptie (Level 1)
     "crypto_1_before": {
         "source": "https://youtu.be/4HohWyqEV2E?si=BXnV3ZXNOJJVrQ7s",  # link video 4
-        "title": "Cryptografie & Caesar Cipher",
-        "caption": "Leer over klassieke encryptie methodes",
+        "title": "Jullie zijn er bijna, nog even en dan hebben jullie alle macht om de epsteinfiles te publiceren!",
+        "caption": "SHHHH! Wees stil!",
         "autoplay": True
     },
     
