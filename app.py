@@ -844,7 +844,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         document.head.appendChild(style);
         </script>
         
-        <div style="padding:0 16px 16px;"><button id="_btn_sql2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=sql2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_sql2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=sql2'">▶ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._activate_sql2 = function() {
             var b=document.getElementById("_btn_sql2");
@@ -1019,7 +1019,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             }
             </script>
             
-        <div style="padding:0 16px 16px;"><button id="_btn_sql3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=sql3'">▶ CLAIM FLAG — GV 71</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_sql3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=sql3'">▶ CLAIM FLAG — GV 71</button></div>
         <script>
         window._activate_sql3 = function() {
             var b=document.getElementById("_btn_sql3");
@@ -1198,7 +1198,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             });
             </script>
             
-        <div style="padding:0 16px 16px;"><button id="_btn_xss2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=xss2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_xss2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=xss2'">▶ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._activate_xss2 = function() {
             var b=document.getElementById("_btn_xss2");
@@ -1341,7 +1341,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             });
             </script>
             
-        <div style="padding:0 16px 16px;"><button id="_btn_xss3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=xss3'">▶ CLAIM FLAG — N75 ZS</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_xss3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=xss3'">▶ CLAIM FLAG — N75 ZS</button></div>
         <script>
         window._activate_xss3 = function() {
             var b=document.getElementById("_btn_xss3");
@@ -1515,7 +1515,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             }
             </script>
             
-        <div style="padding:0 16px 16px;"><button id="_btn_priv2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=priv2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_priv2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=priv2'">▶ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._activate_priv2 = function() {
             var b=document.getElementById("_btn_priv2");
@@ -1639,7 +1639,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             }
             </script>
             
-        <div style="padding:0 16px 16px;"><button id="_btn_priv3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=priv3'">▶ CLAIM FLAG — ZIF VH</button></div>
+        <div style="padding:0 16px 16px;"><button id="_btn_priv3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.top.location.href=window.top.location.href.split('?')[0]+'?_unlock=priv3'">▶ CLAIM FLAG — ZIF VH</button></div>
         <script>
         window._activate_priv3 = function() {
             var b=document.getElementById("_btn_priv3");
