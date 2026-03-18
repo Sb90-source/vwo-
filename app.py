@@ -97,7 +97,7 @@ components.html("""
             top: 0; left: 0; right: 0; bottom: 0;
             background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
             pointer-events: none;
-            z-index: 9999;
+            z-index: 1;
         }
         @keyframes flicker {
             0%,89%,91%,93%,100% { opacity:1; }
