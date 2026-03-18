@@ -217,7 +217,7 @@ HINTS = {
     "xss": [
         "💡 Welk type aanval injecteert kwaadaardige scripts in een webpagina die andere gebruikers zien?",
         "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>",
-        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag.",
+        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas alert nu aan voor problemenbuiten.",
     ],
     "privesc": [
         "💡 Wat doe je als je meer rechten wil dan je hebt?",
