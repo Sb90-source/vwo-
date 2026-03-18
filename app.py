@@ -807,9 +807,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 card.style.background = '#f0fff4';
                 msg.className = 'msg success';
                 msg.style.display = 'block';
-                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
-                
-                // Set flag in localStorage and reload
+                msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">GV</div></div>';
                 document.getElementById('_div_sql2').style.display='block';
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
@@ -988,9 +986,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     row.innerHTML = '<td>UNION</td><td>POTUS</td><td>Covfefe2024!</td><td><span class="badge admin">ADMIN</span></td>';
                     tbody.appendChild(row);
                     info.className = 'result-info ok';
-                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
-                    
-                    // Set flag in localStorage and reload
+                    info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">71</div></div>';
                     document.getElementById('_div_sql3').style.display='block';
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
@@ -1180,11 +1176,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     result.innerHTML = val;
                     alertBox.className = 'alert-box xss';
                     alertBox.style.display = 'block';
-                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong>';
-                    // Trigger actual alert to show XSS works
+                    alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">N75</div></div>';
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
-                    
-                    // Set flag in localStorage and reload
                     document.getElementById('_div_xss2').style.display='block';
                 } else {
                     result.textContent = val || '(empty query)';
@@ -1326,11 +1319,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 
                 if (val.toLowerCase().includes('<script>')) {
                     banner.style.display = 'block';
-                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</strong>';
-                    // Show the persistent XSS alert
+                    banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">ZS</div></div>';
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
-                    
-                    // Set flag in localStorage and reload
                     document.getElementById('_div_xss3').style.display='block';
                 }
                 
@@ -1507,9 +1497,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const role = document.getElementById('roleInput').value.trim().toLowerCase();
                 const resp = document.getElementById('responseBlock');
                 if (role === 'admin') {
-                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
-                    
-                    // Set flag in localStorage and reload
+                    resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!</span><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">ZIF</div></div>';
                     document.getElementById('_div_priv2').style.display='block';
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
@@ -1631,10 +1619,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.innerHTML += '<span class="green">[+] Backdoor installed: /usr/bin/.hidden_access</span><br>';
                     out.innerHTML += '<span class="green">[+] Cron job created for persistence</span><br>';
                     out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
-                    out.innerHTML += '<br><span class="bright" style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden om de flag te claimen.</span><br>';
+                    out.innerHTML += '<div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">VH</div></div>';
                     out.scrollTop = out.scrollHeight;
-                    
-                    // Set flag in localStorage and reload
                     document.getElementById('_div_priv3').style.display='block';
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
