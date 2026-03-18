@@ -593,6 +593,16 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
+st.markdown('''<style>
+div[data-testid="stTextInput"]:has(input[aria-label^="_"]) {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+</style>''', unsafe_allow_html=True)
+
 
 
 
