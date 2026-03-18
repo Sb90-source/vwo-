@@ -1321,7 +1321,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
         else:
             _in_xss3 = st.text_input("Voer de code in die de nep-UI toont:", key="xss3_code", placeholder="deel 2 van de flag...")
-            if st.button("🏴 CLAIM FLAG", key="xss3_continue", type="primary", use_container_width=True):
+            if st.button("CLAIM FLAG", key="xss3_continue", type="primary", use_container_width=True):
                 if _in_xss3.strip().upper() == "ZS":
                     fake_progress("PAYLOAD OPSLAAN IN DATABASE")
                     give_flag(user, "xss", "N75 ZS")
@@ -1612,7 +1612,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
         else:
             _in_priv3 = st.text_input("Voer de code in die de nep-UI toont:", key="priv3_code", placeholder="deel 2 van de flag...")
-            if st.button("🏴 CLAIM FLAG", key="priv3_continue", type="primary", use_container_width=True):
+            if st.button("CLAIM FLAG", key="priv3_continue", type="primary", use_container_width=True):
                 if _in_priv3.strip().upper() == "VH":
                     fake_progress("BACKDOOR INSTALLEREN")
                     give_flag(user, "privesc", "ZIF VH")
