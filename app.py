@@ -1303,7 +1303,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 if (val.toLowerCase().includes('<script>')) {
                     banner.style.display = 'block';
                     banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">ZS</div></div>';
-                    setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
+                    setTimeout(() => alert('🚨 PERSISTENT XSS! Deze payload is nu opgeslagen in de database en wordt uitgevoerd voor IEDERE gebruiker die de website bezoekt. 100);
                     }
                 
                 // Clear the input
