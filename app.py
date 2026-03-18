@@ -1387,6 +1387,7 @@ ACTIE VEREIST: Identificeer het type aanval
 [EXPLOIT FASE]
 De profile update API accepteert een 'role' parameter.
 De server controleert NIET of de gebruiker deze mag wijzigen!
+(een API request is een digitaal bericht dat een softwareprogramma of app naar een server stuurt om data op te halen, aan te passen of te verwijderen.)
 
 ACTIE VEREIST: Zorg ervoor dat je hogere rechten krijgt.'
 ```
