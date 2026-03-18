@@ -1380,14 +1380,14 @@ ACTIE VEREIST: Identificeer het type aanval
         hint_widget(user, "privesc", lvl)
 
     elif lvl == 2:
-        st.info("**MISSIE:** Manipuleer de API request om je rol te veranderen naar admin")
+        st.info("**MISSIE:** Manipuleer de API request om adminrechten te krijgen.")
         st.markdown("""
 ```
 [EXPLOIT FASE]
 De profile update API accepteert een 'role' parameter.
 De server controleert NIET of de gebruiker deze mag wijzigen!
 
-ACTIE VEREIST: Wijzig de role parameter van 'user' naar 'admin'
+ACTIE VEREIST: Zorg ervoor dat je een admin wordt.'
 ```
         """)
         
