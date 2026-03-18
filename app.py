@@ -847,7 +847,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         hint_widget(user, "sql", lvl)
 
     elif lvl == 3:
-        st.info("**MISSIE:** Extract gevoelige data uit de database met UNION SELECT")
+        st.info("**MISSIE:** Selecteer gevoelige data uit de database met UNION SELECT")
         st.markdown("""
 ```
 [DATA EXTRACTION]
