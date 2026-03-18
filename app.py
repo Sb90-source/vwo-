@@ -808,7 +808,6 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.className = 'msg success';
                 msg.style.display = 'block';
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">GV</div></div>';
-                document.getElementById('_div_sql2').style.display='block';
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -833,9 +832,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         const style = document.createElement('style');
         style.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }';
         document.head.appendChild(style);
-        </script>
-        <div id='_div_sql2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>GV</div></div>
-        """, height=780)
+        </script>        """, height=780)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -987,8 +984,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     tbody.appendChild(row);
                     info.className = 'result-info ok';
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">71</div></div>';
-                    document.getElementById('_div_sql3').style.display='block';
-                } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
+                    } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
                 } else if (q.includes('select') && q.includes('where')) {
@@ -1007,9 +1003,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             function showMsg(m) {
                 alert(m + ' — Access restricted via SQL console');
             }
-            </script>
-            <div id='_div_sql3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>71</div></div>
-            """, height=640)
+            </script>            """, height=640)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1178,8 +1172,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     alertBox.style.display = 'block';
                     alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">N75</div></div>';
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
-                    document.getElementById('_div_xss2').style.display='block';
-                } else {
+                    } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
                     alertBox.style.display = val ? 'block' : 'none';
@@ -1189,9 +1182,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             document.getElementById('searchInput').addEventListener('keydown', e => {
                 if (e.key === 'Enter') doSearch();
             });
-            </script>
-            <div id='_div_xss2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>N75</div></div>
-            """, height=610)
+            </script>            """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1321,8 +1312,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     banner.style.display = 'block';
                     banner.innerHTML = '✅ PERSISTENT XSS SUCCESS!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">ZS</div></div>';
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
-                    document.getElementById('_div_xss3').style.display='block';
-                }
+                    }
                 
                 // Clear the input
                 document.getElementById('commentInput').value = '';
@@ -1330,9 +1320,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             document.getElementById('commentInput').addEventListener('keydown', e => {
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
             });
-            </script>
-            <div id='_div_xss3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZS</div></div>
-            """, height=650)
+            </script>            """, height=650)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1498,16 +1486,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 const resp = document.getElementById('responseBlock');
                 if (role === 'admin') {
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!</span><br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:12px;margin-top:10px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:22px;font-weight:bold;letter-spacing:6px;font-family:monospace;">ZIF</div></div>';
-                    document.getElementById('_div_priv2').style.display='block';
-                } else if (role === '') {
+                    } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 28ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;"role": "' + role + '",<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#888;">No admin privileges gained.</span>';
                 }
             }
-            </script>
-            <div id='_div_priv2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZIF</div></div>
-            """, height=610)
+            </script>            """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1621,15 +1606,12 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.innerHTML += '<span class="green">[✓] PERSISTENT ACCESS ESTABLISHED</span><br>';
                     out.innerHTML += '<div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">VH</div></div>';
                     out.scrollTop = out.scrollHeight;
-                    document.getElementById('_div_priv3').style.display='block';
-                } else {
+                    } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
                 out.scrollTop = out.scrollHeight;
             }
-            </script>
-            <div id='_div_priv3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>VH</div></div>
-            """, height=610)
+            </script>            """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1772,9 +1754,7 @@ Bijvoorbeeld:  GV → ??
                     "  ████████████████████████████████",
                 ])
                 give_flag(user, "crypto", "EXAMENKLAS2026")
-                st.success(" **EINDCODE GEACCEPTEERD — ALLE SYSTEMEN GECOMPROMITTEERD!**")
-                st.balloons()
-                components.html("<script>setTimeout(()=>window.playSuccess&&window.playSuccess(),100);</script>", height=0)
+                st.rerun()
             else:
                 st.error("❌ Verkeerde code. Decodeer alle vlaggen en combineer ze correct.")
         hint_widget(user, "crypto", lvl)
