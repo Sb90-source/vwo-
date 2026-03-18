@@ -593,26 +593,12 @@ if st.session_state.role == "teacher":
 # ==========================================================
 user = st.session_state.user
 
-for _f in ['sql2_ok','sql3_ok','xss2_ok','xss3_ok','priv2_ok','priv3_ok']:
-    if _f not in st.session_state: st.session_state[_f] = False
-
-st.markdown('''<style>
-div[data-testid="stTextInput"]:has(input[aria-label^="_"]) {
-    position: absolute !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
-</style>''', unsafe_allow_html=True)
-
 
 
 
 st.markdown("---")
 
 tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S KAMER"])
-st.markdown('<style>div[data-testid="stTextInput"]:has(input[aria-label^="_"]){display:none!important}</style>', unsafe_allow_html=True)
 
 # ==========================================================
 # KAMER 1, RECEPTIE - SQL INJECTION
@@ -670,7 +656,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
 ```
         """)
         
-        _r_sql2 = components.html("""
+        components.html("""
         <style>
         *{box-sizing:border-box;margin:0;padding:0;}
         body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;}
@@ -824,7 +810,8 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
                 // Set flag in localStorage and reload
-                window.parent.postMessage({type:'streamlit:setComponentValue',value:'sql2'},'*');
+                localStorage.setItem('sql2_unlocked', 'true');
+                setTimeout(() => location.reload(), 1000);
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -854,13 +841,16 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        if _r_sql2 == "sql2": st.session_state.sql2_ok = True
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="sql2_btn", disabled=not st.session_state.sql2_ok, type="primary", use_container_width=True):
-            fake_progress("AUTHENTICATIE BYPASSEN")
-            set_level(user, "sql", 3)
-            st.session_state.sql2_ok = False
-            typewriter_terminal(["[+] SQL query gemanipuleerd","[+] WHERE clause: TRUE voor alle rijen","[+] Ingelogd als eerste gebruiker in database: POTUS","[✓] AUTHENTICATIE BYPASSED"])
-            st.rerun()
+        # Check if unlocked via custom component that reads localStorage
+        cmd_sql2 = st.text_input("Voer je SQL injection in:", key="sql2_input", placeholder="bijv. ' or '1'='1")
+        if st.button("▶ GA DOOR NAAR LEVEL 3", key="sql2_btn", type="primary", use_container_width=True):
+            if any(x in cmd_sql2.lower().replace(' ','') for x in ["'or","or1=1","1=1"]):
+                fake_progress("AUTHENTICATIE BYPASSEN")
+                set_level(user, "sql", 3)
+                typewriter_terminal(["[+] SQL query gemanipuleerd","[+] WHERE clause: TRUE","[✓] AUTHENTICATIE BYPASSED"])
+                st.rerun()
+            else:
+                st.error("Incorrect. Gebruik de payload uit de nep-UI hierboven.")
 
         hint_widget(user, "sql", lvl)
 
@@ -879,7 +869,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
         
         col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
-            _r_sql3 = components.html("""
+            components.html("""
             <style>
             *{box-sizing:border-box;margin:0;padding:0;}
             body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
@@ -996,7 +986,8 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
                     // Set flag in localStorage and reload
-                    window.parent.postMessage({type:'streamlit:setComponentValue',value:'sql3'},'*');
+                    localStorage.setItem('sql3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1028,13 +1019,15 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             if has_completed(user, "sql"):
                 st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
             else:
-                if _r_sql3 == "sql3": st.session_state.sql3_ok = True
-                if st.button("▶ CLAIM FLAG", key="sql3_btn", disabled=not st.session_state.sql3_ok, type="primary", use_container_width=True):
-                    fake_progress("DATABASE DUMPEN")
-                    give_flag(user, "sql", "GV 71")
-                    st.session_state.sql3_ok = False
-                    typewriter_terminal(["[+] UNION query uitgevoerd","","  UNION | Potus | Covfefe2024! | ADMIN","","[✓] GEHEIME CODE GEVONDEN: GV 71"])
-                    st.rerun()
+                cmd_sql3 = st.text_input("Voer je UNION SELECT query in:", key="sql3_input", placeholder="bijv. ' UNION SELECT username,password,role FROM users--")
+                if st.button("▶ CLAIM FLAG", key="sql3_btn", type="primary", use_container_width=True):
+                    if 'union' in cmd_sql3.lower() and 'select' in cmd_sql3.lower():
+                        fake_progress("DATABASE DUMPEN")
+                        give_flag(user, "sql", "GV 71")
+                        typewriter_terminal(["[+] UNION query uitgevoerd","  UNION | Potus | Covfefe2024! | ADMIN","[✓] GEHEIME CODE GEVONDEN: GV 71"])
+                        st.rerun()
+                    else:
+                        st.error("Incorrect. Gebruik een UNION SELECT query.")
             
         hint_widget(user, "sql", lvl)
 
@@ -1094,7 +1087,7 @@ ACTIE VEREIST: Injecteer een JavaScript payload die een alert() triggert
         
         col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
-            _r_xss2 = components.html("""
+            components.html("""
             <style>
             *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
@@ -1178,7 +1171,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
                     // Set flag in localStorage and reload
-                    window.parent.postMessage({type:'streamlit:setComponentValue',value:'xss2'},'*');
+                    localStorage.setItem('xss2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1194,13 +1188,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        if _r_xss2 == "xss2": st.session_state.xss2_ok = True
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="xss2_btn", disabled=not st.session_state.xss2_ok, type="primary", use_container_width=True):
-            fake_progress("PAYLOAD INJECTEREN")
-            set_level(user, "xss", 3)
-            st.session_state.xss2_ok = False
-            typewriter_terminal(["[+] Script tag gedetecteerd in input","[+] Browser voert JavaScript uit","[✓] REFLECTED XSS GESLAAGD"])
-            st.rerun()
+        # Check if unlocked via localStorage
+        cmd_xss2 = st.text_input("Voer je XSS payload in:", key="xss2_input", placeholder="bijv. <script>alert('xss')</script>")
+        if st.button("▶ GA DOOR NAAR LEVEL 3", key="xss2_btn", type="primary", use_container_width=True):
+            if '<script' in cmd_xss2.lower() or 'alert(' in cmd_xss2.lower():
+                fake_progress("PAYLOAD INJECTEREN")
+                set_level(user, "xss", 3)
+                typewriter_terminal(["[+] Script tag gedetecteerd","[+] Browser voert JavaScript uit","[✓] REFLECTED XSS GESLAAGD"])
+                st.rerun()
+            else:
+                st.error("Incorrect. Gebruik een payload met <script> of alert().")
             
         hint_widget(user, "xss", lvl)
 
@@ -1219,7 +1216,7 @@ ACTIE VEREIST: Injecteer een persistent XSS payload in de comments
         
         col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
-            _r_xss3 = components.html("""
+            components.html("""
             <style>
             *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
@@ -1315,7 +1312,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
                     // Set flag in localStorage and reload
-                    window.parent.postMessage({type:'streamlit:setComponentValue',value:'xss3'},'*');
+                    localStorage.setItem('xss3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 }
                 
                 // Clear the input
@@ -1333,13 +1331,15 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
         else:
-            if _r_xss3 == "xss3": st.session_state.xss3_ok = True
-            if st.button("▶ CLAIM FLAG", key="xss3_btn", disabled=not st.session_state.xss3_ok, type="primary", use_container_width=True):
-                fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                give_flag(user, "xss", "N75 ZS")
-                st.session_state.xss3_ok = False
-                typewriter_terminal(["[+] Payload opgeslagen in database","[✓] PERSISTENT XSS GESLAAGD","[✓] GEHEIME CODE GEVONDEN: N75 ZS"])
-                st.rerun()
+            cmd_xss3 = st.text_input("Voer je XSS payload in:", key="xss3_input", placeholder="bijv. <script>alert('xss')</script>")
+            if st.button("▶ CLAIM FLAG", key="xss3_btn", type="primary", use_container_width=True):
+                if '<script' in cmd_xss3.lower() or 'alert(' in cmd_xss3.lower():
+                    fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+                    give_flag(user, "xss", "N75 ZS")
+                    typewriter_terminal(["[+] Payload opgeslagen","[✓] PERSISTENT XSS GESLAAGD","[✓] GEHEIME CODE GEVONDEN: N75 ZS"])
+                    st.rerun()
+                else:
+                    st.error("Incorrect. Gebruik een payload met <script> of alert().")
         hint_widget(user, "xss", lvl)
 
 # ==========================================================
@@ -1398,7 +1398,7 @@ ACTIE VEREIST: Wijzig de role parameter van 'user' naar 'admin'
         
         col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
-            _r_priv2 = components.html("""
+            components.html("""
             <style>
             *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
@@ -1485,7 +1485,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
                     // Set flag in localStorage and reload
-                    window.parent.postMessage({type:'streamlit:setComponentValue',value:'priv2'},'*');
+                    localStorage.setItem('priv2_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1497,13 +1498,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        if _r_priv2 == "priv2": st.session_state.priv2_ok = True
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="priv2_btn", disabled=not st.session_state.priv2_ok, type="primary", use_container_width=True):
-            fake_progress("PRIVILEGES ESCALEREN")
-            set_level(user, "privesc", 3)
-            st.session_state.priv2_ok = False
-            typewriter_terminal(["[+] Rolparameter gewijzigd: user → admin","[✓] ADMIN PRIVILEGES VERKREGEN"])
-            st.rerun()
+        # Check if unlocked via localStorage
+        cmd_priv2 = st.text_input("Verander de role parameter naar:", key="priv2_input", placeholder="admin")
+        if st.button("▶ GA DOOR NAAR LEVEL 3", key="priv2_btn", type="primary", use_container_width=True):
+            if cmd_priv2.strip().lower() == 'admin':
+                fake_progress("PRIVILEGES ESCALEREN")
+                set_level(user, "privesc", 3)
+                typewriter_terminal(["[+] Rolparameter gewijzigd: user → admin","[✓] ADMIN PRIVILEGES VERKREGEN"])
+                st.rerun()
+            else:
+                st.error("Incorrect. Verander de role naar 'admin'.")
             
         hint_widget(user, "privesc", lvl)
 
@@ -1521,7 +1525,7 @@ ACTIE VEREIST: Voer een commando uit om een backdoor te installeren
         
         col_l, col_m, col_r = st.columns([1, 3, 1])
         with col_m:
-            _r_priv3 = components.html("""
+            components.html("""
             <style>
             *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;}
@@ -1602,7 +1606,8 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.scrollTop = out.scrollHeight;
                     
                     // Set flag in localStorage and reload
-                    window.parent.postMessage({type:'streamlit:setComponentValue',value:'priv3'},'*');
+                    localStorage.setItem('priv3_unlocked', 'true');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
@@ -1617,13 +1622,15 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
         else:
-            if _r_priv3 == "priv3": st.session_state.priv3_ok = True
-            if st.button("▶ CLAIM FLAG", key="priv3_btn", disabled=not st.session_state.priv3_ok, type="primary", use_container_width=True):
-                fake_progress("BACKDOOR INSTALLEREN")
-                give_flag(user, "privesc", "ZIF VH")
-                st.session_state.priv3_ok = False
-                typewriter_terminal(["[+] Admin token opgeslagen","[+] Backdoor geïnstalleerd","[✓] GEHEIME CODE GEVONDEN: ZIF VH"])
-                st.rerun()
+            cmd_priv3 = st.text_input("Voer een persistence commando in:", key="priv3_input", placeholder="bijv. crontab -e")
+            if st.button("▶ CLAIM FLAG", key="priv3_btn", type="primary", use_container_width=True):
+                if any(x in cmd_priv3.lower() for x in ['backdoor','install','persist','crontab','ssh-keygen','authorized','netcat','nc','chmod','cron','bash']):
+                    fake_progress("BACKDOOR INSTALLEREN")
+                    give_flag(user, "privesc", "ZIF VH")
+                    typewriter_terminal(["[+] Backdoor geïnstalleerd","[✓] GEHEIME CODE GEVONDEN: ZIF VH"])
+                    st.rerun()
+                else:
+                    st.error("Incorrect. Voer een geldig persistence commando in.")
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
@@ -1683,7 +1690,6 @@ ACTIE VEREIST: Identificeer het encryption algoritme
         st.markdown("""
 ```
 Code: MAAUANST!AGGKRAEEI  |  Sleutelwoord: EPSTIN (E=1,P=4,S=5,T=6,I=2,N=3)
-Lees de kolommen in volgorde 1,2,3,4,5,6
 ```
         """)
         _kt = st.text_input("decrypt>", key="crypto_kolomtransp", placeholder="ontcijferd wachtwoord...")
