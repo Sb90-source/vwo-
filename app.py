@@ -215,7 +215,7 @@ HINTS = {
         "💡 Voeg iets toe aan SELECT en vervang het sterretje met de password, role, username; zet ze alleen nog in de juiste volgorde.",
     ],
     "xss": [
-        "💡 Geef in drie woorden de Engelse term. Gebruik als je er neit uitkomt je cheat sheet!."
+        "💡 Geef in drie woorden de Engelse term. Gebruik als je er niet uitkomt je cheat sheet!.",
         "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>",
         "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas 'alert' nu aan naar 'problemenbuiten'.",
     ],
