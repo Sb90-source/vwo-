@@ -1660,7 +1660,7 @@ Bevinding: Klassiek versleutelingssysteem gedetecteerd
 De kluis is beveiligd met een oud maar effectief encryption system.
 Alle verzamelde codes zijn versleuteld met hetzelfde systeem.
 
-ACTIE VEREIST: Identificeer het encryption algoritme
+ACTIE VEREIST: Identificeer het encryptie algoritme
 ```
         """)
         st.markdown("**Welk klassiek versleutelingssysteem verschuift letters in het alfabet?**")
