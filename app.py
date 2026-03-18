@@ -250,7 +250,7 @@ VIDEOS = {
         "source": "https://youtu.be/nD8rPj7Db5o?feature=shared",  # link video 1
         "title": "Wat is jullie opdracht?",
         "caption": "Bekijk deze video voordat je aan kamer 1 begint.",
-        "autoplay": True
+        "autoplay": False
     },
     
     # Video 2: voor kamer 2, XSS  (Level 1)
@@ -258,7 +258,7 @@ VIDEOS = {
         "source": "https://youtu.be/_s4KIIH8U6E?si=QhbEE3LVcAF7EnMb",  # link video 2
         "title": "De volgende stap...",
         "caption": "Goed! Jullie zijn langs de receptie! Kijk nu deze video en begin daarna aan kamer 2.",
-        "autoplay": True
+        "autoplay": False
     },
     
     # Video 3: voor PrivEsc  (Level 1)
@@ -266,7 +266,7 @@ VIDEOS = {
         "source": "https://youtu.be/hDX17X3wbkg?si=jnUEtKS6Z5ztWefk",  # link video 3
         "title": "Goed bezig! Nog 2 kamers te gaan!",
         "caption": "Houd je ogen open en oren gespitst. Bekijk deze video en vergeet niet om goed op te letten",
-        "autoplay": True
+        "autoplay": False
     },
     
     # Video 4: voor encryptie (Level 1)
@@ -274,7 +274,7 @@ VIDEOS = {
         "source": "https://youtu.be/4HohWyqEV2E?si=BXnV3ZXNOJJVrQ7s",  # link video 4
         "title": "Jullie zijn er bijna, nog even en dan hebben jullie alle macht om de epsteinfiles te publiceren!",
         "caption": "SHHHH! Wees stil!",
-        "autoplay": True
+        "autoplay": False
     },
     
     # Video 5: na encryptie kamer (Final Victory)
@@ -282,7 +282,7 @@ VIDEOS = {
         "source": "https://youtu.be/W8vu-yWcLsg?si=Zd0KmOoyg5sOjnzz",  # link video 5
         "title": "MISSIE GESLAAGD!",
         "caption": "Je hebt het White House succesvol gehackt!",
-        "autoplay": True
+        "autoplay": False
     },
 }
 
@@ -354,7 +354,7 @@ def typewriter_terminal(lines):
         st.code(line, language=None)
         time.sleep(0.08)
 
-def show_video(video_source, title=None, caption=None, autoplay=True):
+def show_video(video_source, title=None, caption=None, autoplay=False):
     """
     Display a video with cinematic styling
     video_source can be:
@@ -427,7 +427,7 @@ def check_and_show_video(room, level=None, position="before"):
             video_source=video_config.get("source"),
             title=video_config.get("title"),
             caption=video_config.get("caption"),
-            autoplay=video_config.get("autoplay", True)
+            autoplay=video_config.get("autoplay", False)
         )
         return True
     return False
