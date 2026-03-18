@@ -829,7 +829,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via custom component that reads localStorage
-        _in_sql2 = st.text_input("Voer de code in die de nep-UI toont:", key="sql2_code", placeholder="deel 1 van de flag...")
+        _in_sql2 = st.text_input("Voer de code in die wordt getoont:", key="sql2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue", type="primary", use_container_width=True):
             if _in_sql2.strip().upper() == "GV":
                 fake_progress("AUTHENTICATIE BYPASSEN")
