@@ -212,7 +212,7 @@ HINTS = {
     "sql": [
         "💡 Kijk op je cheat sheet, het type aanval staat in het rijtje! En heb je goed naar de sticky note gekeken?",
         "💡 Maak de WHERE-clausule altijd TRUE. Let op, gebruik een statement die altijd klopt. Het ziet er rekenkundig uit. En tip: let op de plaatsing van de hoge komma's!",
-        "💡 Voeg iets toe aan SELECT en vervang het sterretje met de namen van de colommen.",
+        "💡 Voeg iets toe aan SELECT en vervang het sterretje met de password, role, username; zet ze alleen nog in de juiste volgorde.",
     ],
     "xss": [
         "💡 Welk type aanval injecteert kwaadaardige scripts in een webpagina die andere gebruikers zien?",
