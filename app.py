@@ -1006,7 +1006,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             if has_completed(user, "sql"):
                 st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
             else:
-                _in_sql3 = st.text_input("Voer de code in die de nep-UI toont:", key="sql3_code", placeholder="deel 2 van de flag...")
+                _in_sql3 = st.text_input("Voer de code in die wordt getoont:", key="sql3_code", placeholder="deel 2 van de flag...")
                 if st.button("CLAIM FLAG", key="sql3_continue", type="primary", use_container_width=True):
                     if _in_sql3.strip() == "71":
                         fake_progress("DATABASE DUMPEN")
@@ -1179,7 +1179,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        _in_xss2 = st.text_input("Voer de code in die de nep-UI toont:", key="xss2_code", placeholder="deel 1 van de flag...")
+        _in_xss2 = st.text_input("Voer de code in die wordt getoont:", key="xss2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="xss2_continue", type="primary", use_container_width=True):
             if _in_xss2.strip().upper() == "N75":
                 fake_progress("PAYLOAD INJECTEREN")
@@ -1320,7 +1320,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
         else:
-            _in_xss3 = st.text_input("Voer de code in die de nep-UI toont:", key="xss3_code", placeholder="deel 2 van de flag...")
+            _in_xss3 = st.text_input("Voer de code in die wordt getoont:", key="xss3_code", placeholder="deel 2 van de flag...")
             if st.button("CLAIM FLAG", key="xss3_continue", type="primary", use_container_width=True):
                 if _in_xss3.strip().upper() == "ZS":
                     fake_progress("PAYLOAD OPSLAAN IN DATABASE")
@@ -1489,7 +1489,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        _in_priv2 = st.text_input("Voer de code in die de nep-UI toont:", key="priv2_code", placeholder="deel 1 van de flag...")
+        _in_priv2 = st.text_input("Voer de code in die wordt getoont:", key="priv2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="priv2_continue", type="primary", use_container_width=True):
             if _in_priv2.strip().upper() == "ZIF":
                 fake_progress("PRIVILEGES ESCALEREN")
@@ -1611,7 +1611,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
         else:
-            _in_priv3 = st.text_input("Voer de code in die de nep-UI toont:", key="priv3_code", placeholder="deel 2 van de flag...")
+            _in_priv3 = st.text_input("Voer de code in die wordt getoont:", key="priv3_code", placeholder="deel 2 van de flag...")
             if st.button("CLAIM FLAG", key="priv3_continue", type="primary", use_container_width=True):
                 if _in_priv3.strip().upper() == "VH":
                     fake_progress("BACKDOOR INSTALLEREN")
