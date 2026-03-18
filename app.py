@@ -1206,6 +1206,7 @@ Comments worden opgeslagen in de database en aan alle users getoond.
 
 ACTIE VEREIST: Injecteer een persistent XSS payload in de comments
                Deze wordt uitgevoerd bij ELKE gebruiker die de pagina bezoekt
+               Geef in je payload een reden waarom medewerkers de beveiligde kamer niet binnen kunnen. Denk aan onderhoud etc.
 ```
         """)
         
