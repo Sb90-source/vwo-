@@ -464,6 +464,13 @@ for k, v in [("user", None), ("role", None)]:
     if k not in st.session_state:
         st.session_state[k] = v
 
+# Handle unlock from iframe button click
+_qp = st.query_params.get("_unlock", "")
+if _qp and "user" in st.session_state and st.session_state.user:
+    if _qp not in st.session_state: st.session_state[_qp] = True
+    st.query_params.clear()
+    st.rerun()
+
 # ==========================================================
 # LOGIN
 # ==========================================================
@@ -810,8 +817,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
                 msg.innerHTML = '✅ SQL INJECTION GESLAAGD!<br><br><strong style="font-size:15px;">🎯 Ingelogd als: POTUS</strong><br><br><div style="background:#fff3cd;border:1px solid #ffc107;padding:8px;margin-top:8px;border-radius:4px;color:#856404;"><strong>➡️ VOLGENDE STAP:</strong><br>De groene knop is nu actief! Scroll naar beneden en klik erop om door te gaan.</div>';
                 
                 // Set flag in localStorage and reload
-                localStorage.setItem('sql2_unlocked', 'true');
-                setTimeout(() => location.reload(), 1000);
+                window._activate_sql2 && window._activate_sql2();
             } else if (u === '' || p === '') {
                 msg.className = 'msg error';
                 msg.style.display = 'block';
@@ -837,20 +843,25 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         style.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }';
         document.head.appendChild(style);
         </script>
-        """, height=700)
+        
+        <div style="padding:0 16px 16px;"><button id="_btn_sql2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=sql2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <script>
+        window._activate_sql2 = function() {
+            var b=document.getElementById("_btn_sql2");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=820)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via custom component that reads localStorage
-        cmd_sql2 = st.text_input("Voer je SQL injection in:", key="sql2_input", placeholder="bijv. ' or '1'='1")
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="sql2_btn", type="primary", use_container_width=True):
-            if any(x in cmd_sql2.lower().replace(' ','') for x in ["'or","or1=1","1=1"]):
-                fake_progress("AUTHENTICATIE BYPASSEN")
-                set_level(user, "sql", 3)
-                typewriter_terminal(["[+] SQL query gemanipuleerd","[+] WHERE clause: TRUE","[✓] AUTHENTICATIE BYPASSED"])
-                st.rerun()
-            else:
-                st.error("Incorrect. Gebruik de payload uit de nep-UI hierboven.")
+        if st.session_state.get('sql2'):
+            fake_progress("AUTHENTICATIE BYPASSEN")
+            st.session_state.sql2 = False
+            set_level(user, "sql", 3)
+            typewriter_terminal(["[+] SQL query gemanipuleerd","[+] WHERE clause: TRUE","[✓] AUTHENTICATIE BYPASSED"])
+            st.rerun()
 
         hint_widget(user, "sql", lvl)
 
@@ -986,8 +997,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                     info.innerHTML = '⚠️ 4 rows gevonden — SECRET ADMIN CREDENTIALS EXTRACTED!<br><br><strong style="color:#28a745;">➡️ De groene knop is nu actief! Scroll naar beneden en claim de flag.</strong>';
                     
                     // Set flag in localStorage and reload
-                    localStorage.setItem('sql3_unlocked', 'true');
-                    setTimeout(() => location.reload(), 1000);
+                    window._activate_sql3 && window._activate_sql3();
                 } else if (q.includes('drop')||q.includes('delete')||q.includes('truncate')) {
                     info.className = 'result-info err';
                     info.innerHTML = '⛔ ERROR: Write permissions denied.';
@@ -1008,7 +1018,15 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                 alert(m + ' — Access restricted via SQL console');
             }
             </script>
-            """, height=560)
+            
+        <div style="padding:0 16px 16px;"><button id="_btn_sql3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=sql3'">▶ CLAIM FLAG — GV 71</button></div>
+        <script>
+        window._activate_sql3 = function() {
+            var b=document.getElementById("_btn_sql3");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=660)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1018,16 +1036,12 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             # Check if unlocked via localStorage
             if has_completed(user, "sql"):
                 st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
-            else:
-                cmd_sql3 = st.text_input("Voer je UNION SELECT query in:", key="sql3_input", placeholder="bijv. ' UNION SELECT username,password,role FROM users--")
-                if st.button("▶ CLAIM FLAG", key="sql3_btn", type="primary", use_container_width=True):
-                    if 'union' in cmd_sql3.lower() and 'select' in cmd_sql3.lower():
-                        fake_progress("DATABASE DUMPEN")
-                        give_flag(user, "sql", "GV 71")
-                        typewriter_terminal(["[+] UNION query uitgevoerd","  UNION | Potus | Covfefe2024! | ADMIN","[✓] GEHEIME CODE GEVONDEN: GV 71"])
-                        st.rerun()
-                    else:
-                        st.error("Incorrect. Gebruik een UNION SELECT query.")
+            elif st.session_state.get('sql3'):
+                st.session_state.sql3 = False
+                fake_progress("DATABASE DUMPEN")
+                give_flag(user, "sql", "GV 71")
+                typewriter_terminal(["[+] UNION query uitgevoerd","  UNION | Potus | Covfefe2024! | ADMIN","[✓] GEHEIME CODE GEVONDEN: GV 71"])
+                st.rerun()
             
         hint_widget(user, "sql", lvl)
 
@@ -1171,8 +1185,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
                     
                     // Set flag in localStorage and reload
-                    localStorage.setItem('xss2_unlocked', 'true');
-                    setTimeout(() => location.reload(), 1000);
+                    window._activate_xss2 && window._activate_xss2();
                 } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
@@ -1184,20 +1197,25 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 if (e.key === 'Enter') doSearch();
             });
             </script>
-            """, height=520)
+            
+        <div style="padding:0 16px 16px;"><button id="_btn_xss2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=xss2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <script>
+        window._activate_xss2 = function() {
+            var b=document.getElementById("_btn_xss2");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=620)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        cmd_xss2 = st.text_input("Voer je XSS payload in:", key="xss2_input", placeholder="bijv. <script>alert('xss')</script>")
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="xss2_btn", type="primary", use_container_width=True):
-            if '<script' in cmd_xss2.lower() or 'alert(' in cmd_xss2.lower():
-                fake_progress("PAYLOAD INJECTEREN")
-                set_level(user, "xss", 3)
-                typewriter_terminal(["[+] Script tag gedetecteerd","[+] Browser voert JavaScript uit","[✓] REFLECTED XSS GESLAAGD"])
-                st.rerun()
-            else:
-                st.error("Incorrect. Gebruik een payload met <script> of alert().")
+        if st.session_state.get('xss2'):
+            st.session_state.xss2 = False
+            fake_progress("PAYLOAD INJECTEREN")
+            set_level(user, "xss", 3)
+            typewriter_terminal(["[+] Script tag gedetecteerd","[+] Browser voert JavaScript uit","[✓] REFLECTED XSS GESLAAGD"])
+            st.rerun()
             
         hint_widget(user, "xss", lvl)
 
@@ -1312,8 +1330,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     setTimeout(() => alert('🚨 PERSISTENT XSS! This payload is now stored in the database and will execute for EVERY user who visits!'), 100);
                     
                     // Set flag in localStorage and reload
-                    localStorage.setItem('xss3_unlocked', 'true');
-                    setTimeout(() => location.reload(), 1000);
+                    window._activate_xss3 && window._activate_xss3();
                 }
                 
                 // Clear the input
@@ -1323,23 +1340,27 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
             });
             </script>
-            """, height=560)
+            
+        <div style="padding:0 16px 16px;"><button id="_btn_xss3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=xss3'">▶ CLAIM FLAG — N75 ZS</button></div>
+        <script>
+        window._activate_xss3 = function() {
+            var b=document.getElementById("_btn_xss3");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=660)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
-        else:
-            cmd_xss3 = st.text_input("Voer je XSS payload in:", key="xss3_input", placeholder="bijv. <script>alert('xss')</script>")
-            if st.button("▶ CLAIM FLAG", key="xss3_btn", type="primary", use_container_width=True):
-                if '<script' in cmd_xss3.lower() or 'alert(' in cmd_xss3.lower():
-                    fake_progress("PAYLOAD OPSLAAN IN DATABASE")
-                    give_flag(user, "xss", "N75 ZS")
-                    typewriter_terminal(["[+] Payload opgeslagen","[✓] PERSISTENT XSS GESLAAGD","[✓] GEHEIME CODE GEVONDEN: N75 ZS"])
-                    st.rerun()
-                else:
-                    st.error("Incorrect. Gebruik een payload met <script> of alert().")
+        elif st.session_state.get('xss3'):
+            st.session_state.xss3 = False
+            fake_progress("PAYLOAD OPSLAAN IN DATABASE")
+            give_flag(user, "xss", "N75 ZS")
+            typewriter_terminal(["[+] Payload opgeslagen","[✓] PERSISTENT XSS GESLAAGD","[✓] GEHEIME CODE GEVONDEN: N75 ZS"])
+            st.rerun()
         hint_widget(user, "xss", lvl)
 
 # ==========================================================
@@ -1485,8 +1506,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     resp.innerHTML = '<span class="status-ok">200 OK</span> — 42ms<br><br>{<br>&nbsp;&nbsp;"status": "success",<br>&nbsp;&nbsp;"username": "guest",<br>&nbsp;&nbsp;<span class="highlight">"role": "admin"</span>,<br>&nbsp;&nbsp;"message": "Profile updated"<br>}<br><br><span style="color:#66bb6a;">✅ Server accepted role change!<br><br><strong style="font-size:14px;">➡️ De groene knop is nu actief! Scroll naar beneden.</strong></span>';
                     
                     // Set flag in localStorage and reload
-                    localStorage.setItem('priv2_unlocked', 'true');
-                    setTimeout(() => location.reload(), 1000);
+                    window._activate_priv2 && window._activate_priv2();
                 } else if (role === '') {
                     resp.innerHTML = '<span class="status-err">400 Bad Request</span><br><br>{"error": "role cannot be empty"}';
                 } else {
@@ -1494,20 +1514,25 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 }
             }
             </script>
-            """, height=520)
+            
+        <div style="padding:0 16px 16px;"><button id="_btn_priv2" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=priv2'">▶ GA DOOR NAAR LEVEL 3</button></div>
+        <script>
+        window._activate_priv2 = function() {
+            var b=document.getElementById("_btn_priv2");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=620)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        cmd_priv2 = st.text_input("Verander de role parameter naar:", key="priv2_input", placeholder="admin")
-        if st.button("▶ GA DOOR NAAR LEVEL 3", key="priv2_btn", type="primary", use_container_width=True):
-            if cmd_priv2.strip().lower() == 'admin':
-                fake_progress("PRIVILEGES ESCALEREN")
-                set_level(user, "privesc", 3)
-                typewriter_terminal(["[+] Rolparameter gewijzigd: user → admin","[✓] ADMIN PRIVILEGES VERKREGEN"])
-                st.rerun()
-            else:
-                st.error("Incorrect. Verander de role naar 'admin'.")
+        if st.session_state.get('priv2'):
+            st.session_state.priv2 = False
+            fake_progress("PRIVILEGES ESCALEREN")
+            set_level(user, "privesc", 3)
+            typewriter_terminal(["[+] Rolparameter gewijzigd: user → admin","[✓] ADMIN PRIVILEGES VERKREGEN"])
+            st.rerun()
             
         hint_widget(user, "privesc", lvl)
 
@@ -1606,31 +1631,34 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     out.scrollTop = out.scrollHeight;
                     
                     // Set flag in localStorage and reload
-                    localStorage.setItem('priv3_unlocked', 'true');
-                    setTimeout(() => location.reload(), 1000);
+                    window._activate_priv3 && window._activate_priv3();
                 } else {
                     out.innerHTML += '<span class="dim">bash: ' + cmd + ': command not found</span><br>';
                 }
                 out.scrollTop = out.scrollHeight;
             }
             </script>
-            """, height=520)
+            
+        <div style="padding:0 16px 16px;"><button id="_btn_priv3" disabled style="width:100%;padding:14px;margin-top:16px;background:#1a3a1a;color:#555;border:2px solid #2a4a2a;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;font-family:'Segoe UI',sans-serif;" onclick="window.location.href=window.location.href.split('?')[0]+'?_unlock=priv3'">▶ CLAIM FLAG — ZIF VH</button></div>
+        <script>
+        window._activate_priv3 = function() {
+            var b=document.getElementById("_btn_priv3");
+            if(b){b.disabled=false;b.setAttribute("style","width:100%;padding:14px;margin-top:16px;background:#28a745;color:#fff;border:2px solid #28a745;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:1px;font-family:'Segoe UI',sans-serif;box-shadow:0 0 20px rgba(40,167,69,0.6);");}
+        };
+        </script>
+        """, height=620)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
-        else:
-            cmd_priv3 = st.text_input("Voer een persistence commando in:", key="priv3_input", placeholder="bijv. crontab -e")
-            if st.button("▶ CLAIM FLAG", key="priv3_btn", type="primary", use_container_width=True):
-                if any(x in cmd_priv3.lower() for x in ['backdoor','install','persist','crontab','ssh-keygen','authorized','netcat','nc','chmod','cron','bash']):
-                    fake_progress("BACKDOOR INSTALLEREN")
-                    give_flag(user, "privesc", "ZIF VH")
-                    typewriter_terminal(["[+] Backdoor geïnstalleerd","[✓] GEHEIME CODE GEVONDEN: ZIF VH"])
-                    st.rerun()
-                else:
-                    st.error("Incorrect. Voer een geldig persistence commando in.")
+        elif st.session_state.get('priv3'):
+            st.session_state.priv3 = False
+            fake_progress("BACKDOOR INSTALLEREN")
+            give_flag(user, "privesc", "ZIF VH")
+            typewriter_terminal(["[+] Backdoor geïnstalleerd","[✓] GEHEIME CODE GEVONDEN: ZIF VH"])
+            st.rerun()
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
