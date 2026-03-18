@@ -491,15 +491,6 @@ for k, v in [("user", None), ("role", None)]:
         st.session_state[k] = v
 
 # ==========================================================
-# UNLOCK VIA QUERY PARAM (from in-HTML button click)
-# ==========================================================
-_up = st.query_params.get("_unlock", "")
-if _up and st.session_state.get("user"):
-    set_unlock(st.session_state["user"], _up)
-    st.query_params.clear()
-    st.rerun()
-
-# ==========================================================
 # LOGIN
 # ==========================================================
 if not st.session_state.user:
@@ -872,7 +863,7 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         document.head.appendChild(style);
         </script>
         
-        <div style="padding:4px 16px 16px;"><button id="_btn_sql2" disabled onclick="window.location.href=window.location.pathname+'?_unlock=sql2'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_sql2" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=sql2');window._streamlit_unlock_sql2&&window._streamlit_unlock_sql2();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._unlock_sql2 = function() {
             var b=document.getElementById("_btn_sql2");
@@ -884,6 +875,16 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via custom component that reads localStorage
+        # Poll URL param set by history.replaceState in nep-UI
+        _poll_sql2 = components.html("""<script>
+        var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+        window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+        </script>""", height=1)
+        if _poll_sql2 == "sql2":
+            set_unlock(user, "sql2")
+            # Clear param without reload
+            st.query_params.clear()
+            st.rerun()
         if is_unlocked(user, 'sql2'):
             if st.button("▶ GA DOOR NAAR LEVEL 3", key="sql2_confirm", use_container_width=True, type="primary"):
                 fake_progress("AUTHENTICATIE BYPASSEN")
@@ -1053,7 +1054,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             }
             </script>
             
-        <div style="padding:4px 16px 16px;"><button id="_btn_sql3" disabled onclick="window.location.href=window.location.pathname+'?_unlock=sql3'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — GV 71</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_sql3" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=sql3');window._streamlit_unlock_sql3&&window._streamlit_unlock_sql3();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — GV 71</button></div>
         <script>
         window._unlock_sql3 = function() {
             var b=document.getElementById("_btn_sql3");
@@ -1068,6 +1069,16 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
         else:
             # Check if unlocked via localStorage
+            # Poll URL param set by history.replaceState in nep-UI
+            _poll_sql3 = components.html("""<script>
+            var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+            window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+            </script>""", height=1)
+            if _poll_sql3 == "sql3":
+                set_unlock(user, "sql3")
+                # Clear param without reload
+                st.query_params.clear()
+                st.rerun()
             if is_unlocked(user, 'sql3'):
                 if st.button("▶ CLAIM FLAG — GV 71", key="sql3_confirm", use_container_width=True, type="primary"):
                     fake_progress("DATABASE DUMPEN")
@@ -1240,7 +1251,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             });
             </script>
             
-        <div style="padding:4px 16px 16px;"><button id="_btn_xss2" disabled onclick="window.location.href=window.location.pathname+'?_unlock=xss2'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_xss2" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=xss2');window._streamlit_unlock_xss2&&window._streamlit_unlock_xss2();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._unlock_xss2 = function() {
             var b=document.getElementById("_btn_xss2");
@@ -1252,6 +1263,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
+        # Poll URL param set by history.replaceState in nep-UI
+        _poll_xss2 = components.html("""<script>
+        var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+        window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+        </script>""", height=1)
+        if _poll_xss2 == "xss2":
+            set_unlock(user, "xss2")
+            # Clear param without reload
+            st.query_params.clear()
+            st.rerun()
         if is_unlocked(user, 'xss2'):
             if st.button("▶ GA DOOR NAAR LEVEL 3", key="xss2_confirm", use_container_width=True, type="primary"):
                 fake_progress("PAYLOAD INJECTEREN")
@@ -1389,7 +1410,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             });
             </script>
             
-        <div style="padding:4px 16px 16px;"><button id="_btn_xss3" disabled onclick="window.location.href=window.location.pathname+'?_unlock=xss3'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — N75 ZS</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_xss3" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=xss3');window._streamlit_unlock_xss3&&window._streamlit_unlock_xss3();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — N75 ZS</button></div>
         <script>
         window._unlock_xss3 = function() {
             var b=document.getElementById("_btn_xss3");
@@ -1403,6 +1424,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         # Check if unlocked via localStorage
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
+        # Poll URL param set by history.replaceState in nep-UI
+        _poll_xss3 = components.html("""<script>
+        var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+        window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+        </script>""", height=1)
+        if _poll_xss3 == "xss3":
+            set_unlock(user, "xss3")
+            # Clear param without reload
+            st.query_params.clear()
+            st.rerun()
         elif is_unlocked(user, 'xss3'):
             if st.button("▶ CLAIM FLAG — N75 ZS", key="xss3_confirm", use_container_width=True, type="primary"):
                 fake_progress("PAYLOAD OPSLAAN IN DATABASE")
@@ -1570,7 +1601,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             }
             </script>
             
-        <div style="padding:4px 16px 16px;"><button id="_btn_priv2" disabled onclick="window.location.href=window.location.pathname+'?_unlock=priv2'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_priv2" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=priv2');window._streamlit_unlock_priv2&&window._streamlit_unlock_priv2();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ GA DOOR NAAR LEVEL 3</button></div>
         <script>
         window._unlock_priv2 = function() {
             var b=document.getElementById("_btn_priv2");
@@ -1582,6 +1613,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
+        # Poll URL param set by history.replaceState in nep-UI
+        _poll_priv2 = components.html("""<script>
+        var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+        window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+        </script>""", height=1)
+        if _poll_priv2 == "priv2":
+            set_unlock(user, "priv2")
+            # Clear param without reload
+            st.query_params.clear()
+            st.rerun()
         if is_unlocked(user, 'priv2'):
             if st.button("▶ GA DOOR NAAR LEVEL 3", key="priv2_confirm", use_container_width=True, type="primary"):
                 fake_progress("PRIVILEGES ESCALEREN")
@@ -1699,7 +1740,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
             }
             </script>
             
-        <div style="padding:4px 16px 16px;"><button id="_btn_priv3" disabled onclick="window.location.href=window.location.pathname+'?_unlock=priv3'" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — ZIF VH</button></div>
+        <div style="padding:4px 16px 16px;"><button id="_btn_priv3" disabled onclick="history.replaceState(null,'',window.location.pathname+'?_unlock=priv3');window._streamlit_unlock_priv3&&window._streamlit_unlock_priv3();" style="width:100%;padding:14px;margin-top:16px;background:#222;color:#555;border:2px solid #333;border-radius:8px;font-size:15px;font-weight:bold;cursor:not-allowed;letter-spacing:1px;transition:all 0.3s;">⏳ CLAIM FLAG — ZIF VH</button></div>
         <script>
         window._unlock_priv3 = function() {
             var b=document.getElementById("_btn_priv3");
@@ -1713,6 +1754,16 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         # Check if unlocked via localStorage
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
+        # Poll URL param set by history.replaceState in nep-UI
+        _poll_priv3 = components.html("""<script>
+        var _v=new URLSearchParams(window.parent.location.search).get("_unlock");
+        window.parent.postMessage({type:"streamlit:setComponentValue",value:_v||""},"*");
+        </script>""", height=1)
+        if _poll_priv3 == "priv3":
+            set_unlock(user, "priv3")
+            # Clear param without reload
+            st.query_params.clear()
+            st.rerun()
         elif is_unlocked(user, 'priv3'):
             if st.button("▶ CLAIM FLAG — ZIF VH", key="priv3_confirm", use_container_width=True, type="primary"):
                 fake_progress("BACKDOOR INSTALLEREN")
