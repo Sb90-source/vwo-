@@ -216,8 +216,8 @@ HINTS = {
     ],
     "xss": [
         "💡 Geef in drie woorden de Engelse term. Gebruik als je er niet uitkomt je cheat sheet!.",
-        "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>",
-        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas 'alert' nu aan naar 'problemenbuiten'.",
+        "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>. Verander 'alert' naar: 'Beveiligers; problemen buiten'", 
+        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas 'alert' nu aan naar een reden waarom mensen niet naar de veveiligde kamer mogen komen. Denk aan onderhoud etc.",
     ],
     "privesc": [
         "💡 Wat doe je als je meer rechten wil dan je hebt? Kijk eventueel op je cheat sheet.",
