@@ -225,9 +225,9 @@ HINTS = {
         "💡 Geef een commando om je installatie te plaatsen. Gebruik 1 woord; wat je wil installeren",
     ],
     "crypto": [
-        "💡 Denk aan een persoon van een hele lange tijd terug! Geef de Engelse term. "
-        "💡 Elke letter wordt X posities verschoven in het alfabet.",
-        "💡 Probeer ROT13 of verschuif letters met 3 posities terug.",
+        "💡 Denk aan een persoon van een hele lange tijd terug! Geef de Engelse term. ",
+        "💡 Je tabel moet 3 rijen onder je code woord hebben voor het oplossen van de code.",
+        "💡 Aantal stappen: Hoeveel kinderen heeft Trump in totaal?",
     ],
 }
 
