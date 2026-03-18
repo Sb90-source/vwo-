@@ -222,10 +222,10 @@ HINTS = {
     "privesc": [
         "💡 Wat doe je als je meer rechten wil dan je hebt?",
         "💡 Wat is de hoogste gebruikersrol in een systeem?",
-        "💡 Typ simpelweg de rol waar je toegang toe wil hebben.",
+        "💡 Geef een commando om je installatie te plaatsen. Gebruik 1 woord; wat je wil installeren",
     ],
     "crypto": [
-        "💡 Julius Caesar gebruikte dit systeem om berichten te versleutelen.",
+        "💡 Denk aan een persoon van een hele lange tijd terug! Geef de Engelse term. 
         "💡 Elke letter wordt X posities verschoven in het alfabet.",
         "💡 Probeer ROT13 of verschuif letters met 3 posities terug.",
     ],
@@ -1684,7 +1684,7 @@ ACTIE VEREIST: Identificeer het encryptie algoritme
         st.info(" **RAADSEL:** Ontcijfer de kolomtranspositie code")
         st.markdown("""
 ```
-Code: MAAUANST!AGGKRAEEI  |  Sleutelwoord: EPSTIN (E=1,P=4,S=5,T=6,I=2,N=3)
+Code: MAAUANST!AGGKRAEEI  |  Sleutelwoord: ?
 ```
         """)
         _kt = st.text_input("decrypt>", key="crypto_kolomtransp", placeholder="ontcijferd wachtwoord...")
