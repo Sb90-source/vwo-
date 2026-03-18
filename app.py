@@ -1820,6 +1820,6 @@ st.markdown("""
 <div style="text-align:center;color:#00ff9c;opacity:0.7;font-family:'Share Tech Mono',monospace;font-size:11px;">
     THE WHITE HOUSE<br>
     Gemaakt door: Anouk, Marwa, Fenna en Noura<br>
-    <em>Cybersecurity escape room — 2025</em>
+    <em>Cybersecurity escape room — 2026</em>
 </div>
 """, unsafe_allow_html=True)
