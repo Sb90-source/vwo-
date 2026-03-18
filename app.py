@@ -590,7 +590,7 @@ user = st.session_state.user
 
 st.markdown("---")
 
-tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMP'S KAMER"])
+tabs = st.tabs(["DE RECEPTIE", "DE VERGADERRUIMTE", "DE BEVEILIGDE KAMER", "TRUMPS KAMER"])
 
 # ==========================================================
 # KAMER 1, RECEPTIE - SQL INJECTION
@@ -1631,10 +1631,10 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         hint_widget(user, "privesc", lvl)
 
 # ==========================================================
-# KAMER 4, Trump's kamer - encryptie
+# KAMER 4, Trumps kamer - encryptie
 # ==========================================================
 with tabs[3]:
-    st.header("TRUMP'S KAMER - CRYPTOGRAFIE")
+    st.header("TRUMPS KAMER")
     st.markdown("*Kraak Trump's persoonlijke kluis.*")
 
     rooms_complete = [has_completed(user, r) for r in ["sql", "xss", "privesc"]]
@@ -1654,7 +1654,7 @@ with tabs[3]:
         st.markdown("""
 ```
 [FINAL CHALLENGE]
-Locatie: Presidential Suite — Trump's privé ruimte
+Locatie: Presidential Suite — Trumps privé ruimte
 Beveiligingsniveau: MAXIMUM
 Doelwit: Encrypted vault password
 Bevinding: Klassiek versleutelingssysteem gedetecteerd
