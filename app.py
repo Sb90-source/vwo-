@@ -1041,14 +1041,14 @@ with tabs[1]:
         # Show intro video before XSS Level 1
         check_and_show_video("xss", 1, "before")
         
-        st.info("**MISSIE:** Identificeer de kwetsbaarheid in het communications portal")
+        st.info("**MISSIE:**Identificeer de kwetsbaarheid in het communications portal")
         st.markdown("""
 ```
 [INFORMATIE]
 Locatie: White House Internal Communications Portal
 Doelwit: comms.whitehouse.gov/search
 Bevinding: User input wordt direct in HTML weergegeven
-Kwetsbaarheid: Geen sanitization van gebruikersinput
+Kwetsbaarheid: Geen permanente verwijdering van gebruikersinput
 
 ACTIE VEREIST: Identificeer het type aanval
 ```
