@@ -836,13 +836,13 @@ OPDRACHT: Manipuleer de gebruikersnaam zodat de WHERE-clausule
         style.textContent = '@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }';
         document.head.appendChild(style);
         </script>
-        <div id='_div_sql2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>GV</div></div>
+        <div id='_div_sql2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>GV</div></div>
         """, height=780)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via custom component that reads localStorage
-        _in_sql2 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="sql2_code", placeholder="deel 1 van de flag...")
+        _in_sql2 = st.text_input("Voer de code in die de nep-UI toont:", key="sql2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="sql2_continue", type="primary", use_container_width=True):
             if _in_sql2.strip().upper() == "GV":
                 fake_progress("AUTHENTICATIE BYPASSEN")
@@ -1012,7 +1012,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
                 alert(m + ' — Access restricted via SQL console');
             }
             </script>
-            <div id='_div_sql3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>71</div></div>
+            <div id='_div_sql3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>71</div></div>
             """, height=640)
         
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1024,7 +1024,7 @@ ACTIE VEREIST: Gebruik UNION SELECT om geheime admin credentials te extraheren
             if has_completed(user, "sql"):
                 st.success(" FLAG BEHAALD: **GV 71** — Ga naar volgende kamer")
             else:
-                _in_sql3 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="sql3_code", placeholder="deel 2 van de flag...")
+                _in_sql3 = st.text_input("Voer de code in die de nep-UI toont:", key="sql3_code", placeholder="deel 2 van de flag...")
                 if st.button("CLAIM FLAG", key="sql3_continue", type="primary", use_container_width=True):
                     if _in_sql3.strip() == "71":
                         fake_progress("DATABASE DUMPEN")
@@ -1197,13 +1197,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 if (e.key === 'Enter') doSearch();
             });
             </script>
-            <div id='_div_xss2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>N75</div></div>
+            <div id='_div_xss2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>N75</div></div>
             """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        _in_xss2 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="xss2_code", placeholder="deel 1 van de flag...")
+        _in_xss2 = st.text_input("Voer de code in die de nep-UI toont:", key="xss2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="xss2_continue", type="primary", use_container_width=True):
             if _in_xss2.strip().upper() == "N75":
                 fake_progress("PAYLOAD INJECTEREN")
@@ -1341,7 +1341,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); }
             });
             </script>
-            <div id='_div_xss3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZS</div></div>
+            <div id='_div_xss3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZS</div></div>
             """, height=650)
         
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1350,7 +1350,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "xss"):
             st.success("🏴 FLAG BEHAALD: **N75 ZS** — Ga naar volgende kamer")
         else:
-            _in_xss3 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="xss3_code", placeholder="deel 2 van de flag...")
+            _in_xss3 = st.text_input("Voer de code in die de nep-UI toont:", key="xss3_code", placeholder="deel 2 van de flag...")
             if st.button("🏴 CLAIM FLAG", key="xss3_continue", type="primary", use_container_width=True):
                 if _in_xss3.strip().upper() == "ZS":
                     fake_progress("PAYLOAD OPSLAAN IN DATABASE")
@@ -1518,13 +1518,13 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 }
             }
             </script>
-            <div id='_div_priv2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZIF</div></div>
+            <div id='_div_priv2' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>ZIF</div></div>
             """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Check if unlocked via localStorage
-        _in_priv2 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="priv2_code", placeholder="deel 1 van de flag...")
+        _in_priv2 = st.text_input("Voer de code in die de nep-UI toont:", key="priv2_code", placeholder="deel 1 van de flag...")
         if st.button("GA DOOR NAAR LEVEL 3", key="priv2_continue", type="primary", use_container_width=True):
             if _in_priv2.strip().upper() == "ZIF":
                 fake_progress("PRIVILEGES ESCALEREN")
@@ -1642,7 +1642,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                 out.scrollTop = out.scrollHeight;
             }
             </script>
-            <div id='_div_priv3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>✅ GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>VH</div></div>
+            <div id='_div_priv3' style='display:none;margin:12px 16px;padding:12px;background:#0a2a0a;border:2px solid #28a745;border-radius:8px;text-align:center;'><div style='color:#aaa;font-size:11px;font-family:monospace;margin-bottom:4px;'>GESLAAGD — noteer deze code:</div><div style='color:#28a745;font-size:24px;font-weight:bold;letter-spacing:6px;font-family:monospace;'>VH</div></div>
             """, height=610)
         
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1651,7 +1651,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
         if has_completed(user, "privesc"):
             st.success("🏴 FLAG BEHAALD: **ZIF VH** — Ga naar volgende kamer")
         else:
-            _in_priv3 = st.text_input("🔑 Voer de code in die de nep-UI toont:", key="priv3_code", placeholder="deel 2 van de flag...")
+            _in_priv3 = st.text_input("Voer de code in die de nep-UI toont:", key="priv3_code", placeholder="deel 2 van de flag...")
             if st.button("🏴 CLAIM FLAG", key="priv3_continue", type="primary", use_container_width=True):
                 if _in_priv3.strip().upper() == "VH":
                     fake_progress("BACKDOOR INSTALLEREN")
