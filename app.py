@@ -221,7 +221,7 @@ HINTS = {
     ],
     "privesc": [
         "💡 Wat doe je als je meer rechten wil dan je hebt? Kijk eventueel op je cheat sheet.",
-        "💡 Wat is de hoogste gebruikersrol in een systeem?",
+        "💡 Wat is een hoge gebruikersrol in een systeem?",
         "💡 Geef een commando om je installatie te plaatsen. Gebruik 1 woord; wat je wil installeren",
     ],
     "crypto": [
