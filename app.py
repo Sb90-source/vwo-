@@ -1163,7 +1163,7 @@ body{background:#020409;font-family:'Segoe UI',Arial,sans-serif;display:flex;fle
                     alertBox.className = 'alert-box xss';
                     alertBox.style.display = 'block';
                     alertBox.innerHTML = '✅ XSS ATTACK SUCCESSFUL!<br><div style="background:#0a2a0a;border:2px solid #28a745;border-radius:8px;padding:10px;margin-top:8px;text-align:center;"><div style="color:#aaa;font-size:11px;font-family:monospace;">GESLAAGD — noteer deze code:</div><div style="color:#28a745;font-size:20px;font-weight:bold;letter-spacing:6px;font-family:monospace;">N75</div></div>';
-                    setTimeout(() => alert('🚨 SECURITY BREACH DETECTED! This alert proves XSS works!'), 100);
+                    setTimeout(() => alert('🚨 BEVEILIGINGS INBREUK GEDETECTEERD! Dit alarm laat zien dat de xss werkt!'), 100);
                     } else {
                     result.textContent = val || '(empty query)';
                     alertBox.className = 'alert-box';
