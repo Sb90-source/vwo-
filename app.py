@@ -1714,12 +1714,17 @@ Code: MAAUANST!AGGKRAEEI  |  Sleutelwoord: ?
         
         st.markdown("""
 ```
-[DECRYPTION INSTRUCTIONS]
-Caesar cipher verschuift elke letter een vast aantal posities.
+[INSTRUCTIES]
+Caesar rotatie verschuift elke letter een vast aantal posities.
 Probeer verschillende shift values (bijvoorbeeld ROT13 = 13 posities).
 
-HINT: Decodeer elke code afzonderlijk en combineer de resultaten.
-FORMAAT EINDWACHTWOORD: EXAMENKLAS[JAAR]
+TIP aantal shifts:
+Ik help je de wereld te ervaren.
+Je hebt ons altijd bij je en maakt dagelijks gebruik van ons, vaak zonder erbij stil te staan. 
+Zonder ons zou muziek stil zijn en kleuren verdwijnen. Met hoeveel zijn we?
+
+
+HINT: Decodeer elke code afzonderlijk en zet daarna de stukjes code op de juiste plek!
 
 Bijvoorbeeld:  GV → ??
                N75 → ???  
