@@ -1388,7 +1388,7 @@ ACTIE VEREIST: Identificeer het type aanval
 De profile update API accepteert een 'role' parameter.
 De server controleert NIET of de gebruiker deze mag wijzigen!
 
-ACTIE VEREIST: Zorg ervoor dat je een admin wordt.'
+ACTIE VEREIST: Zorg ervoor dat je hogere rechten krijgt.'
 ```
         """)
         
