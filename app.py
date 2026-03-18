@@ -211,13 +211,13 @@ init_db()
 HINTS = {
     "sql": [
         "💡 Kijk op je cheat sheet, het type aanval staat in het rijtje! En heb je goed naar de sticky note gekeken?",
-        "💡 Maak de WHERE-clausule altijd TRUE. Let op, gebruik een statement die altijd klopt. Het ziet er rekenkundig uit. En tip: let op de plaatsing van de hoge komma's!",
-        "💡 Voeg iets toe aan SELECT en vervang het sterretje met de password, role, username; zet ze alleen nog in de juiste volgorde.",
+        "💡 Maak de WHERE-clausule altijd TRUE. Let op, gebruik een statement dat altijd klopt. Het ziet er rekenkundig uit. En tip: let op de plaatsing van de hoge komma's!",
+        "💡 Voeg iets toe aan SELECT en vervang het sterretje met password, role, username; zet ze alleen nog in de juiste volgorde.",
     ],
     "xss": [
         "💡 Geef in drie woorden de Engelse term. Gebruik als je er niet uitkomt je cheat sheet!.",
         "💡 Gebruik de HTML tag die JavaScript uitvoert. Typ letterlijk: <script>alert('xss')</script>. Verander 'alert' naar: 'Beveiligers; problemen buiten'", 
-        "💡 Zelfde als stap 2 maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas 'alert' nu aan naar een reden waarom mensen niet naar de beveiligde kamer mogen komen. Denk aan onderhoud etc.",
+        "💡 Zelfde als raadsel 2, maar nu wordt je script opgeslagen in de database. Gebruik weer een <script> tag. Pas 'alert' nu aan naar een reden waarom mensen op dit moment geen toegang hebben tot de beveiligde kamer(denk aan onderhoud etc.)",
     ],
     "privesc": [
         "💡 Wat doe je als je meer rechten wil dan je hebt? Kijk eventueel op je cheat sheet.",
